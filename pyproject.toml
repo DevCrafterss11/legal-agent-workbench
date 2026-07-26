@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "legal-agent-workbench"
+version = "0.1.0"
+description = "Enterprise legal agent execution workbench with RAG, memory, governance, MCP connectors, and review traces."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = [
+    "pydantic>=2.0.0",
+    "typer>=0.12.0",
+    "rich>=13.0.0",
+    "httpx>=0.27.0",
+    "pymilvus>=2.4.0",
+    "python-docx>=1.1.0",
+    "pypdf>=4.0.0",
+    "mcp>=1.0.0",
+    "lark-oapi>=1.6.5",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.29.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "fakeredis>=2.23.0",
+]
+bge = [
+    "sentence-transformers>=3.0.0",
+    "torch>=2.2.0",
+]
+redis = [
+    "redis>=5.0.0",
+]
+
+[project.scripts]
+legal-agent = "legalworkbench.cli:app"
+lawbench = "legalworkbench.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/legalworkbench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
