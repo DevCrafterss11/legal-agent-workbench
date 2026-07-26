@@ -1,0 +1,1747 @@
+{
+  "name": "enterprise_legal_human_benchmark_v1",
+  "version": "2026.07.02",
+  "description": "30 contracts with 120 clause-level risk annotations for legal Agent evaluation.",
+  "contracts": [
+    {
+      "contract_id": "human_bench_001",
+      "title": "SaaS 平台服务协议 HB-001",
+      "contract_type": "SaaS",
+      "scenario": "企业采购云软件服务",
+      "file": "contracts/human_bench_001.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0001",
+          "clause_id": "C002",
+          "clause_title": "自动续约",
+          "risk_type": "auto_renewal",
+          "risk_level": "medium",
+          "rationale": "自动续约缺少通知期和退出路径，容易导致业务方被动续约。",
+          "expected_suggestion": "建议明确续约前至少 30 日书面通知，并保留到期不续约或邮件取消路径。",
+          "evidence_source": "playbook:saas_terms",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0002",
+          "clause_id": "C003",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0003",
+          "clause_id": "C004",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0004",
+          "clause_id": "C005",
+          "clause_title": "服务水平",
+          "risk_type": "sla_remedy",
+          "risk_level": "medium",
+          "rationale": "SLA 只有原则性承诺，缺少故障分级、响应时间和补救措施。",
+          "expected_suggestion": "建议补充可用性指标、故障分级、响应时限以及服务抵扣或补偿机制。",
+          "evidence_source": "playbook:saas_sla",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_002",
+      "title": "软件采购合同 HB-002",
+      "contract_type": "procurement",
+      "scenario": "采购管理系统及实施服务",
+      "file": "contracts/human_bench_002.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0005",
+          "clause_id": "C002",
+          "clause_title": "付款条件",
+          "risk_type": "payment_acceptance",
+          "risk_level": "medium",
+          "rationale": "付款义务没有与交付质量或成果确认绑定，可能形成先付款后争议。",
+          "expected_suggestion": "建议将付款条件与交付完成、验收通过或合法有效发票开具绑定。",
+          "evidence_source": "template:procurement_review",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0006",
+          "clause_id": "C003",
+          "clause_title": "付款周期",
+          "risk_type": "payment_cycle",
+          "risk_level": "medium",
+          "rationale": "付款过度前置，未与交付进度或服务周期匹配。",
+          "expected_suggestion": "建议拆分首付款、阶段款和尾款，并绑定里程碑完成情况。",
+          "evidence_source": "company_policy:payment_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0007",
+          "clause_id": "C004",
+          "clause_title": "知识产权归属",
+          "risk_type": "ip_ownership",
+          "risk_level": "high",
+          "rationale": "交付成果归属偏向乙方，可能限制甲方使用、复制和商业化。",
+          "expected_suggestion": "建议明确交付成果归甲方所有，乙方背景知识产权另行授权。",
+          "evidence_source": "company_policy:ip_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0008",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "hard_paraphrase"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_003",
+      "title": "商业保密协议 HB-003",
+      "contract_type": "NDA",
+      "scenario": "合作前技术和客户资料披露",
+      "file": "contracts/human_bench_003.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0009",
+          "clause_id": "C002",
+          "clause_title": "保密义务",
+          "risk_type": "confidentiality",
+          "risk_level": "medium",
+          "rationale": "保密条款缺少范围、期限和例外，后续执行边界不清。",
+          "expected_suggestion": "建议明确保密信息范围、保密期限、例外情形以及返还/销毁义务。",
+          "evidence_source": "playbook:nda_confidentiality",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0010",
+          "clause_id": "C003",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0011",
+          "clause_id": "C004",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "hard_paraphrase"
+        },
+        {
+          "risk_id": "HR0012",
+          "clause_id": "C005",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_004",
+      "title": "办公场地租赁合同 HB-004",
+      "contract_type": "lease",
+      "scenario": "企业承租办公场地",
+      "file": "contracts/human_bench_004.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0013",
+          "clause_id": "C002",
+          "clause_title": "保证金",
+          "risk_type": "deposit_return",
+          "risk_level": "medium",
+          "rationale": "保证金条款缺少返还条件、扣除范围和时间安排。",
+          "expected_suggestion": "建议明确保证金金额、扣除范围、返还期限和逾期责任。",
+          "evidence_source": "company_policy:deposit_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0014",
+          "clause_id": "C003",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0015",
+          "clause_id": "C004",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0016",
+          "clause_id": "C005",
+          "clause_title": "不可抗力",
+          "risk_type": "force_majeure",
+          "risk_level": "low",
+          "rationale": "不可抗力条款缺少通知、证明和减损义务。",
+          "expected_suggestion": "建议补充不可抗力发生后的通知期限、证明材料和减损义务。",
+          "evidence_source": "playbook:force_majeure",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_005",
+      "title": "运维服务合同 HB-005",
+      "contract_type": "service",
+      "scenario": "供应商提供长期运维支持",
+      "file": "contracts/human_bench_005.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0017",
+          "clause_id": "C002",
+          "clause_title": "服务水平",
+          "risk_type": "sla_remedy",
+          "risk_level": "medium",
+          "rationale": "SLA 只有原则性承诺，缺少故障分级、响应时间和补救措施。",
+          "expected_suggestion": "建议补充可用性指标、故障分级、响应时限以及服务抵扣或补偿机制。",
+          "evidence_source": "playbook:saas_sla",
+          "requires_human_review": false,
+          "annotation_notes": "hard_paraphrase"
+        },
+        {
+          "risk_id": "HR0018",
+          "clause_id": "C003",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0019",
+          "clause_id": "C004",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0020",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_006",
+      "title": "员工劳动与保密协议 HB-006",
+      "contract_type": "employment",
+      "scenario": "员工入职及成果归属约定",
+      "file": "contracts/human_bench_006.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0021",
+          "clause_id": "C002",
+          "clause_title": "保密义务",
+          "risk_type": "confidentiality",
+          "risk_level": "medium",
+          "rationale": "保密条款缺少范围、期限和例外，后续执行边界不清。",
+          "expected_suggestion": "建议明确保密信息范围、保密期限、例外情形以及返还/销毁义务。",
+          "evidence_source": "playbook:nda_confidentiality",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0022",
+          "clause_id": "C003",
+          "clause_title": "知识产权归属",
+          "risk_type": "ip_ownership",
+          "risk_level": "high",
+          "rationale": "交付成果归属偏向乙方，可能限制甲方使用、复制和商业化。",
+          "expected_suggestion": "建议明确交付成果归甲方所有，乙方背景知识产权另行授权。",
+          "evidence_source": "company_policy:ip_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0023",
+          "clause_id": "C004",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0024",
+          "clause_id": "C005",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_007",
+      "title": "预付式会员服务合同 HB-007",
+      "contract_type": "consumer",
+      "scenario": "用户充值购买会员权益",
+      "file": "contracts/human_bench_007.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0025",
+          "clause_id": "C002",
+          "clause_title": "预付式服务",
+          "risk_type": "prepaid_refund",
+          "risk_level": "medium",
+          "rationale": "预付式服务缺少未使用权益处理机制，容易引发退费争议。",
+          "expected_suggestion": "建议明确未消费余额退还、服务终止后的退款路径和手续费边界。",
+          "evidence_source": "company_policy:prepaid_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0026",
+          "clause_id": "C003",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0027",
+          "clause_id": "C004",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0028",
+          "clause_id": "C005",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_008",
+      "title": "工程施工服务合同 HB-008",
+      "contract_type": "construction",
+      "scenario": "办公室装修和施工管理",
+      "file": "contracts/human_bench_008.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0029",
+          "clause_id": "C002",
+          "clause_title": "付款条件",
+          "risk_type": "payment_acceptance",
+          "risk_level": "medium",
+          "rationale": "付款义务没有与交付质量或成果确认绑定，可能形成先付款后争议。",
+          "expected_suggestion": "建议将付款条件与交付完成、验收通过或合法有效发票开具绑定。",
+          "evidence_source": "template:procurement_review",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0030",
+          "clause_id": "C003",
+          "clause_title": "付款周期",
+          "risk_type": "payment_cycle",
+          "risk_level": "medium",
+          "rationale": "付款过度前置，未与交付进度或服务周期匹配。",
+          "expected_suggestion": "建议拆分首付款、阶段款和尾款，并绑定里程碑完成情况。",
+          "evidence_source": "company_policy:payment_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0031",
+          "clause_id": "C004",
+          "clause_title": "不可抗力",
+          "risk_type": "force_majeure",
+          "risk_level": "low",
+          "rationale": "不可抗力条款缺少通知、证明和减损义务。",
+          "expected_suggestion": "建议补充不可抗力发生后的通知期限、证明材料和减损义务。",
+          "evidence_source": "playbook:force_majeure",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0032",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_009",
+      "title": "设备销售合同 HB-009",
+      "contract_type": "sales",
+      "scenario": "采购硬件设备及售后服务",
+      "file": "contracts/human_bench_009.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0033",
+          "clause_id": "C002",
+          "clause_title": "付款条件",
+          "risk_type": "payment_acceptance",
+          "risk_level": "medium",
+          "rationale": "付款义务没有与交付质量或成果确认绑定，可能形成先付款后争议。",
+          "expected_suggestion": "建议将付款条件与交付完成、验收通过或合法有效发票开具绑定。",
+          "evidence_source": "template:procurement_review",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0034",
+          "clause_id": "C003",
+          "clause_title": "付款周期",
+          "risk_type": "payment_cycle",
+          "risk_level": "medium",
+          "rationale": "付款过度前置，未与交付进度或服务周期匹配。",
+          "expected_suggestion": "建议拆分首付款、阶段款和尾款，并绑定里程碑完成情况。",
+          "evidence_source": "company_policy:payment_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0035",
+          "clause_id": "C004",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0036",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "hard_paraphrase"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_010",
+      "title": "数据处理服务协议 HB-010",
+      "contract_type": "SaaS",
+      "scenario": "供应商处理客户业务数据",
+      "file": "contracts/human_bench_010.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0037",
+          "clause_id": "C002",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0038",
+          "clause_id": "C003",
+          "clause_title": "保密义务",
+          "risk_type": "confidentiality",
+          "risk_level": "medium",
+          "rationale": "保密条款缺少范围、期限和例外，后续执行边界不清。",
+          "expected_suggestion": "建议明确保密信息范围、保密期限、例外情形以及返还/销毁义务。",
+          "evidence_source": "playbook:nda_confidentiality",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0039",
+          "clause_id": "C004",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0040",
+          "clause_id": "C005",
+          "clause_title": "服务水平",
+          "risk_type": "sla_remedy",
+          "risk_level": "medium",
+          "rationale": "SLA 只有原则性承诺，缺少故障分级、响应时间和补救措施。",
+          "expected_suggestion": "建议补充可用性指标、故障分级、响应时限以及服务抵扣或补偿机制。",
+          "evidence_source": "playbook:saas_sla",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_011",
+      "title": "SaaS 平台服务协议 HB-011",
+      "contract_type": "SaaS",
+      "scenario": "企业采购云软件服务",
+      "file": "contracts/human_bench_011.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0041",
+          "clause_id": "C002",
+          "clause_title": "自动续约",
+          "risk_type": "auto_renewal",
+          "risk_level": "medium",
+          "rationale": "自动续约缺少通知期和退出路径，容易导致业务方被动续约。",
+          "expected_suggestion": "建议明确续约前至少 30 日书面通知，并保留到期不续约或邮件取消路径。",
+          "evidence_source": "playbook:saas_terms",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0042",
+          "clause_id": "C003",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "hard_paraphrase"
+        },
+        {
+          "risk_id": "HR0043",
+          "clause_id": "C004",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0044",
+          "clause_id": "C005",
+          "clause_title": "服务水平",
+          "risk_type": "sla_remedy",
+          "risk_level": "medium",
+          "rationale": "SLA 只有原则性承诺，缺少故障分级、响应时间和补救措施。",
+          "expected_suggestion": "建议补充可用性指标、故障分级、响应时限以及服务抵扣或补偿机制。",
+          "evidence_source": "playbook:saas_sla",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_012",
+      "title": "软件采购合同 HB-012",
+      "contract_type": "procurement",
+      "scenario": "采购管理系统及实施服务",
+      "file": "contracts/human_bench_012.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0045",
+          "clause_id": "C002",
+          "clause_title": "付款条件",
+          "risk_type": "payment_acceptance",
+          "risk_level": "medium",
+          "rationale": "付款义务没有与交付质量或成果确认绑定，可能形成先付款后争议。",
+          "expected_suggestion": "建议将付款条件与交付完成、验收通过或合法有效发票开具绑定。",
+          "evidence_source": "template:procurement_review",
+          "requires_human_review": false,
+          "annotation_notes": "hard_paraphrase"
+        },
+        {
+          "risk_id": "HR0046",
+          "clause_id": "C003",
+          "clause_title": "付款周期",
+          "risk_type": "payment_cycle",
+          "risk_level": "medium",
+          "rationale": "付款过度前置，未与交付进度或服务周期匹配。",
+          "expected_suggestion": "建议拆分首付款、阶段款和尾款，并绑定里程碑完成情况。",
+          "evidence_source": "company_policy:payment_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0047",
+          "clause_id": "C004",
+          "clause_title": "知识产权归属",
+          "risk_type": "ip_ownership",
+          "risk_level": "high",
+          "rationale": "交付成果归属偏向乙方，可能限制甲方使用、复制和商业化。",
+          "expected_suggestion": "建议明确交付成果归甲方所有，乙方背景知识产权另行授权。",
+          "evidence_source": "company_policy:ip_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0048",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_013",
+      "title": "商业保密协议 HB-013",
+      "contract_type": "NDA",
+      "scenario": "合作前技术和客户资料披露",
+      "file": "contracts/human_bench_013.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0049",
+          "clause_id": "C002",
+          "clause_title": "保密义务",
+          "risk_type": "confidentiality",
+          "risk_level": "medium",
+          "rationale": "保密条款缺少范围、期限和例外，后续执行边界不清。",
+          "expected_suggestion": "建议明确保密信息范围、保密期限、例外情形以及返还/销毁义务。",
+          "evidence_source": "playbook:nda_confidentiality",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0050",
+          "clause_id": "C003",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0051",
+          "clause_id": "C004",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0052",
+          "clause_id": "C005",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_014",
+      "title": "办公场地租赁合同 HB-014",
+      "contract_type": "lease",
+      "scenario": "企业承租办公场地",
+      "file": "contracts/human_bench_014.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0053",
+          "clause_id": "C002",
+          "clause_title": "保证金",
+          "risk_type": "deposit_return",
+          "risk_level": "medium",
+          "rationale": "保证金条款缺少返还条件、扣除范围和时间安排。",
+          "expected_suggestion": "建议明确保证金金额、扣除范围、返还期限和逾期责任。",
+          "evidence_source": "company_policy:deposit_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0054",
+          "clause_id": "C003",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0055",
+          "clause_id": "C004",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0056",
+          "clause_id": "C005",
+          "clause_title": "不可抗力",
+          "risk_type": "force_majeure",
+          "risk_level": "low",
+          "rationale": "不可抗力条款缺少通知、证明和减损义务。",
+          "expected_suggestion": "建议补充不可抗力发生后的通知期限、证明材料和减损义务。",
+          "evidence_source": "playbook:force_majeure",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_015",
+      "title": "运维服务合同 HB-015",
+      "contract_type": "service",
+      "scenario": "供应商提供长期运维支持",
+      "file": "contracts/human_bench_015.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0057",
+          "clause_id": "C002",
+          "clause_title": "服务水平",
+          "risk_type": "sla_remedy",
+          "risk_level": "medium",
+          "rationale": "SLA 只有原则性承诺，缺少故障分级、响应时间和补救措施。",
+          "expected_suggestion": "建议补充可用性指标、故障分级、响应时限以及服务抵扣或补偿机制。",
+          "evidence_source": "playbook:saas_sla",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0058",
+          "clause_id": "C003",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0059",
+          "clause_id": "C004",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0060",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_016",
+      "title": "员工劳动与保密协议 HB-016",
+      "contract_type": "employment",
+      "scenario": "员工入职及成果归属约定",
+      "file": "contracts/human_bench_016.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0061",
+          "clause_id": "C002",
+          "clause_title": "保密义务",
+          "risk_type": "confidentiality",
+          "risk_level": "medium",
+          "rationale": "保密条款缺少范围、期限和例外，后续执行边界不清。",
+          "expected_suggestion": "建议明确保密信息范围、保密期限、例外情形以及返还/销毁义务。",
+          "evidence_source": "playbook:nda_confidentiality",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0062",
+          "clause_id": "C003",
+          "clause_title": "知识产权归属",
+          "risk_type": "ip_ownership",
+          "risk_level": "high",
+          "rationale": "交付成果归属偏向乙方，可能限制甲方使用、复制和商业化。",
+          "expected_suggestion": "建议明确交付成果归甲方所有，乙方背景知识产权另行授权。",
+          "evidence_source": "company_policy:ip_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0063",
+          "clause_id": "C004",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0064",
+          "clause_id": "C005",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "hard_paraphrase"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_017",
+      "title": "预付式会员服务合同 HB-017",
+      "contract_type": "consumer",
+      "scenario": "用户充值购买会员权益",
+      "file": "contracts/human_bench_017.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0065",
+          "clause_id": "C002",
+          "clause_title": "预付式服务",
+          "risk_type": "prepaid_refund",
+          "risk_level": "medium",
+          "rationale": "预付式服务缺少未使用权益处理机制，容易引发退费争议。",
+          "expected_suggestion": "建议明确未消费余额退还、服务终止后的退款路径和手续费边界。",
+          "evidence_source": "company_policy:prepaid_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0066",
+          "clause_id": "C003",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0067",
+          "clause_id": "C004",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "hard_paraphrase"
+        },
+        {
+          "risk_id": "HR0068",
+          "clause_id": "C005",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_018",
+      "title": "工程施工服务合同 HB-018",
+      "contract_type": "construction",
+      "scenario": "办公室装修和施工管理",
+      "file": "contracts/human_bench_018.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0069",
+          "clause_id": "C002",
+          "clause_title": "付款条件",
+          "risk_type": "payment_acceptance",
+          "risk_level": "medium",
+          "rationale": "付款义务没有与交付质量或成果确认绑定，可能形成先付款后争议。",
+          "expected_suggestion": "建议将付款条件与交付完成、验收通过或合法有效发票开具绑定。",
+          "evidence_source": "template:procurement_review",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0070",
+          "clause_id": "C003",
+          "clause_title": "付款周期",
+          "risk_type": "payment_cycle",
+          "risk_level": "medium",
+          "rationale": "付款过度前置，未与交付进度或服务周期匹配。",
+          "expected_suggestion": "建议拆分首付款、阶段款和尾款，并绑定里程碑完成情况。",
+          "evidence_source": "company_policy:payment_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0071",
+          "clause_id": "C004",
+          "clause_title": "不可抗力",
+          "risk_type": "force_majeure",
+          "risk_level": "low",
+          "rationale": "不可抗力条款缺少通知、证明和减损义务。",
+          "expected_suggestion": "建议补充不可抗力发生后的通知期限、证明材料和减损义务。",
+          "evidence_source": "playbook:force_majeure",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0072",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_019",
+      "title": "设备销售合同 HB-019",
+      "contract_type": "sales",
+      "scenario": "采购硬件设备及售后服务",
+      "file": "contracts/human_bench_019.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0073",
+          "clause_id": "C002",
+          "clause_title": "付款条件",
+          "risk_type": "payment_acceptance",
+          "risk_level": "medium",
+          "rationale": "付款义务没有与交付质量或成果确认绑定，可能形成先付款后争议。",
+          "expected_suggestion": "建议将付款条件与交付完成、验收通过或合法有效发票开具绑定。",
+          "evidence_source": "template:procurement_review",
+          "requires_human_review": false,
+          "annotation_notes": "hard_paraphrase"
+        },
+        {
+          "risk_id": "HR0074",
+          "clause_id": "C003",
+          "clause_title": "付款周期",
+          "risk_type": "payment_cycle",
+          "risk_level": "medium",
+          "rationale": "付款过度前置，未与交付进度或服务周期匹配。",
+          "expected_suggestion": "建议拆分首付款、阶段款和尾款，并绑定里程碑完成情况。",
+          "evidence_source": "company_policy:payment_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0075",
+          "clause_id": "C004",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0076",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_020",
+      "title": "数据处理服务协议 HB-020",
+      "contract_type": "SaaS",
+      "scenario": "供应商处理客户业务数据",
+      "file": "contracts/human_bench_020.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0077",
+          "clause_id": "C002",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0078",
+          "clause_id": "C003",
+          "clause_title": "保密义务",
+          "risk_type": "confidentiality",
+          "risk_level": "medium",
+          "rationale": "保密条款缺少范围、期限和例外，后续执行边界不清。",
+          "expected_suggestion": "建议明确保密信息范围、保密期限、例外情形以及返还/销毁义务。",
+          "evidence_source": "playbook:nda_confidentiality",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0079",
+          "clause_id": "C004",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0080",
+          "clause_id": "C005",
+          "clause_title": "服务水平",
+          "risk_type": "sla_remedy",
+          "risk_level": "medium",
+          "rationale": "SLA 只有原则性承诺，缺少故障分级、响应时间和补救措施。",
+          "expected_suggestion": "建议补充可用性指标、故障分级、响应时限以及服务抵扣或补偿机制。",
+          "evidence_source": "playbook:saas_sla",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_021",
+      "title": "SaaS 平台服务协议 HB-021",
+      "contract_type": "SaaS",
+      "scenario": "企业采购云软件服务",
+      "file": "contracts/human_bench_021.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0081",
+          "clause_id": "C002",
+          "clause_title": "自动续约",
+          "risk_type": "auto_renewal",
+          "risk_level": "medium",
+          "rationale": "自动续约缺少通知期和退出路径，容易导致业务方被动续约。",
+          "expected_suggestion": "建议明确续约前至少 30 日书面通知，并保留到期不续约或邮件取消路径。",
+          "evidence_source": "playbook:saas_terms",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0082",
+          "clause_id": "C003",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0083",
+          "clause_id": "C004",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0084",
+          "clause_id": "C005",
+          "clause_title": "服务水平",
+          "risk_type": "sla_remedy",
+          "risk_level": "medium",
+          "rationale": "SLA 只有原则性承诺，缺少故障分级、响应时间和补救措施。",
+          "expected_suggestion": "建议补充可用性指标、故障分级、响应时限以及服务抵扣或补偿机制。",
+          "evidence_source": "playbook:saas_sla",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_022",
+      "title": "软件采购合同 HB-022",
+      "contract_type": "procurement",
+      "scenario": "采购管理系统及实施服务",
+      "file": "contracts/human_bench_022.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0085",
+          "clause_id": "C002",
+          "clause_title": "付款条件",
+          "risk_type": "payment_acceptance",
+          "risk_level": "medium",
+          "rationale": "付款义务没有与交付质量或成果确认绑定，可能形成先付款后争议。",
+          "expected_suggestion": "建议将付款条件与交付完成、验收通过或合法有效发票开具绑定。",
+          "evidence_source": "template:procurement_review",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0086",
+          "clause_id": "C003",
+          "clause_title": "付款周期",
+          "risk_type": "payment_cycle",
+          "risk_level": "medium",
+          "rationale": "付款过度前置，未与交付进度或服务周期匹配。",
+          "expected_suggestion": "建议拆分首付款、阶段款和尾款，并绑定里程碑完成情况。",
+          "evidence_source": "company_policy:payment_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0087",
+          "clause_id": "C004",
+          "clause_title": "知识产权归属",
+          "risk_type": "ip_ownership",
+          "risk_level": "high",
+          "rationale": "交付成果归属偏向乙方，可能限制甲方使用、复制和商业化。",
+          "expected_suggestion": "建议明确交付成果归甲方所有，乙方背景知识产权另行授权。",
+          "evidence_source": "company_policy:ip_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0088",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_023",
+      "title": "商业保密协议 HB-023",
+      "contract_type": "NDA",
+      "scenario": "合作前技术和客户资料披露",
+      "file": "contracts/human_bench_023.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0089",
+          "clause_id": "C002",
+          "clause_title": "保密义务",
+          "risk_type": "confidentiality",
+          "risk_level": "medium",
+          "rationale": "保密条款缺少范围、期限和例外，后续执行边界不清。",
+          "expected_suggestion": "建议明确保密信息范围、保密期限、例外情形以及返还/销毁义务。",
+          "evidence_source": "playbook:nda_confidentiality",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0090",
+          "clause_id": "C003",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0091",
+          "clause_id": "C004",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0092",
+          "clause_id": "C005",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_024",
+      "title": "办公场地租赁合同 HB-024",
+      "contract_type": "lease",
+      "scenario": "企业承租办公场地",
+      "file": "contracts/human_bench_024.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0093",
+          "clause_id": "C002",
+          "clause_title": "保证金",
+          "risk_type": "deposit_return",
+          "risk_level": "medium",
+          "rationale": "保证金条款缺少返还条件、扣除范围和时间安排。",
+          "expected_suggestion": "建议明确保证金金额、扣除范围、返还期限和逾期责任。",
+          "evidence_source": "company_policy:deposit_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0094",
+          "clause_id": "C003",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0095",
+          "clause_id": "C004",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "hard_paraphrase"
+        },
+        {
+          "risk_id": "HR0096",
+          "clause_id": "C005",
+          "clause_title": "不可抗力",
+          "risk_type": "force_majeure",
+          "risk_level": "low",
+          "rationale": "不可抗力条款缺少通知、证明和减损义务。",
+          "expected_suggestion": "建议补充不可抗力发生后的通知期限、证明材料和减损义务。",
+          "evidence_source": "playbook:force_majeure",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_025",
+      "title": "运维服务合同 HB-025",
+      "contract_type": "service",
+      "scenario": "供应商提供长期运维支持",
+      "file": "contracts/human_bench_025.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0097",
+          "clause_id": "C002",
+          "clause_title": "服务水平",
+          "risk_type": "sla_remedy",
+          "risk_level": "medium",
+          "rationale": "SLA 只有原则性承诺，缺少故障分级、响应时间和补救措施。",
+          "expected_suggestion": "建议补充可用性指标、故障分级、响应时限以及服务抵扣或补偿机制。",
+          "evidence_source": "playbook:saas_sla",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0098",
+          "clause_id": "C003",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "hard_paraphrase"
+        },
+        {
+          "risk_id": "HR0099",
+          "clause_id": "C004",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0100",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_026",
+      "title": "员工劳动与保密协议 HB-026",
+      "contract_type": "employment",
+      "scenario": "员工入职及成果归属约定",
+      "file": "contracts/human_bench_026.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0101",
+          "clause_id": "C002",
+          "clause_title": "保密义务",
+          "risk_type": "confidentiality",
+          "risk_level": "medium",
+          "rationale": "保密条款缺少范围、期限和例外，后续执行边界不清。",
+          "expected_suggestion": "建议明确保密信息范围、保密期限、例外情形以及返还/销毁义务。",
+          "evidence_source": "playbook:nda_confidentiality",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0102",
+          "clause_id": "C003",
+          "clause_title": "知识产权归属",
+          "risk_type": "ip_ownership",
+          "risk_level": "high",
+          "rationale": "交付成果归属偏向乙方，可能限制甲方使用、复制和商业化。",
+          "expected_suggestion": "建议明确交付成果归甲方所有，乙方背景知识产权另行授权。",
+          "evidence_source": "company_policy:ip_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0103",
+          "clause_id": "C004",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0104",
+          "clause_id": "C005",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_027",
+      "title": "预付式会员服务合同 HB-027",
+      "contract_type": "consumer",
+      "scenario": "用户充值购买会员权益",
+      "file": "contracts/human_bench_027.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0105",
+          "clause_id": "C002",
+          "clause_title": "预付式服务",
+          "risk_type": "prepaid_refund",
+          "risk_level": "medium",
+          "rationale": "预付式服务缺少未使用权益处理机制，容易引发退费争议。",
+          "expected_suggestion": "建议明确未消费余额退还、服务终止后的退款路径和手续费边界。",
+          "evidence_source": "company_policy:prepaid_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0106",
+          "clause_id": "C003",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0107",
+          "clause_id": "C004",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0108",
+          "clause_id": "C005",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_028",
+      "title": "工程施工服务合同 HB-028",
+      "contract_type": "construction",
+      "scenario": "办公室装修和施工管理",
+      "file": "contracts/human_bench_028.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0109",
+          "clause_id": "C002",
+          "clause_title": "付款条件",
+          "risk_type": "payment_acceptance",
+          "risk_level": "medium",
+          "rationale": "付款义务没有与交付质量或成果确认绑定，可能形成先付款后争议。",
+          "expected_suggestion": "建议将付款条件与交付完成、验收通过或合法有效发票开具绑定。",
+          "evidence_source": "template:procurement_review",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0110",
+          "clause_id": "C003",
+          "clause_title": "付款周期",
+          "risk_type": "payment_cycle",
+          "risk_level": "medium",
+          "rationale": "付款过度前置，未与交付进度或服务周期匹配。",
+          "expected_suggestion": "建议拆分首付款、阶段款和尾款，并绑定里程碑完成情况。",
+          "evidence_source": "company_policy:payment_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0111",
+          "clause_id": "C004",
+          "clause_title": "不可抗力",
+          "risk_type": "force_majeure",
+          "risk_level": "low",
+          "rationale": "不可抗力条款缺少通知、证明和减损义务。",
+          "expected_suggestion": "建议补充不可抗力发生后的通知期限、证明材料和减损义务。",
+          "evidence_source": "playbook:force_majeure",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0112",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_029",
+      "title": "设备销售合同 HB-029",
+      "contract_type": "sales",
+      "scenario": "采购硬件设备及售后服务",
+      "file": "contracts/human_bench_029.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0113",
+          "clause_id": "C002",
+          "clause_title": "付款条件",
+          "risk_type": "payment_acceptance",
+          "risk_level": "medium",
+          "rationale": "付款义务没有与交付质量或成果确认绑定，可能形成先付款后争议。",
+          "expected_suggestion": "建议将付款条件与交付完成、验收通过或合法有效发票开具绑定。",
+          "evidence_source": "template:procurement_review",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0114",
+          "clause_id": "C003",
+          "clause_title": "付款周期",
+          "risk_type": "payment_cycle",
+          "risk_level": "medium",
+          "rationale": "付款过度前置，未与交付进度或服务周期匹配。",
+          "expected_suggestion": "建议拆分首付款、阶段款和尾款，并绑定里程碑完成情况。",
+          "evidence_source": "company_policy:payment_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0115",
+          "clause_id": "C004",
+          "clause_title": "争议解决",
+          "risk_type": "jurisdiction",
+          "risk_level": "medium",
+          "rationale": "管辖地偏向乙方，可能增加甲方维权成本和诉讼不确定性。",
+          "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+          "evidence_source": "playbook:dispute_resolution",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0116",
+          "clause_id": "C005",
+          "clause_title": "赔偿责任",
+          "risk_type": "unlimited_liability",
+          "risk_level": "high",
+          "rationale": "责任范围覆盖间接损失且没有金额上限，可能造成不可控赔付敞口。",
+          "expected_suggestion": "建议限定为直接损失，并将累计赔偿责任上限设置为近 12 个月已付费用或合同总额。",
+          "evidence_source": "company_policy:liability_v1",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        }
+      ]
+    },
+    {
+      "contract_id": "human_bench_030",
+      "title": "数据处理服务协议 HB-030",
+      "contract_type": "SaaS",
+      "scenario": "供应商处理客户业务数据",
+      "file": "contracts/human_bench_030.md",
+      "annotator": "legal_reviewer_v1",
+      "annotations": [
+        {
+          "risk_id": "HR0117",
+          "clause_id": "C002",
+          "clause_title": "数据安全",
+          "risk_type": "data_security",
+          "risk_level": "high",
+          "rationale": "涉及客户数据和个人信息处理，但安全措施、泄露通知和责任分担不清。",
+          "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限和责任分担。",
+          "evidence_source": "company_policy:data_security_v2",
+          "requires_human_review": true,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0118",
+          "clause_id": "C003",
+          "clause_title": "保密义务",
+          "risk_type": "confidentiality",
+          "risk_level": "medium",
+          "rationale": "保密条款缺少范围、期限和例外，后续执行边界不清。",
+          "expected_suggestion": "建议明确保密信息范围、保密期限、例外情形以及返还/销毁义务。",
+          "evidence_source": "playbook:nda_confidentiality",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0119",
+          "clause_id": "C004",
+          "clause_title": "合同解除",
+          "risk_type": "termination_notice",
+          "risk_level": "medium",
+          "rationale": "任意解除缺少通知期、整改期和交接安排，业务连续性风险较高。",
+          "expected_suggestion": "建议设置提前书面通知期限、违约整改期和服务交接过渡安排。",
+          "evidence_source": "company_policy:termination_v1",
+          "requires_human_review": false,
+          "annotation_notes": "keyword_explicit"
+        },
+        {
+          "risk_id": "HR0120",
+          "clause_id": "C005",
+          "clause_title": "服务水平",
+          "risk_type": "sla_remedy",
+          "risk_level": "medium",
+          "rationale": "SLA 只有原则性承诺，缺少故障分级、响应时间和补救措施。",
+          "expected_suggestion": "建议补充可用性指标、故障分级、响应时限以及服务抵扣或补偿机制。",
+          "evidence_source": "playbook:saas_sla",
+          "requires_human_review": false,
+          "annotation_notes": "hard_paraphrase"
+        }
+      ]
+    }
+  ]
+}
