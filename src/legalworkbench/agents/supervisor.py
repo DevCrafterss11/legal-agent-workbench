@@ -113,6 +113,14 @@ class LegalReviewSupervisor(LegalReviewAgent):
 
         try:
             self.parser.run(ctx)
+            # 隐私扫描：PII 统计进 trace，敏感合同全程携带标记；
+            # 明文只存在于本地信任边界，远端 LLM 与飞书回发链路各自做出/入境脱敏
+            from legalworkbench.privacy import scan as scan_pii
+
+            pii_counts = scan_pii(contract_text)
+            run.mcp_context["privacy"] = {"pii_counts": pii_counts, "sensitive": bool(pii_counts)}
+            if pii_counts:
+                self.hooks.emit(HookEvent("privacy.pii_detected", run.review_run_id, {"counts": pii_counts}))
             skill_profile = self.skill_planner.run(ctx)
             skill_risk_focus = set(skill_profile.get("risk_focus") or [])
             retrieval_top_k = int(skill_profile.get("retrieval_top_k") or 10)

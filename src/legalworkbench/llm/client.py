@@ -38,6 +38,7 @@ def load_llm_config(cwd: Any = None) -> "LlmConfig":
         base_url=os.environ.get("LEGAL_WORKBENCH_LLM_BASE_URL") or str(section.get("base_url") or ""),
         api_key=os.environ.get("LEGAL_WORKBENCH_LLM_API_KEY") or str(secrets.get("llm_api_key") or ""),
         timeout_seconds=float(section.get("timeout_seconds") or 30.0),
+        mask_pii=bool(section.get("mask_pii", True)),
     )
 
 
@@ -48,6 +49,7 @@ class LlmConfig:
     base_url: str = ""
     api_key: str = ""
     timeout_seconds: float = 30.0
+    mask_pii: bool = True
 
 
 @dataclass(frozen=True)
@@ -87,23 +89,35 @@ class LlmClient:
 
     def complete(self, *, system: str, user: str) -> LlmResponse:
         if self.remote_endpoint() is not None:
+            # 隐私边界：合同文本出境（远端 LLM）前先可逆脱敏，映射表只留在进程内；
+            # 缓存 key 与缓存值均基于脱敏文本，PII 不落 Redis，回复占位符本地回填
+            mapping: dict[str, str] = {}
+            outbound_user = user
+            if self.config.mask_pii:
+                from legalworkbench.privacy import mask as mask_pii
+
+                masked = mask_pii(user)
+                outbound_user = masked.masked_text
+                mapping = masked.mapping
             # cache-aside：仅缓存远端调用（temperature=0.1 接近幂等）；
             # 本地 deterministic fallback 无网络成本，不缓存
             cache_key = ""
             if self.cache is not None:
                 from legalworkbench.cache import content_hash
 
-                cache_key = f"llm:{content_hash(self.config.model, system, user)}"
+                cache_key = f"llm:{content_hash(self.config.model, system, outbound_user)}"
                 cached = self.cache.get_json(cache_key)
                 if cached is not None:
+                    from legalworkbench.privacy import restore
+
                     return LlmResponse(
-                        text=str(cached.get("text") or ""),
+                        text=restore(str(cached.get("text") or ""), mapping),
                         model=str(cached.get("model") or self.config.model),
                         prompt_tokens=int(cached.get("prompt_tokens") or 0),
                         completion_tokens=int(cached.get("completion_tokens") or 0),
-                        raw={"cached": True},
+                        raw={"cached": True, "pii_masked": bool(mapping)},
                     )
-            response = self._openai_compatible(system=system, user=user)
+            response = self._openai_compatible(system=system, user=outbound_user)
             if self.cache is not None and cache_key:
                 self.cache.set_json(
                     cache_key,
@@ -114,6 +128,16 @@ class LlmClient:
                         "completion_tokens": response.completion_tokens,
                     },
                     ttl_seconds=self.cache_ttl_seconds,
+                )
+            if mapping:
+                from legalworkbench.privacy import restore
+
+                response = LlmResponse(
+                    text=restore(response.text, mapping),
+                    model=response.model,
+                    prompt_tokens=response.prompt_tokens,
+                    completion_tokens=response.completion_tokens,
+                    raw={**(response.raw or {}), "pii_masked": True},
                 )
             return response
         return self._local(system=system, user=user)

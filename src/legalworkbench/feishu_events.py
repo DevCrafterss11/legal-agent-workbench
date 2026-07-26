@@ -280,6 +280,16 @@ class FeishuEventBridge:
         receive_id = chat_id or open_id
         if not receive_id:
             return {"ok": False, "error": "missing chat_id/open_id", "content": []}
+        # 出境脱敏：回发内容属于跨信任边界输出，PII 一律占位符化（不可逆方向，
+        # 群聊里不应出现身份证/手机号明文；需要原文时在本地工作台查看）
+        from legalworkbench.privacy import mask as mask_pii
+
+        masked = mask_pii(text)
+        if masked.has_pii:
+            text = masked.masked_text
+            self.hooks.emit(
+                HookEvent("privacy.outbound_masked", "feishu", {"counts": masked.counts})
+            )
         receive_id_type = "chat_id" if chat_id else "open_id"
         return self.mcp.call_tool(
             "feishu_legal_workspace",
