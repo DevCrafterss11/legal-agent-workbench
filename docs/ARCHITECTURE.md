@@ -1,0 +1,86 @@
+# 企业法务 Agent 执行工作台架构
+
+本项目是面向企业合同审查的 Agent 执行平台，不是单一问答 Demo。核心目标是让每次合同审查都成为可追踪、可治理、可复核、可评测的 `ReviewRun`。
+
+## 能力映射
+
+| 能力 | 项目实现 |
+| --- | --- |
+| Agent Runtime / Loop | `legalworkbench.runtime.engine.LegalAgentRuntime` 保持对外 API，`legalworkbench.agents.LegalReviewSupervisor` 负责创建 `review_run_id` 并推进 parse、retrieve、risk_check、rewrite、compliance、report 状态 |
+| Tool Registry | `legalworkbench.tools.ToolRegistry` 统一注册合同解析、RAG 检索、规则判断、条款改写、权限审查、报告导出工具 |
+| Permission Checker | `legalworkbench.governance.LegalPermissionChecker` 和 `PermissionGuard` 控制敏感合同、无来源法律判断、高风险外部写入 |
+| Memory | `legalworkbench.memory.LegalMemoryStore` 沉淀企业偏好、历史审查意见、常用修改模板、同类风险经验 |
+| Skills | `legalworkbench.skills.SkillCatalog` 根据 SaaS、采购、NDA 等合同类型选择审查技能和风险重点 |
+| MCP / Connectors | `legalworkbench.connectors` 作为企业系统连接层，接飞书、Notion、OA、合同库、CRM 等外部系统 |
+| Multi-Agent Workflow | `legalworkbench.agents/` 采用 Supervisor-Worker 模式，拆分 Parser、Skill Planner、Evidence、Risk Reviewer、Rewriter、Compliance Auditor、Report Writer、Memory Curator |
+| Session Storage | `legalworkbench.storage.ReviewSessionStore` 保存每次审查会话快照、状态、工具链路和报告位置 |
+| Dashboard | `legalworkbench.web` 提供交互式网页工作台，展示任务状态、风险数量、工具调用、记忆命中和评测输出 |
+| Benchmark | `legalworkbench.evals.BenchmarkRunner` 衡量风险召回、来源覆盖率、工具成功率、记忆召回率和拦截率 |
+| Reflection | `legalworkbench.reflection.ReflectionAuditor` 对无来源判断、高风险建议和绝对化结论做二次复核 |
+| Compact | `legalworkbench.compact.LegalContextCompactor` 生成保留关键条款、风险、来源和状态的压缩快照 |
+| Hooks | `legalworkbench.hooks.HookEventBus` 记录 review/tool/risk 事件，作为审计和外部通知扩展点 |
+
+## 执行链路
+
+```mermaid
+flowchart LR
+    A["合同输入 / Task Queue"] --> B["Legal Review Supervisor"]
+    B --> C["Parser Agent"]
+    B --> D["Skill Planner Agent"]
+    B --> E["Evidence Agent"]
+    B --> F["Risk Reviewer Agent"]
+    B --> G["Clause Rewriter Agent"]
+    B --> H["Compliance Auditor Agent"]
+    B --> I["Report Writer Agent"]
+    B --> J["Memory Curator"]
+    E --> E1["BM25 + BGE + Milvus + Rerank"]
+    E --> E2["Legal Memory Recall"]
+    H --> H1["Permission Guard + Reflection"]
+    I --> K["Session Storage / Dashboard / Benchmark"]
+    B --> L["MCP Connectors"]
+```
+
+## Agent 通信模型
+
+本项目没有采用自由聊天式 swarm，而是采用强约束的 Supervisor-Worker 架构：
+
+- 主 Agent：`LegalReviewSupervisor`，负责任务编排、状态推进、失败处理、最终持久化。
+- 子 Agent：`ParserAgent`、`SkillPlannerAgent`、`EvidenceAgent`、`RiskReviewerAgent`、`ClauseRewriterAgent`、`ComplianceAuditorAgent`、`ReportWriterAgent`、`MemoryCuratorAgent`。
+- 通信方式：所有 Agent 通过 `ReviewRun` 共享状态和结构化 `agent_steps` 交换结果，不通过自然语言互聊。
+- 审计方式：所有工具调用写入 `ToolCallTrace`，trace metadata 会记录 `agent` 和 `agent_role`。
+- RAG 定位：RAG 不是独立决策 Agent，而是 `EvidenceAgent` 调用的检索能力层；风险结论由 `RiskReviewerAgent` 和 `ComplianceAuditorAgent` 交叉确认。
+
+## MCP 在本项目中的作用
+
+MCP 在这里不是上传功能，而是企业系统交互层。法务 Agent 可以通过 connector 发现和调用外部 tools/resources：
+
+- 从飞书文档读取合同正文、制度文件和审批上下文
+- 从 Notion 查询合同审查 playbook、供应商历史风险和审查记录
+- 将审查报告写回飞书或 Notion
+- 为高风险条款创建 OA/飞书审批任务
+- 写入审计日志，保留“谁在什么时候基于哪些来源生成了什么建议”
+
+本地版本默认使用可运行的 connector contract 和 mock discovery；正式上线时可替换为真实 MCP SDK client，并保持 runtime 边界不变。
+
+## 目录结构
+
+```text
+src/legalworkbench/
+  runtime/        Runtime 门面，对外提供 review/eval/dashboard API
+  agents/         Supervisor-Worker 多 Agent 编排
+  tools/          可注册工具和工具调用 trace
+  rag/            合同条款知识库检索
+  memory/         长期审查记忆与沉淀
+  governance/     权限、规则、合规拦截
+  skills/         合同类型技能
+  workflow/       多角色审查流程
+  connectors/     MCP/企业系统连接层
+  storage/        session 和 run 存储
+  evals/          benchmark 指标评测
+  tasks/          审查任务队列
+  hooks/          runtime 事件总线
+  reflection/     二次复核
+  compact/        长合同上下文压缩
+  web.py          交互式网页工作台
+  cli.py          命令行入口
+```
