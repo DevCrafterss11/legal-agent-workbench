@@ -119,7 +119,43 @@ def _extract_pdf(path: Path) -> str:
         text = page.extract_text() or ""
         if text.strip():
             parts.append(f"## Page {index}\n{text.strip()}")
-    return "\n\n".join(parts) or f"# Empty PDF\n\n未能从 `{path.name}` 抽取文本。"
+    if parts:
+        return "\n\n".join(parts)
+    # 文本层为空 -> 大概率是扫描件（图片型 PDF），走 OCR 扩展点
+    ocr_text = _try_ocr_pdf(path)
+    if ocr_text:
+        return ocr_text
+    return (
+        f"# Scanned PDF (needs OCR)\n\n未能从 `{path.name}` 抽取文本层，疑似扫描件。"
+        "安装 OCR 依赖后重新上传可解析：`pip install rapidocr-onnxruntime pdf2image`。"
+    )
+
+
+def _try_ocr_pdf(path: Path) -> str:
+    """扫描件 OCR 扩展点：依赖存在则逐页 OCR，缺依赖返回空由上层标注 needs_ocr。
+
+    刻意选择本地 OCR（rapidocr）而非云端 OCR API：合同扫描件含 PII 与商业秘密，
+    与远端 LLM 脱敏同一原则——明文不出本地信任边界。
+    """
+
+    try:  # pragma: no cover - optional heavy dependency
+        from pdf2image import convert_from_path  # type: ignore
+        from rapidocr_onnxruntime import RapidOCR  # type: ignore
+    except Exception:
+        return ""
+    try:  # pragma: no cover - exercised only when OCR deps installed
+        engine = RapidOCR()
+        parts = []
+        for index, image in enumerate(convert_from_path(str(path), dpi=200), start=1):
+            import numpy as np  # type: ignore
+
+            result, _ = engine(np.array(image))
+            lines = [item[1] for item in (result or [])]
+            if lines:
+                parts.append(f"## Page {index} (OCR)\n" + "\n".join(lines))
+        return "\n\n".join(parts)
+    except Exception:
+        return ""
 
 
 def _extract_docx(path: Path) -> str:

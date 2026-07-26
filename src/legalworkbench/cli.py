@@ -127,6 +127,7 @@ def rag_config_cmd(
     no_embedding_fallback: bool = typer.Option(False, "--no-embedding-fallback", help="Fail instead of falling back to hashing"),
     rerank_provider: str = typer.Option("formula", "--rerank-provider", help="formula or cross_encoder"),
     rerank_model: str = typer.Option("BAAI/bge-reranker-base", "--rerank-model", help="Cross-encoder rerank model"),
+    fusion: str = typer.Option("score", "--fusion", help="score (加权融合) or rrf (reciprocal rank fusion)"),
 ) -> None:
     current = _load_settings(cwd)
     current["rag"] = {
@@ -141,6 +142,7 @@ def rag_config_cmd(
         "embedding_fallback": not no_embedding_fallback,
         "rerank_provider": rerank_provider,
         "rerank_model": rerank_model,
+        "fusion": fusion,
     }
     atomic_write_text(settings_path(cwd), json.dumps(current, ensure_ascii=False, indent=2) + "\n")
     print(f"Updated RAG config: {settings_path(cwd)}")

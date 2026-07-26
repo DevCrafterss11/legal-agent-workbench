@@ -35,6 +35,10 @@ bge = [
 redis = [
     "redis>=5.0.0",
 ]
+ocr = [
+    "rapidocr-onnxruntime>=1.3.0",
+    "pdf2image>=1.17.0",
+]
 
 [project.scripts]
 legal-agent = "legalworkbench.cli:app"

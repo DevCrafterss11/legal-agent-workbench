@@ -33,6 +33,7 @@ class RagConfig:
     connect_timeout: float = 1.0
     rerank_provider: str = "formula"
     rerank_model: str = "BAAI/bge-reranker-base"
+    fusion: str = "score"  # score: 加权分数融合; rrf: reciprocal rank fusion
 
 
 class LegalRagService:
@@ -96,23 +97,25 @@ class LegalRagService:
             top_k=self.config.vector_top_k,
             filters={},
         )
+        if self.config.fusion.lower() == "rrf":
+            merged = self._fuse_rrf(lexical, vector_hits)
+        else:
+            merged = self._fuse_score(lexical, vector_hits)
+        evidence = rerank_evidence(query, list(merged.values()), contract_type=contract_type)
+        if self.reranker is not None:
+            evidence = self.reranker.rerank(query, evidence)
+        return evidence[:final_top_k]
+
+    def _fuse_score(self, lexical: list[RetrievedEvidence], vector_hits: list[Any]) -> dict[str, RetrievedEvidence]:
+        """加权分数融合：词法分与向量分直接相加。量纲敏感，但分数可解释。"""
+
         merged: dict[str, RetrievedEvidence] = {item.entry_id: item for item in lexical}
         for hit in vector_hits:
             entry = hit.entry
             existing = merged.get(entry.id)
             vector_score = round(hit.score * 10.0, 4)
             if existing is None:
-                merged[entry.id] = RetrievedEvidence(
-                    entry_id=entry.id,
-                    title=entry.title,
-                    source=entry.source,
-                    score=vector_score,
-                    reason=f"vector={hit.score:.3f}",
-                    body_preview=entry.body[:240],
-                    risk_type=entry.risk_type,
-                    risk_level=entry.risk_level,
-                    rerank_score=0.0,
-                )
+                merged[entry.id] = _evidence_from_entry(entry, score=vector_score, reason=f"vector={hit.score:.3f}")
             else:
                 merged[entry.id] = existing.model_copy(
                     update={
@@ -120,10 +123,32 @@ class LegalRagService:
                         "reason": f"{existing.reason}, vector={hit.score:.3f}",
                     }
                 )
-        evidence = rerank_evidence(query, list(merged.values()), contract_type=contract_type)
-        if self.reranker is not None:
-            evidence = self.reranker.rerank(query, evidence)
-        return evidence[:final_top_k]
+        return merged
+
+    def _fuse_rrf(self, lexical: list[RetrievedEvidence], vector_hits: list[Any], *, k: int = 60) -> dict[str, RetrievedEvidence]:
+        """Reciprocal Rank Fusion：只用名次不用分数，天然免疫两路召回的量纲差异。
+
+        RRF(d) = Σ 1/(k + rank_i(d))，k=60 为经验值。BM25 分与向量余弦分不可比，
+        加权融合需要调权重；RRF 无需调参，是多路召回融合的标准做法。
+        """
+
+        scores: dict[str, float] = {}
+        catalog: dict[str, RetrievedEvidence] = {}
+        for rank, item in enumerate(lexical, start=1):
+            scores[item.entry_id] = scores.get(item.entry_id, 0.0) + 1.0 / (k + rank)
+            catalog[item.entry_id] = item
+        for rank, hit in enumerate(vector_hits, start=1):
+            entry = hit.entry
+            scores[entry.id] = scores.get(entry.id, 0.0) + 1.0 / (k + rank)
+            if entry.id not in catalog:
+                catalog[entry.id] = _evidence_from_entry(entry, score=0.0, reason=f"vector_rank={rank}")
+        merged: dict[str, RetrievedEvidence] = {}
+        for entry_id, rrf in scores.items():
+            item = catalog[entry_id]
+            merged[entry_id] = item.model_copy(
+                update={"score": round(rrf * 100, 4), "reason": f"{item.reason}, rrf={rrf:.4f}"}
+            )
+        return merged
 
     def status(self) -> dict[str, Any]:
         return {
@@ -193,6 +218,20 @@ def lightweight_rag_status(cwd: str | Path | None = None) -> dict[str, Any]:
     }
 
 
+def _evidence_from_entry(entry: KnowledgeEntry, *, score: float, reason: str) -> RetrievedEvidence:
+    return RetrievedEvidence(
+        entry_id=entry.id,
+        title=entry.title,
+        source=entry.source,
+        score=score,
+        reason=reason,
+        body_preview=entry.body[:240],
+        risk_type=entry.risk_type,
+        risk_level=entry.risk_level,
+        rerank_score=0.0,
+    )
+
+
 def _entry_text(entry: KnowledgeEntry) -> str:
     return " ".join([entry.title, entry.body, entry.contract_type, entry.clause_type, entry.risk_type, " ".join(entry.tags)])
 
@@ -235,4 +274,5 @@ def _load_rag_config(cwd: Path) -> RagConfig:
         connect_timeout=float(rag.get("connect_timeout") or 1.0),
         rerank_provider=str(rag.get("rerank_provider") or "formula"),
         rerank_model=str(rag.get("rerank_model") or "BAAI/bge-reranker-base"),
+        fusion=str(rag.get("fusion") or "score"),
     )
