@@ -115,12 +115,28 @@ class LegalReviewSupervisor(LegalReviewAgent):
             self.parser.run(ctx)
             # 隐私扫描：PII 统计进 trace，敏感合同全程携带标记；
             # 明文只存在于本地信任边界，远端 LLM 与飞书回发链路各自做出/入境脱敏
+            from legalworkbench.governance import scan_injection
             from legalworkbench.privacy import scan as scan_pii
 
             pii_counts = scan_pii(contract_text)
             run.mcp_context["privacy"] = {"pii_counts": pii_counts, "sensitive": bool(pii_counts)}
             if pii_counts:
                 self.hooks.emit(HookEvent("privacy.pii_detected", run.review_run_id, {"counts": pii_counts}))
+            # 注入检测：合同是不可信输入，命中指令注入模式 -> 打标 + 审计事件 +
+            # 本次审查全部结论强制人工复核（宁可保守，不让被污染的结论静默通过）
+            injection_hits = scan_injection(contract_text)
+            run.mcp_context["injection"] = {
+                "detected": bool(injection_hits),
+                "hits": [{"pattern": hit.pattern_id, "snippet": hit.snippet[:80]} for hit in injection_hits],
+            }
+            if injection_hits:
+                self.hooks.emit(
+                    HookEvent(
+                        "security.injection_detected",
+                        run.review_run_id,
+                        {"patterns": [hit.pattern_id for hit in injection_hits]},
+                    )
+                )
             skill_profile = self.skill_planner.run(ctx)
             skill_risk_focus = set(skill_profile.get("risk_focus") or [])
             retrieval_top_k = int(skill_profile.get("retrieval_top_k") or 10)
@@ -139,6 +155,8 @@ class LegalReviewSupervisor(LegalReviewAgent):
                         suggestion=suggestion,
                         finding_id=f"F{len(findings) + 1:03d}",
                     )
+                    if injection_hits:
+                        finding.requires_human_review = True
                     findings.append(finding)
                     self.hooks.emit(
                         HookEvent(
@@ -209,4 +227,9 @@ class LegalReviewSupervisor(LegalReviewAgent):
                 self.memory_curator.name,
             ],
             "rag_role": "RAG is a retrieval capability owned by evidence_agent, not an autonomous decision agent.",
+            "memory_layers": {
+                "working": "ReviewRun 共享状态：当前条款、证据包、决策来源，生命周期为单次审查（context 内工作记忆）",
+                "short_term": "ReviewSession 阶段快照 + CompactSnapshot 长合同压缩：会话级，可回溯可恢复",
+                "long_term": "LegalMemoryStore 跨会话记忆：写入门槛/冲突强化/使用反馈/时间衰减/容量驱逐",
+            },
         }
