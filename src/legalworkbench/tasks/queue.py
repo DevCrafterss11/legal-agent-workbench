@@ -1,0 +1,185 @@
+"""A lightweight file-backed review task queue."""
+
+from __future__ import annotations
+
+import json
+import time
+from pathlib import Path
+from typing import Any
+from uuid import uuid4
+
+from legalworkbench.fs import atomic_write_text
+from legalworkbench.paths import workspace_dir
+
+
+class ReviewTaskQueue:
+    """Persist pending and completed legal review tasks for dashboard use."""
+
+    def __init__(self, cwd: str | Path | None = None) -> None:
+        self.cwd = Path(cwd or Path.cwd()).resolve()
+        self.path = workspace_dir(self.cwd) / "tasks.json"
+        self._bus: Any = None
+
+    def add(
+        self,
+        *,
+        title: str,
+        source: str,
+        contract_path: str = "",
+        priority: int = 50,
+        document_id: str = "",
+        connect_mcp: bool = False,
+        max_attempts: int = 2,
+        publish: bool = True,
+        dedup_key: str = "",
+    ) -> dict[str, Any]:
+        tasks = self.list()
+        task = {
+            "task_id": f"task_{uuid4().hex[:10]}",
+            "title": title,
+            "source": source,
+            "contract_path": contract_path,
+            "document_id": document_id,
+            "priority": priority,
+            "status": "pending",
+            "attempts": 0,
+            "max_attempts": max(1, max_attempts),
+            "connect_mcp": connect_mcp,
+            "review_run_id": "",
+            "report_path": "",
+            "error": "",
+            "created_at": time.time(),
+            "updated_at": time.time(),
+        }
+        tasks.append(task)
+        # 任务表先落盘再发布：tasks.json 兼任本地消息表（outbox）。发布失败时
+        # 任务仍是 pending，由 worker 的 outbox 补偿扫描重投，入队按 task_id 幂等。
+        self.save(tasks)
+        if publish:
+            task["queue"] = self.publish(task, dedup_key=dedup_key)
+            self.update(str(task["task_id"]), queue=task["queue"])
+        return task
+
+    def publish(self, task: dict[str, Any], *, dedup_key: str = "") -> dict[str, Any]:
+        try:
+            if self._bus is None:
+                from legalworkbench.mq import create_task_bus
+
+                self._bus = create_task_bus(self.cwd)
+            return self._bus.publish(task, dedup_key=dedup_key)
+        except Exception as exc:  # noqa: BLE001 - 发布失败不阻塞任务创建
+            return {"published": False, "error": str(exc)}
+
+    def get(self, task_id: str) -> dict[str, Any] | None:
+        for task in self.list():
+            if task.get("task_id") == task_id:
+                return task
+        return None
+
+    def list(self) -> list[dict[str, Any]]:
+        if not self.path.exists():
+            return []
+        try:
+            raw = json.loads(self.path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return []
+        return raw if isinstance(raw, list) else []
+
+    def summary(self, *, limit: int = 5) -> dict[str, Any]:
+        tasks = self.list()
+        counts = {"pending": 0, "running": 0, "completed": 0, "failed": 0}
+        for task in tasks:
+            status = str(task.get("status") or "unknown")
+            counts[status] = counts.get(status, 0) + 1
+
+        def pick(statuses: set[str]) -> list[dict[str, Any]]:
+            return [
+                {
+                    "task_id": task.get("task_id", ""),
+                    "title": task.get("title", ""),
+                    "status": task.get("status", ""),
+                    "priority": task.get("priority", 0),
+                    "review_run_id": task.get("review_run_id", ""),
+                    "error": task.get("error", ""),
+                    "updated_at": task.get("updated_at", 0),
+                }
+                for task in tasks
+                if str(task.get("status") or "") in statuses
+            ][:limit]
+
+        return {
+            "total": len(tasks),
+            "pending": counts.get("pending", 0),
+            "running": counts.get("running", 0),
+            "completed": counts.get("completed", 0),
+            "failed": counts.get("failed", 0),
+            "remaining": counts.get("pending", 0) + counts.get("running", 0),
+            "next_tasks": pick({"pending", "running"}),
+            "failed_tasks": pick({"failed"}),
+            "recent_completed": pick({"completed"}),
+        }
+
+    def update(self, task_id: str, **updates: Any) -> dict[str, Any] | None:
+        tasks = self.list()
+        updated: dict[str, Any] | None = None
+        for task in tasks:
+            if task.get("task_id") == task_id:
+                task.update(updates)
+                task["updated_at"] = time.time()
+                updated = task
+                break
+        if updated is not None:
+            self.save(tasks)
+        return updated
+
+    def delete(self, task_id: str) -> bool:
+        tasks = self.list()
+        remaining = [task for task in tasks if task.get("task_id") != task_id]
+        if len(remaining) == len(tasks):
+            return False
+        self.save(remaining)
+        return True
+
+    def delete_failed_without_contract(self) -> int:
+        tasks = self.list()
+        remaining = [
+            task
+            for task in tasks
+            if not (
+                task.get("status") == "failed"
+                and not str(task.get("contract_path") or "")
+                and not str(task.get("review_run_id") or "")
+            )
+        ]
+        deleted = len(tasks) - len(remaining)
+        if deleted:
+            self.save(remaining)
+        return deleted
+
+    def save(self, tasks: list[dict[str, Any]]) -> None:
+        tasks.sort(key=lambda item: (-int(item.get("priority", 0)), -float(item.get("updated_at", 0))))
+        atomic_write_text(self.path, json.dumps(tasks, ensure_ascii=False, indent=2) + "\n")
+
+    def next_pending(self) -> dict[str, Any] | None:
+        for task in self.list():
+            if task.get("status") == "pending":
+                return task
+        return None
+
+    def recover_stale_running(self, *, max_age_seconds: float = 900.0) -> int:
+        tasks = self.list()
+        now = time.time()
+        recovered = 0
+        for task in tasks:
+            if task.get("status") != "running":
+                continue
+            started_at = float(task.get("started_at") or 0)
+            if started_at and now - started_at <= max_age_seconds:
+                continue
+            task["status"] = "pending"
+            task["error"] = "recovered stale running task"
+            task["updated_at"] = now
+            recovered += 1
+        if recovered:
+            self.save(tasks)
+        return recovered
