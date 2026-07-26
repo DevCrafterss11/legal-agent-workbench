@@ -25,8 +25,8 @@
 - `rag/`：合同条款知识库混合检索
 - `memory/`：长期审查记忆全生命周期（写入门槛、冲突强化、使用反馈、时间衰减、容量驱逐与归档）
 - `privacy.py`：PII 识别与可逆脱敏（身份证/手机/邮箱/银行卡，含校验码与 Luhn 验证）
-- `governance/`：权限策略、风险规则和合规拦截
-- `skills/`：SaaS、采购、NDA 等合同审查技能
+- `governance/`：权限策略、风险规则、合规拦截与 prompt injection 三层防御
+- `skills/`：SKILL.md（frontmatter）+ JSON 双来源技能，优先级合并为审查画像
 - `workflow/`：Parser、Risk Reviewer、Rewriter、Auditor、Report Writer 多角色流程
 - `connectors/`：飞书、Notion、OA、合同库等企业系统连接层
 - `storage/`：审查 session 快照和任务状态
