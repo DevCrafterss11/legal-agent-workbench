@@ -269,7 +269,7 @@ def test_llm_client_remote_calls_hit_cache() -> None:
     second = client.complete(system="s", user="u")
     assert calls["n"] == 1
     assert second.text == first.text
-    assert second.raw == {"cached": True}
+    assert second.raw == {"cached": True, "pii_masked": False}
     # 不同 prompt 不会命中同一个 key
     client.complete(system="s", user="other")
     assert calls["n"] == 2

@@ -320,6 +320,67 @@ A：standard benchmark 是确定性回归集，目标是防止功能退化，不
 
 A：不是直接套壳。迁移的是思想：Agent Runtime、Tool Registry、Permission、Memory、Skills、Session、Dashboard、MCP、Task Queue。代码已经按企业法务场景重构成独立项目，包名、领域模型、工具、评测和前端都围绕合同审查。
 
+## 高频拷打：记忆系统怎么处理
+
+代码位置：`src/legalworkbench/memory/manager.py`、`src/legalworkbench/retrieval.py` 的 `retrieve_memories`、测试 `tests/test_memory_privacy.py`。
+
+**Q：你的 Agent 记忆是怎么设计的？和把聊天历史塞进 prompt 有什么区别？**
+
+A：完整生命周期，五个环节都有代码。**写入门槛**：不是所有审查结论都进记忆——置信度达标 + 必须有证据来源 + 高风险未复核的降权，被拦截的结论不沉淀（垃圾进记忆比没有记忆更糟）。**分类**：semantic（条款风险知识）/ episodic（具体审查案例）/ procedural（处理流程）/ preference（企业偏好）四类。**冲突处理**：同一结论再次出现不是重复写入，而是强化——reinforce_count 自增、置信度小步上调、采纳更新的已复核建议。**召回**：相关性 + 企业上下文匹配 + 使用频率强化 + 时间衰减（半衰期 180 天）综合排序，被命中的记忆回写 use_count，形成"越有用越容易被想起"的正反馈。**遗忘**：容量上限触发驱逐，保留分综合置信度、使用强化、新近性，人工复核过的优先保留；被驱逐的导出到归档文件——可审计，不可召回。
+
+**Q：记忆错了怎么办？会不会污染后续审查？**
+
+A：三道防线。写入侧的门槛挡掉低质结论；使用侧记忆只作为证据参与 Risk Reviewer 的置信度计算，不能单独产生结论——最终风险判断仍需检索证据支撑，无来源的会被 Permission Guard 拦截；生命周期侧错误记忆若不再被确认，得不到强化，时间衰减会让它自然沉底直至被驱逐。每条记忆带 source_review_run_id，发现问题可以回溯到产生它的那次审查。
+
+## 高频拷打：敏感合同与个人隐私
+
+代码位置：`src/legalworkbench/privacy.py`，接入点在 `llm/client.py`（远端出境）、`feishu_events.py`（回发出境）、`agents/supervisor.py`（入口扫描）。
+
+**Q：合同里有身份证号、手机号，你把它发给大模型 API 了？**
+
+A：没有。信任边界设计：明文只存在于本地（文件存储、本地审查链路）；跨出边界前强制可逆脱敏——PII 替换为稳定占位符（同值同占位符），映射表只留在进程内存，模型回复里的占位符在本地回填。缓存也在边界内做了处理：缓存 key 和缓存值都基于脱敏文本，PII 永远不落 Redis。飞书回发是另一条出境路径，同样过脱敏，且是单向的——群聊里不应出现身份证明文。
+
+**Q：PII 识别为什么用正则不用模型？**
+
+A：隐私拦截层自身不能有幻觉。正则 + 校验（身份证校验码、银行卡 Luhn）是确定性的：能识别的一定拦住，普通合同编号、金额不会误伤（测试里专门有不误报断言）。边界我也说清楚：自由文本里的姓名、地址这类无固定格式的 PII 正则覆盖不了，下一步是接本地 NER 模型（仍在本地边界内），这是已知改进方向而不是没想过。
+
+**Q：审查过程本身会泄露合同吗？**
+
+A：审查主链路（解析、规则、检索）全部本地执行，知识库检索是"拿条款查本地库"，不外发。会外发的只有两条路径且都有闸门：远端 LLM 决策（可逆脱敏）和飞书回发（单向脱敏）。合同入口处做 PII 扫描，统计进 trace 并打 sensitive 标记，全程可审计。
+
+## 高频拷打：飞书 / MCP 集成
+
+**Q：飞书那套是真的能跑还是 mock？被问细节答得上来吗？**
+
+A：真实链路，两种模式都实现了：本地开发用 WebSocket 长连接（`feishu-listen`，不需要公网域名），生产用 HTTP 回调（URL verification 的 challenge 应答、verification token 和事件签名校验都在 `feishu_events.py` 里）。拷打点逐个说：**重复投递**——飞书事件是 at-least-once 重试，按 message_id 幂等去重（Redis SET NX + 文件兜底双层）；**附件**——PDF/DOCX 走 OpenAPI 下载消息资源文件，文档链接走 Lark MCP 读取云文档；**凭证**——APP_SECRET 和 user token 只存 secrets.json（gitignore），settings 只放非敏感配置；**权限最小化**——MCP 工具按需开通（文档读取、消息发送、任务创建），不申请全量 scope。
+
+**Q：MCP 在这里的价值是什么？不就是个 API 封装？**
+
+A：区别在标准化的工具发现与调用协议：Agent 通过 MCP 拿到的是带 schema 的工具目录，飞书、Notion、OA 都长一个样子，新接一个企业系统不改 Agent 代码只加 connector。我还能讲它的边界：MCP 服务器是外部进程，凭证注入、工具白名单、调用审计都在我的 connector 层做，Agent 不直接碰凭证。
+
+## 与现代 Agent Harness 的概念对照
+
+面试官若熟悉 Claude Code / OpenAI Assistants 这类 harness，可以直接对照着讲——本项目就是把 harness 的核心机制在合同审查领域自研落地了一遍：
+
+| Harness 概念 | 本项目实现 | 领域特化点 |
+| --- | --- | --- |
+| System prompt / Skills | `skills/`（SaaS、采购、NDA 审查技能） | 技能=合同类型的审查画像（risk_focus、top_k、playbook） |
+| Tool registry + 权限 | `tools/` ToolRegistry + `governance/` PermissionChecker | 工具按读写分级，敏感导出需复核 |
+| Sub-agents | Supervisor-Worker 八类子 Agent | 共享 ReviewRun 状态而非各自独立上下文 |
+| Memory | `memory/` 四类记忆 + 生命周期 | 写入门槛绑定证据与复核状态 |
+| Context compaction | `compact/` 长合同压缩快照 | 记录 retention_rate 进 trace |
+| Hooks / events | `hooks/` 事件总线 | SSE 推给前端 + 审计留档 |
+| Session / resume | `storage/` ReviewSession 快照 | 每个阶段快照，失败可回溯 |
+| Trace / observability | ToolCallTrace + tokens 统计 | 每次工具调用记录调用 Agent 与耗时 |
+
+这个对照本身就是答"为什么不用现成框架"的素材：我不是不知道这些概念，而是把它们在一个垂直场景里从零实现了一遍，所以每一层的取舍我都能讲。
+
+## 多模态怎么答（诚实版）
+
+**Q：你的 RAG 支持多模态吗？**
+
+A：合同场景的"多模态"实际是三件事：扫描件（图片型 PDF）、表格条款、盖章/签名区域。我做了前两件的工程处理：DOCX 表格逐行抽取进正文；图片型 PDF 检测文本层为空后走 OCR 扩展点（rapidocr 本地推理，刻意不用云端 OCR API——扫描件含 PII，和 LLM 脱敏同一条信任边界原则；依赖未装时明确标注 needs_ocr 而不是静默失败）。没做的也直说：印章真伪、手写签名比对属于 CV 专业问题，超出文本 Agent 的合理边界，真要做会接专门的检测服务。图文混排 embedding（CLIP 类）对合同场景收益存疑——合同的信息密度在文本，我不为了"多模态"标签加没有业务价值的组件。
+
 ## 深挖拷打：LLM 决策点、评测区分度与 Web 层
 
 **Q：你的系统哪里是模型在决策，哪里是写死的？为什么这样划分？**

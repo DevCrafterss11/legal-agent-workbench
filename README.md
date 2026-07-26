@@ -23,7 +23,8 @@
 - `agents/`：Supervisor-Worker 多 Agent 编排；RAG 作为 Evidence Agent 的工具能力
 - `tools/`：合同解析、RAG、风险规则、改写、权限、报告等工具注册表
 - `rag/`：合同条款知识库混合检索
-- `memory/`：长期审查记忆沉淀和召回
+- `memory/`：长期审查记忆全生命周期（写入门槛、冲突强化、使用反馈、时间衰减、容量驱逐与归档）
+- `privacy.py`：PII 识别与可逆脱敏（身份证/手机/邮箱/银行卡，含校验码与 Luhn 验证）
 - `governance/`：权限策略、风险规则和合规拦截
 - `skills/`：SaaS、采购、NDA 等合同审查技能
 - `workflow/`：Parser、Risk Reviewer、Rewriter、Auditor、Report Writer 多角色流程
@@ -97,6 +98,20 @@ legal-agent llm-config --provider openai_compatible \
 ```
 
 模型输出解析失败、网络超时或服务不可用时，决策点自动回落确定性规则，主链路不中断。
+
+## 隐私边界与 PII 脱敏
+
+合同明文只存在于本地信任边界内。两条出境路径各有闸门：
+
+- **远端 LLM**：发送前 PII 可逆脱敏（同值同占位符），映射表只留进程内存，模型回复本地回填；LLM 响应缓存的 key 与值均基于脱敏文本，**PII 不落 Redis**
+- **飞书回发**：单向脱敏，群聊消息不出现身份证/手机号明文
+
+识别采用确定性正则 + 校验（身份证校验码、银行卡 Luhn），隐私层自身不依赖模型、无幻觉；
+合同入口处 PII 扫描计入 trace 并打 sensitive 标记。扫描件 PDF 支持本地 OCR
+（`pip install -e ".[ocr]"`，刻意不用云端 OCR——同一信任边界原则）。
+
+检索融合支持两种模式：`--fusion score`（加权分数融合，可解释）与
+`--fusion rrf`（reciprocal rank fusion，免疫 BM25 与向量分的量纲差异）。
 
 ## Cross-Encoder 重排
 
