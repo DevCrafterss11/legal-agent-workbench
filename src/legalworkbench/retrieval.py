@@ -82,6 +82,16 @@ class HybridClauseRetriever:
 
 
 def retrieve_memories(memories: list[LegalMemory], query: str, *, contract_type: str, top_k: int = 5) -> list[LegalMemory]:
+    """Recall ranking = 相关性 + 企业上下文匹配 + 使用强化 + 时间衰减。
+
+    时间衰减只作用于携带时间戳的记忆（半衰期 180 天），旧数据（created_at=0）
+    不衰减，保证升级兼容。
+    """
+
+    import math
+    import time as _time
+
+    now = _time.time()
     tokens = set(tokenize(query))
     scored: list[tuple[float, LegalMemory]] = []
     for memory in memories:
@@ -92,6 +102,12 @@ def retrieve_memories(memories: list[LegalMemory], query: str, *, contract_type:
             score += 0.25
         if memory.approved_by_human:
             score += 0.15
+        score += min(memory.use_count, 5) * 0.03
+        score += min(memory.reinforce_count, 3) * 0.04
+        reference = memory.last_used_at or memory.created_at
+        if reference > 0:
+            age_days = max(0.0, (now - reference) / 86_400)
+            score *= math.pow(0.5, age_days / 180)
         if score > 0:
             scored.append((score, memory))
     scored.sort(key=lambda item: (item[0], item[1].confidence), reverse=True)

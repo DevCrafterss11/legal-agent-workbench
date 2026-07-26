@@ -82,6 +82,12 @@ class LegalMemory(BaseModel):
     approved_by_human: bool = False
     confidence: float = 0.0
     tags: list[str] = Field(default_factory=list)
+    # 生命周期字段：写入时间、召回强化（次数/时间）、再确认次数。
+    # created_at=0 表示旧数据，评分时跳过时间衰减以保持兼容
+    created_at: float = 0.0
+    last_used_at: float = 0.0
+    use_count: int = 0
+    reinforce_count: int = 0
 
 
 class LegalSkill(BaseModel):
