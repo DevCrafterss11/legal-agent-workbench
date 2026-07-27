@@ -35,6 +35,10 @@ flowchart LR
     B --> J["Memory Curator"]
     E --> E1["BM25 + BGE + Milvus + Rerank"]
     E --> E2["Legal Memory Recall"]
+    F --> F1["规则候选"]
+    F --> F2["RAG 候选"]
+    F --> F3["LLM 独立语义候选"]
+    F3 --> F4["原文锚定 + 同类 RAG 取证 + 二次语义核验"]
     H --> H1["Permission Guard + Reflection"]
     I --> K["Session Storage / Dashboard / Benchmark"]
     B --> L["MCP Connectors"]
@@ -49,6 +53,7 @@ flowchart LR
 - 通信方式：所有 Agent 通过 `ReviewRun` 共享状态和结构化 `agent_steps` 交换结果，不通过自然语言互聊。
 - 审计方式：所有工具调用写入 `ToolCallTrace`，trace metadata 会记录 `agent` 和 `agent_role`。
 - RAG 定位：RAG 不是独立决策 Agent，而是 `EvidenceAgent` 调用的检索能力层；风险结论由 `RiskReviewerAgent` 和 `ComplianceAuditorAgent` 交叉确认。
+- 语义候选：`RiskReviewerAgent` 并行合并规则、RAG 和 LLM 独立候选。LLM 候选不受不利模式硬门控，但必须使用风险类型白名单、引用合同原文、取得同类 RAG 证据并通过二次语义核验；独立候选一律标记人工复核。
 
 ## MCP 在本项目中的作用
 
@@ -60,7 +65,7 @@ MCP 在这里不是上传功能，而是企业系统交互层。法务 Agent 可
 - 为高风险条款创建 OA/飞书审批任务
 - 写入审计日志，保留“谁在什么时候基于哪些来源生成了什么建议”
 
-本地版本默认使用可运行的 connector contract 和 mock discovery；正式上线时可替换为真实 MCP SDK client，并保持 runtime 边界不变。
+MCP 连接只走真实 MCP SDK client（stdio/http）：连接成功读取真实 tool/resource 目录，失败如实报 `failed` 并附错误原因，不提供任何 mock 目录兜底。未配置连接器时功能整体不可用并明确提示，而不是假装可用。
 
 ## 目录结构
 

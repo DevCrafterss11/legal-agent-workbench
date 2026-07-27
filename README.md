@@ -24,7 +24,8 @@
 - `tools/`：合同解析、RAG、风险规则、改写、权限、报告等工具注册表
 - `rag/`：合同条款知识库混合检索
 - `memory/`：长期审查记忆全生命周期（写入门槛、冲突强化、使用反馈、时间衰减、容量驱逐与归档）
-- `privacy.py`：PII 识别与可逆脱敏（身份证/手机/邮箱/银行卡，含校验码与 Luhn 验证）
+- `privacy.py`：PII 识别与可逆脱敏（身份证/手机/邮箱/银行卡 + 本地姓名/地址实体识别）
+- `secure_storage.py`：AES-256-GCM 信封加密，支持 macOS Keychain 与 AWS KMS 的外部主密钥
 - `governance/`：权限策略、风险规则、合规拦截与 prompt injection 三层防御
 - `skills/`：SKILL.md（frontmatter）+ JSON 双来源技能，优先级合并为审查画像
 - `workflow/`：Parser、Risk Reviewer、Rewriter、Auditor、Report Writer 多角色流程
@@ -40,6 +41,18 @@
 - `web.py`：FastAPI 交互式工作台，SSE 实时推送审查事件流
 
 ## 快速运行
+
+macOS 一键启动（会检查虚拟环境、Milvus、Web 和已安装的飞书 LaunchAgent，并自动打开浏览器）：
+
+```bash
+./start.command
+```
+
+需要强制重启 Web 时：
+
+```bash
+./start.command --restart
+```
 
 ```bash
 python -m pip install -e ".[dev]"
@@ -57,29 +70,46 @@ legal-agent serve --port 5180
 http://127.0.0.1:5180/
 ```
 
-## Baseline 对比评测
+## 评测体系：真实合同 P/R/F1 + Agent 端到端
 
-项目提供 rule-only、RAG-only、full-system 三组可复现 baseline，用来解释规则引擎、证据检索和完整 Agent Runtime 分别带来的增益：
+主评测集是 **`data/real_benchmark/`：65 份真实合同（国家市场监督管理总局示范文本库，
+可溯源）+ 33 份红线注入变体（125 个已知答案风险）+ 1724 个真实负例条款**。
+未标注条款全部计为负例，因此可以计算 Precision / Recall / F1 与误报率，
+而不是只报 Recall；主指标行 `full_agent` 真实执行完整 supervisor-worker Agent
+管线（含 LLM 决策点）后对 `run.findings` 打分——**评的是 Agent 本身**，
+rule_only / rag_only / rule_plus_rag 是组件消融对照：
+
+```bash
+legal-agent eval-real                                   # 全部方法（full_agent 走真实 LLM）
+legal-agent eval-real --methods rule_only,rag_only,rule_plus_rag   # 快速消融
+legal-agent eval-real --methods full_agent --limit 12   # Agent 端到端限量评测
+```
+
+当前结果（`rule_only` 修复前 → 修复后）：precision 0.14 → **0.84**、F1 0.21 → **0.88**、
+误报 4.6 → **0.24 条/合同**——这套 benchmark 抓出的第一个真实问题就是旧规则层的
+"话题词误报洪水"，并驱动了不利模式规则重写（`governance/rules.py`）。
+`full_agent` 端到端（12 份均衡子集、真实 LLM，独立语义候选改造前基线）：
+precision 0.889 / recall 1.0 / F1 0.941。当前 LLM 已能绕过规则硬门控独立提出候选，
+但必须通过风险类型白名单、原文锚定、同类 RAG 证据和二次语义核验；新的真实
+held-out 指标完成前仍保留上述基线，不提前宣称提升。
+数据来源、标注口径（LLM 标注 + 人工复核流程，非"人工标注"）、指标定义与完整
+结果见 `docs/benchmarks/REAL_BENCHMARK.md`。
+
+旧的合成回归集仍保留为 CI 护栏（秒级、确定性，含隐式措辞 hard 样本与已知失败样本）：
 
 ```bash
 legal-agent eval-baseline --dataset both
 python scripts/run_baseline_eval.py --dataset both
 ```
 
-当前本地结果（合成集含隐式措辞 hard 样本与 1 个双漏的已知失败样本，刻意防止评测饱和）：
-
 ```text
-synthetic  rule_only    recall@10=0.4833  source@10=0.0000
-synthetic  rag_only     recall@10=0.9067  source@10=0.9067
-synthetic  full_system  recall@10=0.9533  source@10=0.9067
-human      rule_only    recall@10=0.9000  source@10=0.0000
-human      full_system  recall@10=1.0000  source@10=1.0000
+synthetic  rule_only    recall@10=0.4833
+synthetic  rag_only     recall@10=0.9067
+synthetic  full_system  recall@10=0.9533
 ```
 
-三组数字的解读：规则引擎对隐式措辞风险大量漏检（0.48）；语义检索补足大部分（0.91），
-但会漏掉知识库覆盖稀疏的风险类型（如保密条款）；full_system 用规则∪检索互补到 0.95，
-其中规则兜底命中的风险没有检索证据（source 仍为 0.91），会被 Permission Guard 标记人工复核。
-剩余 4.7% 是措辞完全脱离词面的已知失败样本，保留在 benchmark 中标记改进方向。
+注意：合成集与模板构造集只能算 Recall（没有负例），分数接近饱和是构造使然，
+不作为能力证明——真实能力口径以 `eval-real` 为准。
 
 ## 接入真实 LLM（Ollama / OpenAI-compatible）
 
@@ -101,14 +131,30 @@ legal-agent llm-config --provider openai_compatible \
 
 ## 隐私边界与 PII 脱敏
 
-合同明文只存在于本地信任边界内。两条出境路径各有闸门：
+合同明文只在本地审查进程的内存中出现。上传原件、抽取文本、粘贴合同、任务表和
+`secrets.json` 均使用 AES-256-GCM 信封加密后落盘，每次写入使用独立数据密钥；主密钥位于
+macOS Keychain 或 AWS KMS，不与密文同盘。两条出境路径各有闸门：
 
 - **远端 LLM**：发送前 PII 可逆脱敏（同值同占位符），映射表只留进程内存，模型回复本地回填；LLM 响应缓存的 key 与值均基于脱敏文本，**PII 不落 Redis**
-- **飞书回发**：单向脱敏，群聊消息不出现身份证/手机号明文
+- **飞书回发**：单向脱敏，群聊消息不出现 PII 明文
 
-识别采用确定性正则 + 校验（身份证校验码、银行卡 Luhn），隐私层自身不依赖模型、无幻觉；
+识别采用确定性正则 + 校验（身份证校验码、银行卡 Luhn），并在“姓名/联系人/法定代表人”、
+“联系地址/住所地/送达地址”等法务字段上执行本地上下文实体识别；不向远程 NER 服务发送合同。
 合同入口处 PII 扫描计入 trace 并打 sensitive 标记。扫描件 PDF 支持本地 OCR
 （`pip install -e ".[ocr]"`，刻意不用云端 OCR——同一信任边界原则）。
+
+本机首次启用密文存储并迁移历史数据：
+
+```bash
+legal-agent encryption-init --provider macos-keychain
+```
+
+生产环境使用 AWS KMS（需安装 `pip install -e ".[aws-kms]"` 并配置 AWS 凭证）：
+
+```bash
+legal-agent encryption-init --provider aws-kms \
+  --aws-kms-key-id arn:aws:kms:REGION:ACCOUNT:key/KEY_ID --aws-region REGION
+```
 
 检索融合支持两种模式：`--fusion score`（加权分数融合，可解释）与
 `--fusion rrf`（reciprocal rank fusion，免疫 BM25 与向量分的量纲差异）。
@@ -125,7 +171,7 @@ legal-agent rag-config --rerank-provider cross_encoder --rerank-model BAAI/bge-r
 
 ## Milvus 与 BGE
 
-本项目默认可以用本地 hashing embedding + in-memory vector store 演示；面试或准生产环境建议切到 Milvus + BGE。当前项目已构建 `data/common_contracts/` 语料目录，包含 100 份可解析公开合同示范文本，并生成 1400+ 条合同条款知识写入 RAG（精确条数随语料重建浮动，以 `legal-agent rag-status` 为准）：
+本项目默认可以用本地 hashing embedding + in-memory vector store 演示；面试或准生产环境建议切到 Milvus + BGE。当前 `data/common_contracts/` 包含 **500 份内容唯一**的公开合同示范文本（另有 9 个官方重复来源在 manifest 中保留溯源、不计入有效语料），已自动提取正文并生成 8388 条合同条款知识；叠加 13 条 curated 风险知识后，本地 RAG 知识源共 8401 条：
 
 ```bash
 python -m pip install -e ".[dev,bge]"
@@ -141,7 +187,7 @@ legal-agent rag-health
 重新构建公开合同语料：
 
 ```bash
-.venv/bin/python scripts/build_common_contract_corpus.py --limit 100
+.venv/bin/python scripts/build_common_contract_corpus.py --limit 500 --resume
 ```
 
 如果 Docker Desktop 未启动或 BGE 依赖未安装，系统会明确显示 fallback 状态：
@@ -308,4 +354,4 @@ legal-agent eval --human
 legal-agent eval-baseline --dataset both
 ```
 
-更多设计说明见 `docs/ARCHITECTURE.md`，人工标注 benchmark 见 `docs/HUMAN_BENCHMARK.md`，面试答辩准备见 `docs/INTERVIEW_QA.md`，产品化自查见 `docs/PRODUCT_READINESS.md`，迁移自查见 `docs/HARNESS_MIGRATION_AUDIT.md`，简历表达见 `docs/RESUME_PROJECT.md`。
+文档入口见 `docs/README.md`。
