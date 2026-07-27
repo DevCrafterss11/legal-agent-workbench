@@ -7,7 +7,11 @@ import time
 from pathlib import Path
 from uuid import uuid4
 
-from legalworkbench.agents.base import AgentExecutionError, LegalReviewAgent, ReviewAgentContext
+from legalworkbench.agents.base import (
+    AgentExecutionError,
+    LegalReviewAgent,
+    ReviewAgentContext,
+)
 from legalworkbench.agents.clause_rewriter import ClauseRewriterAgent
 from legalworkbench.agents.compliance_auditor import ComplianceAuditorAgent
 from legalworkbench.agents.evidence import EvidenceAgent
@@ -24,6 +28,7 @@ from legalworkbench.llm import LlmClient
 from legalworkbench.memory import LegalMemoryStore
 from legalworkbench.models import ReviewRun
 from legalworkbench.paths import workspace_dir
+from legalworkbench.privacy import mask_value
 from legalworkbench.reflection import ReflectionAuditor
 from legalworkbench.report import render_dashboard_html
 from legalworkbench.skills import SkillCatalog
@@ -207,7 +212,10 @@ class LegalReviewSupervisor(LegalReviewAgent):
             "runs": [run.model_dump(mode="json") for run in runs],
         }
         path = Path(output).resolve() if output else workspace_dir(self.cwd) / "dashboard.json"
-        atomic_write_text(path, json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+        atomic_write_text(
+            path,
+            json.dumps(mask_value(payload), ensure_ascii=False, indent=2) + "\n",
+        )
         atomic_write_text(path.with_suffix(".html"), render_dashboard_html(runs))
         return path
 

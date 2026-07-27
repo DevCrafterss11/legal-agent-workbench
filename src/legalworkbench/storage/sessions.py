@@ -10,6 +10,7 @@ from typing import Any
 from legalworkbench.fs import atomic_write_text
 from legalworkbench.models import ReviewRun
 from legalworkbench.paths import workspace_dir
+from legalworkbench.privacy import mask_value
 
 
 class ReviewSessionStore:
@@ -37,7 +38,7 @@ class ReviewSessionStore:
             "run": run.model_dump(mode="json"),
             "created_at": time.time(),
         }
-        data = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+        data = json.dumps(mask_value(payload), ensure_ascii=False, indent=2) + "\n"
         path = self.root / f"session-{run.review_run_id}.json"
         atomic_write_text(path, data)
         atomic_write_text(self.root / "latest.json", data)

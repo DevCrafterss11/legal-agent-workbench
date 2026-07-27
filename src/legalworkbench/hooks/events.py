@@ -10,6 +10,7 @@ from typing import Any
 
 from legalworkbench.fs import atomic_write_text
 from legalworkbench.paths import workspace_dir
+from legalworkbench.privacy import mask_value
 
 
 @dataclass(frozen=True)
@@ -33,7 +34,7 @@ class HookEventBus:
             {
                 "name": event.name,
                 "review_run_id": event.review_run_id,
-                "payload": event.payload,
+                "payload": mask_value(event.payload),
                 "created_at": event.created_at,
             },
             ensure_ascii=False,

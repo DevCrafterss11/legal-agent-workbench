@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from legalworkbench.models import ToolCallTrace
+from legalworkbench.privacy import mask
 
 
 @dataclass
@@ -73,7 +74,7 @@ class ToolRegistry:
             tool_name=name,
             status="error" if result.is_error else "success",
             input_summary=_summarize(arguments),
-            output_summary=result.summary,
+            output_summary=mask(result.summary).masked_text,
             duration_ms=int((time.time() - started) * 1000),
             metadata={**context.metadata, **result.metadata},
         )
@@ -81,5 +82,5 @@ class ToolRegistry:
 
 
 def _summarize(value: Any) -> str:
-    text = str(value)
+    text = mask(str(value)).masked_text
     return text if len(text) <= 180 else text[:177] + "..."

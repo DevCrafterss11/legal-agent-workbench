@@ -6,11 +6,18 @@ import json
 from pathlib import Path
 from typing import Any
 
-from legalworkbench.fs import atomic_write_text
 from legalworkbench.paths import secrets_path
+from legalworkbench.secure_storage import secure_read_text, secure_write_text
 
-
-SENSITIVE_KEYS = {"secret", "app_secret", "appSecret", "token", "user_access_token", "USER_ACCESS_TOKEN", "APP_SECRET"}
+SENSITIVE_KEYS = {
+    "secret",
+    "app_secret",
+    "appSecret",
+    "token",
+    "user_access_token",
+    "USER_ACCESS_TOKEN",
+    "APP_SECRET",
+}
 
 
 def load_secrets(cwd: str | Path | None = None) -> dict[str, Any]:
@@ -18,28 +25,37 @@ def load_secrets(cwd: str | Path | None = None) -> dict[str, Any]:
     if not path.exists():
         return {}
     try:
-        raw = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
+        raw = json.loads(secure_read_text(path, cwd=cwd))
+    except (json.JSONDecodeError, UnicodeDecodeError):
         return {}
     return raw if isinstance(raw, dict) else {}
 
 
 def save_secrets(payload: dict[str, Any], cwd: str | Path | None = None) -> None:
     path = secrets_path(cwd)
-    atomic_write_text(path, json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+    secure_write_text(
+        path,
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        cwd=cwd,
+        purpose="connector-secrets",
+    )
     try:
         path.chmod(0o600)
     except OSError:
         pass
 
 
-def update_connector_secret(server_name: str, secret_payload: dict[str, Any], cwd: str | Path | None = None) -> None:
+def update_connector_secret(
+    server_name: str, secret_payload: dict[str, Any], cwd: str | Path | None = None
+) -> None:
     secrets = load_secrets(cwd)
     connectors = secrets.setdefault("connectors", {})
     existing = connectors.get(server_name, {})
     if not isinstance(existing, dict):
         existing = {}
-    existing.update({key: value for key, value in secret_payload.items() if value not in {"", None}})
+    existing.update(
+        {key: value for key, value in secret_payload.items() if value not in {"", None}}
+    )
     connectors[server_name] = existing
     save_secrets(secrets, cwd)
 
@@ -65,12 +81,17 @@ def redact(value: object) -> object:
 def redact_mapping(payload: dict[str, Any]) -> dict[str, Any]:
     redacted: dict[str, Any] = {}
     for key, value in payload.items():
-        if key in SENSITIVE_KEYS or any(word in key.lower() for word in ("secret", "token")):
+        if key in SENSITIVE_KEYS or any(
+            word in key.lower() for word in ("secret", "token")
+        ):
             redacted[key] = redact(value)
         elif isinstance(value, dict):
             redacted[key] = redact_mapping(value)
         elif isinstance(value, list):
-            redacted[key] = [redact_mapping(item) if isinstance(item, dict) else item for item in value]
+            redacted[key] = [
+                redact_mapping(item) if isinstance(item, dict) else item
+                for item in value
+            ]
         else:
             redacted[key] = value
     return redacted

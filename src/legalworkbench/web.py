@@ -11,7 +11,6 @@ import asyncio
 import json
 import threading
 from pathlib import Path
-from tempfile import NamedTemporaryFile
 from typing import Any
 
 import uvicorn
@@ -124,10 +123,14 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         text = str(payload.get("contract_text") or "").strip()
         if not text:
             return error("contract_text required")
-        with NamedTemporaryFile("w", encoding="utf-8", suffix=".md", prefix="contract_", dir=str(runtime.store.root), delete=False) as handle:
-            handle.write(text)
-            contract = Path(handle.name)
-        run = runtime.review(contract, connect_mcp=bool(payload.get("connect_mcp")))
+        record = documents.save_text(
+            filename="pasted-contract.md",
+            text=text,
+            source="web_paste",
+        )
+        run = runtime.review(
+            record["path"], connect_mcp=bool(payload.get("connect_mcp"))
+        )
         return run_summary(run)
 
     @app.post("/api/upload")
@@ -239,7 +242,7 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
                 },
             },
         }
-        return feishu_events.handle(fake_event)
+        return feishu_events.handle(fake_event, trusted_source=True)
 
     @app.post("/api/rag-config")
     def api_rag_config(payload: dict[str, Any] = Body(default={})):

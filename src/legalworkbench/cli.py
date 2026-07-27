@@ -18,10 +18,13 @@ from legalworkbench.rag import LegalRagService
 from legalworkbench.rag.health import rag_health
 from legalworkbench.runtime import LegalAgentRuntime
 from legalworkbench.paths import settings_path
+from legalworkbench.secrets import load_secrets, save_secrets
+from legalworkbench.security_cli import register_security_commands
 from legalworkbench.tasks import ReviewTaskQueue, ReviewTaskWorker
 from legalworkbench.web import LegalWorkbenchServer
 
 app = typer.Typer(name="legal-agent", help="Enterprise Legal Agent Workbench", add_completion=False)
+register_security_commands(app)
 
 
 @app.command("init")
@@ -274,16 +277,9 @@ def llm_config_cmd(
     current["llm"] = {"provider": provider, "model": model, "base_url": base_url, "timeout_seconds": timeout}
     atomic_write_text(settings_path(cwd), json.dumps(current, ensure_ascii=False, indent=2) + "\n")
     if api_key:
-        from legalworkbench.paths import secrets_path
-
-        secrets: dict = {}
-        if secrets_path(cwd).exists():
-            try:
-                secrets = json.loads(secrets_path(cwd).read_text(encoding="utf-8"))
-            except json.JSONDecodeError:
-                secrets = {}
+        secrets = load_secrets(cwd)
         secrets["llm_api_key"] = api_key
-        atomic_write_text(secrets_path(cwd), json.dumps(secrets, ensure_ascii=False, indent=2) + "\n")
+        save_secrets(secrets, cwd)
     from legalworkbench.llm import LlmClient, load_llm_config
 
     client = LlmClient(load_llm_config(cwd))

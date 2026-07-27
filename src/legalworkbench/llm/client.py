@@ -30,13 +30,15 @@ def load_llm_config(cwd: Any = None) -> "LlmConfig":
     settings: dict[str, Any] = {}
     secrets: dict[str, Any] = {}
     try:
-        from legalworkbench.paths import secrets_path, settings_path
+        from legalworkbench.paths import settings_path
+        from legalworkbench.secrets import load_secrets
 
-        for target, path in ((settings, settings_path(cwd)), (secrets, secrets_path(cwd))):
-            if path.exists():
-                parsed = json.loads(path.read_text(encoding="utf-8"))
-                if isinstance(parsed, dict):
-                    target.update(parsed)
+        path = settings_path(cwd)
+        if path.exists():
+            parsed = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(parsed, dict):
+                settings.update(parsed)
+        secrets.update(load_secrets(cwd))
     except (OSError, json.JSONDecodeError):
         pass
     section = settings.get("llm") if isinstance(settings.get("llm"), dict) else {}

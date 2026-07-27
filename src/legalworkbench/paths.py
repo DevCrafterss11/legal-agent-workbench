@@ -12,32 +12,27 @@ def project_root(cwd: str | Path | None = None) -> Path:
 
 def workspace_dir(cwd: str | Path | None = None) -> Path:
     path = project_root(cwd) / ".lawbench"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+    return _private_dir(path)
 
 
 def knowledge_dir(cwd: str | Path | None = None) -> Path:
     path = workspace_dir(cwd) / "knowledge"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+    return _private_dir(path)
 
 
 def contracts_dir(cwd: str | Path | None = None) -> Path:
     path = workspace_dir(cwd) / "contracts"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+    return _private_dir(path)
 
 
 def uploads_dir(cwd: str | Path | None = None) -> Path:
     path = workspace_dir(cwd) / "uploads"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+    return _private_dir(path)
 
 
 def runs_dir(cwd: str | Path | None = None) -> Path:
     path = workspace_dir(cwd) / "runs"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+    return _private_dir(path)
 
 
 def memory_path(cwd: str | Path | None = None) -> Path:
@@ -50,8 +45,7 @@ def skills_path(cwd: str | Path | None = None) -> Path:
 
 def skills_dir(cwd: str | Path | None = None) -> Path:
     path = workspace_dir(cwd) / "skills"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+    return _private_dir(path)
 
 
 def benchmark_path(cwd: str | Path | None = None) -> Path:
@@ -66,3 +60,13 @@ def settings_path(cwd: str | Path | None = None) -> Path:
 def secrets_path(cwd: str | Path | None = None) -> Path:
     env = os.environ.get("LEGAL_WORKBENCH_SECRETS")
     return Path(env).expanduser().resolve() if env else workspace_dir(cwd) / "secrets.json"
+
+
+def _private_dir(path: Path) -> Path:
+    path.mkdir(parents=True, exist_ok=True, mode=0o700)
+    try:
+        path.chmod(0o700)
+    except OSError:
+        # Read-only/delegated filesystems may own permissions outside the process.
+        pass
+    return path

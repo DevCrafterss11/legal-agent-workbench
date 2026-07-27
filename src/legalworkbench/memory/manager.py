@@ -25,6 +25,7 @@ from uuid import uuid4
 from legalworkbench.fs import atomic_write_text
 from legalworkbench.models import LegalMemory, ReviewRun
 from legalworkbench.paths import memory_path, workspace_dir
+from legalworkbench.privacy import mask_value
 from legalworkbench.retrieval import retrieve_memories
 from legalworkbench.store import load_model_list, write_model_list
 
@@ -57,8 +58,12 @@ class LegalMemoryStore:
         return load_model_list(memory_path(self.cwd), LegalMemory)
 
     def save(self, memories: list[LegalMemory]) -> None:
-        write_model_list(memory_path(self.cwd), memories)
-        self.write_index(memories)
+        safe_memories = [
+            LegalMemory.model_validate(mask_value(item.model_dump(mode="json")))
+            for item in memories
+        ]
+        write_model_list(memory_path(self.cwd), safe_memories)
+        self.write_index(safe_memories)
 
     def recall(self, query: str, *, contract_type: str, top_k: int = 5) -> list[LegalMemory]:
         return retrieve_memories(self.list(), query, contract_type=contract_type, top_k=top_k)
@@ -171,7 +176,10 @@ class LegalMemoryStore:
         if not evicted:
             return
         path = workspace_dir(self.cwd) / "memory_archive.jsonl"
-        rows = [json.dumps(item.model_dump(mode="json"), ensure_ascii=False) for item in evicted]
+        rows = [
+            json.dumps(mask_value(item.model_dump(mode="json")), ensure_ascii=False)
+            for item in evicted
+        ]
         previous = path.read_text(encoding="utf-8") if path.exists() else ""
         atomic_write_text(path, previous + "\n".join(rows) + "\n")
 

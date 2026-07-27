@@ -8,11 +8,36 @@ from typing import TypeVar
 
 from pydantic import BaseModel
 
-from legalworkbench.fs import atomic_write_text
 from legalworkbench.data import build_scaled_benchmark
-from legalworkbench.models import BenchmarkCase, KnowledgeEntry, LegalMemory, LegalSkill, ReviewRun
-from legalworkbench.paths import benchmark_path, contracts_dir, knowledge_dir, memory_path, runs_dir, settings_path, skills_dir, skills_path, workspace_dir
-from legalworkbench.sample_data import SAMPLE_BENCHMARK, SAMPLE_CONTRACT, SAMPLE_KNOWLEDGE, SAMPLE_MEMORY, SAMPLE_SETTINGS, SAMPLE_SKILLS
+from legalworkbench.fs import atomic_write_text
+from legalworkbench.models import (
+    BenchmarkCase,
+    KnowledgeEntry,
+    LegalMemory,
+    LegalSkill,
+    ReviewRun,
+)
+from legalworkbench.paths import (
+    benchmark_path,
+    contracts_dir,
+    knowledge_dir,
+    memory_path,
+    runs_dir,
+    settings_path,
+    skills_dir,
+    skills_path,
+    workspace_dir,
+)
+from legalworkbench.privacy import mask_value
+from legalworkbench.sample_data import (
+    SAMPLE_BENCHMARK,
+    SAMPLE_CONTRACT,
+    SAMPLE_KNOWLEDGE,
+    SAMPLE_MEMORY,
+    SAMPLE_SETTINGS,
+    SAMPLE_SKILLS,
+)
+from legalworkbench.secure_storage import secure_write_text
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -52,7 +77,12 @@ class WorkbenchStore:
         if force or not knowledge_file.exists():
             write_model_list(knowledge_file, SAMPLE_KNOWLEDGE)
         if force or not contract_file.exists():
-            atomic_write_text(contract_file, SAMPLE_CONTRACT)
+            secure_write_text(
+                contract_file,
+                SAMPLE_CONTRACT,
+                cwd=self.cwd,
+                purpose="stored-contract",
+            )
         if force or not skills_path(self.cwd).exists():
             write_model_list(skills_path(self.cwd), SAMPLE_SKILLS)
         if force or not any(skills_dir(self.cwd).glob("*/SKILL.md")):
@@ -114,7 +144,8 @@ class WorkbenchStore:
 
     def save_run(self, run: ReviewRun) -> Path:
         path = runs_dir(self.cwd) / f"{run.review_run_id}.json"
-        atomic_write_text(path, json.dumps(run.model_dump(mode="json"), ensure_ascii=False, indent=2) + "\n")
+        payload = mask_value(run.model_dump(mode="json"))
+        atomic_write_text(path, json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
         return path
 
     def load_run(self, run_id: str) -> ReviewRun | None:

@@ -21,7 +21,6 @@ from legalworkbench.paths import workspace_dir
 from legalworkbench.runtime import LegalAgentRuntime
 from legalworkbench.secrets import connector_secret
 
-
 DOC_TOKEN_PATTERNS = [
     re.compile(r"/docx/([A-Za-z0-9]+)"),
     re.compile(r"/docs/([A-Za-z0-9]+)"),
@@ -68,10 +67,27 @@ class FeishuEventBridge:
         headers = headers or {}
         if "challenge" in payload:
             return {"challenge": payload.get("challenge")}
-        if not trusted_source and not self._verify_token(payload):
-            return {"ok": False, "error": "invalid verification token", "status": "ignored"}
-        if not trusted_source and not self._verify_signature(payload, headers):
-            return {"ok": False, "error": "invalid event signature", "status": "ignored"}
+        if not trusted_source:
+            if not (self.config.verification_token or self.config.callback_secret):
+                return {
+                    "ok": False,
+                    "error": "feishu callback authentication is not configured",
+                    "status": "ignored",
+                }
+            if self.config.verification_token and not self._verify_token(payload):
+                return {
+                    "ok": False,
+                    "error": "invalid verification token",
+                    "status": "ignored",
+                }
+            if self.config.callback_secret and not self._verify_signature(
+                payload, headers
+            ):
+                return {
+                    "ok": False,
+                    "error": "invalid event signature",
+                    "status": "ignored",
+                }
 
         event = self._extract_event(payload)
         if not event:

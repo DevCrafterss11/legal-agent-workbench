@@ -24,8 +24,10 @@ from legalworkbench.llm import LlmClient
 from legalworkbench.memory import LegalMemoryStore
 from legalworkbench.models import ReviewRun
 from legalworkbench.paths import workspace_dir
+from legalworkbench.privacy import mask_value
 from legalworkbench.reflection import ReflectionAuditor
 from legalworkbench.report import render_dashboard_html
+from legalworkbench.secure_storage import secure_read_text
 from legalworkbench.skills import SkillCatalog
 from legalworkbench.storage import ReviewSessionStore
 from legalworkbench.store import WorkbenchStore
@@ -69,7 +71,7 @@ class LegalAgentRuntime:
             raise PermissionError(permission.reason)
         return self._supervisor().review(
             path,
-            contract_text=path.read_text(encoding="utf-8"),
+            contract_text=secure_read_text(path, cwd=self.cwd),
             connect_mcp=connect_mcp,
         )
 
@@ -88,7 +90,10 @@ class LegalAgentRuntime:
             "runs": [run.model_dump(mode="json") for run in runs],
         }
         path = Path(output).resolve() if output else workspace_dir(self.cwd) / "dashboard.json"
-        atomic_write_text(path, json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+        atomic_write_text(
+            path,
+            json.dumps(mask_value(payload), ensure_ascii=False, indent=2) + "\n",
+        )
         atomic_write_text(path.with_suffix(".html"), render_dashboard_html(runs))
         return path
 

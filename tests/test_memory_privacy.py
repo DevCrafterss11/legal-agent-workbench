@@ -2,20 +2,37 @@
 
 from __future__ import annotations
 
+import base64
 import time
 from pathlib import Path
 
 from legalworkbench.llm.client import LlmClient, LlmConfig, LlmResponse
 from legalworkbench.memory import LegalMemoryStore
 from legalworkbench.memory.manager import MemoryWritePolicy
-from legalworkbench.models import LegalMemory, ReviewRun, RiskFinding, RetrievedEvidence
-from legalworkbench.privacy import mask, restore, scan, valid_bank_card, valid_id_card
+from legalworkbench.models import LegalMemory, RetrievedEvidence, ReviewRun, RiskFinding
+from legalworkbench.privacy import (
+    mask,
+    mask_value,
+    restore,
+    scan,
+    valid_bank_card,
+    valid_id_card,
+)
+from legalworkbench.privacy_migration import migrate_private_storage
 from legalworkbench.rag.service import LegalRagService, RagConfig
 from legalworkbench.retrieval import retrieve_memories
 from legalworkbench.runtime import LegalAgentRuntime
+from legalworkbench.secure_storage import (
+    MAGIC,
+    secure_read_text,
+    secure_write_text,
+)
+from legalworkbench.tools.base import ToolContext, ToolRegistry, ToolResult
 
 
-def make_finding(risk_type: str = "unlimited_liability", summary: str = "责任无上限") -> RiskFinding:
+def make_finding(
+    risk_type: str = "unlimited_liability", summary: str = "责任无上限"
+) -> RiskFinding:
     return RiskFinding(
         finding_id="F001",
         clause_id="c1",
@@ -26,8 +43,15 @@ def make_finding(risk_type: str = "unlimited_liability", summary: str = "责任�
         suggestion="加上限",
         evidence=[
             RetrievedEvidence(
-                entry_id="e1", title="t", source="company_policy", score=1.0, reason="", body_preview="b",
-                risk_type=risk_type, risk_level="medium", rerank_score=1.0,
+                entry_id="e1",
+                title="t",
+                source="company_policy",
+                score=1.0,
+                reason="",
+                body_preview="b",
+                risk_type=risk_type,
+                risk_level="medium",
+                rerank_score=1.0,
             )
         ],
         requires_human_review=False,
@@ -37,8 +61,13 @@ def make_finding(risk_type: str = "unlimited_liability", summary: str = "责任�
 def make_run(run_id: str = "law_test1") -> ReviewRun:
     now = time.time()
     return ReviewRun(
-        review_run_id=run_id, contract_path="x.md", status="completed",
-        created_at=now, updated_at=now, contract_type="SaaS", findings=[make_finding()],
+        review_run_id=run_id,
+        contract_path="x.md",
+        status="completed",
+        created_at=now,
+        updated_at=now,
+        contract_type="SaaS",
+        findings=[make_finding()],
     )
 
 
@@ -67,8 +96,17 @@ def test_memory_mark_used_feeds_recall_ranking(tmp_path: Path) -> None:
     assert updated.last_used_at > 0
 
     fresh_used = updated
-    stale = updated.model_copy(update={"memory_id": "mem_stale", "use_count": 0, "last_used_at": 0.0, "created_at": time.time() - 400 * 86_400})
-    ranked = retrieve_memories([stale, fresh_used], "赔偿 责任 上限", contract_type="SaaS", top_k=2)
+    stale = updated.model_copy(
+        update={
+            "memory_id": "mem_stale",
+            "use_count": 0,
+            "last_used_at": 0.0,
+            "created_at": time.time() - 400 * 86_400,
+        }
+    )
+    ranked = retrieve_memories(
+        [stale, fresh_used], "赔偿 责任 上限", contract_type="SaaS", top_k=2
+    )
     assert ranked[0].memory_id == fresh_used.memory_id  # 使用强化 + 时间衰减决定排序
 
 
@@ -76,7 +114,14 @@ def test_memory_eviction_archives_lowest_retention(tmp_path: Path) -> None:
     store = LegalMemoryStore(tmp_path, policy=MemoryWritePolicy(max_entries=2))
     now = time.time()
     memories = [
-        LegalMemory(memory_id=f"mem_{i}", type="semantic", summary=f"s{i}", confidence=0.8, created_at=now, use_count=i)
+        LegalMemory(
+            memory_id=f"mem_{i}",
+            type="semantic",
+            summary=f"s{i}",
+            confidence=0.8,
+            created_at=now,
+            use_count=i,
+        )
         for i in range(3)
     ]
     kept = store._evict_if_needed(memories)
@@ -92,13 +137,104 @@ def test_pii_scan_mask_restore_roundtrip() -> None:
         "邮箱 zhangsan@example.com，收款账户 4111111111111111。手机再次出现：13812345678。"
     )
     counts = scan(text)
-    assert counts == {"id_card": 1, "phone": 2, "email": 1, "bank_card": 1}
+    assert counts == {
+        "id_card": 1,
+        "phone": 2,
+        "email": 1,
+        "bank_card": 1,
+        "person_name": 1,
+    }
 
     result = mask(text)
     assert "11010519491231002X" not in result.masked_text
     assert "13812345678" not in result.masked_text
     assert result.masked_text.count("[PII_PHONE_1]") == 2  # 同值同占位符
     assert restore(result.masked_text, result.mapping) == text
+
+
+def test_local_name_and_address_entity_recognition() -> None:
+    text = "法定代表人：张三，送达地址：北京市朝阳区建国路88号。"
+
+    assert scan(text) == {"person_name": 1, "address": 1}
+    result = mask(text)
+
+    assert "张三" not in result.masked_text
+    assert "北京市朝阳区建国路88号" not in result.masked_text
+    assert "[PII_PERSON_NAME_1]" in result.masked_text
+    assert "[PII_ADDRESS_1]" in result.masked_text
+    assert restore(result.masked_text, result.mapping) == text
+
+
+def test_name_entity_recognition_avoids_contact_field_labels() -> None:
+    assert scan("联系人手机 13812345678") == {"phone": 1}
+
+
+def test_envelope_encryption_and_migration(tmp_path: Path, monkeypatch) -> None:
+    key = base64.urlsafe_b64encode(b"k" * 32).decode("ascii")
+    monkeypatch.setenv("LEGAL_WORKBENCH_ENCRYPTION_PROVIDER", "env")
+    monkeypatch.setenv("LEGAL_WORKBENCH_ENCRYPTION_KEY", key)
+    encrypted = tmp_path / "secret.txt"
+
+    secure_write_text(encrypted, "联系人：张三", cwd=tmp_path, purpose="test")
+
+    assert encrypted.read_bytes().startswith(MAGIC)
+    assert "张三".encode() not in encrypted.read_bytes()
+    assert secure_read_text(encrypted, cwd=tmp_path) == "联系人：张三"
+
+    run_path = tmp_path / ".lawbench" / "runs" / "legacy.json"
+    run_path.parent.mkdir(parents=True)
+    run_path.write_text(
+        '{"contact":"姓名：李四，地址：上海市浦东新区世纪大道100号。"}',
+        encoding="utf-8",
+    )
+    upload = tmp_path / ".lawbench" / "uploads" / "legacy.md"
+    upload.parent.mkdir(parents=True)
+    upload.write_text("姓名：王五", encoding="utf-8")
+
+    result = migrate_private_storage(tmp_path)
+
+    assert result["masked_files"] == 1
+    assert "李四" not in run_path.read_text(encoding="utf-8")
+    assert upload.read_bytes().startswith(MAGIC)
+    assert secure_read_text(upload, cwd=tmp_path) == "姓名：王五"
+
+
+def test_mask_value_recursively_sanitizes_structured_data() -> None:
+    payload = {
+        "clause": "联系人 13812345678",
+        "nested": ["11010519491231002X", {"email": "legal@example.com"}],
+        "count": 2,
+    }
+
+    masked = mask_value(payload)
+
+    assert masked["clause"] == "联系人 [PII_PHONE_1]"
+    assert masked["nested"][0] == "[PII_ID_CARD_1]"
+    assert masked["nested"][1]["email"] == "[PII_EMAIL_1]"
+    assert masked["count"] == 2
+
+
+def test_tool_trace_masks_input_and_output_summaries(tmp_path: Path) -> None:
+    class EchoTool:
+        name = "echo"
+        description = "test"
+
+        def execute(self, arguments, context):
+            del context
+            return ToolResult(output=arguments, summary="结果手机 13812345678")
+
+    registry = ToolRegistry()
+    registry.register(EchoTool())
+    _, trace = registry.execute(
+        "echo",
+        {"text": "联系人 13812345678"},
+        ToolContext(cwd=tmp_path, review_run_id="law_private"),
+    )
+
+    assert "13812345678" not in trace.input_summary
+    assert "13812345678" not in trace.output_summary
+    assert "[PII_PHONE_1]" in trace.input_summary
+    assert "[PII_PHONE_1]" in trace.output_summary
 
 
 def test_pii_validators_reject_random_numbers() -> None:
@@ -115,9 +251,19 @@ def test_remote_llm_sends_masked_text_and_restores_reply() -> None:
     class CapturingLlm(LlmClient):
         def _openai_compatible(self, *, system: str, user: str) -> LlmResponse:
             captured["user"] = user
-            return LlmResponse(text=f'{{"score": 0.9, "contact": "[PII_PHONE_1]"}}', model="fake")
+            return LlmResponse(
+                text=f'{{"score": 0.9, "contact": "[PII_PHONE_1]"}}', model="fake"
+            )
 
-    client = CapturingLlm(LlmConfig(provider="openai_compatible", model="m", base_url="http://fake", api_key="k", mask_pii=True))
+    client = CapturingLlm(
+        LlmConfig(
+            provider="openai_compatible",
+            model="m",
+            base_url="http://fake",
+            api_key="k",
+            mask_pii=True,
+        )
+    )
     response = client.complete(system="s", user="联系人手机 13812345678，请判断风险。")
     assert "13812345678" not in captured["user"]  # 明文不出境
     assert "[PII_PHONE_1]" in captured["user"]
@@ -136,13 +282,28 @@ def test_review_records_privacy_scan(tmp_path: Path) -> None:
     privacy = run.mcp_context["privacy"]
     assert privacy["sensitive"] is True
     assert privacy["pii_counts"] == {"phone": 1}
+    assert all("13812345678" not in item.input_summary for item in run.tool_calls)
+
+    persisted = [
+        tmp_path / ".lawbench" / "events.jsonl",
+        tmp_path / ".lawbench" / "runs" / f"{run.review_run_id}.json",
+        tmp_path / ".lawbench" / "sessions" / f"session-{run.review_run_id}.json",
+        tmp_path / ".lawbench" / "sessions" / "latest.json",
+        Path(run.report_path),
+    ]
+    for path in persisted:
+        content = path.read_text(encoding="utf-8")
+        assert "13812345678" not in content, path
+    assert "[PII_PHONE_1]" in persisted[1].read_text(encoding="utf-8")
 
 
 def test_rrf_fusion_returns_ranked_evidence(tmp_path: Path) -> None:
     runtime = LegalAgentRuntime(tmp_path)
     runtime.init_samples()
     service = LegalRagService(tmp_path, config=RagConfig(fusion="rrf"))
-    evidence = service.retrieve("乙方承担全部损失且不设赔偿责任上限", contract_type="SaaS", top_k=5)
+    evidence = service.retrieve(
+        "乙方承担全部损失且不设赔偿责任上限", contract_type="SaaS", top_k=5
+    )
     assert evidence
     assert any("rrf=" in item.reason for item in evidence)
     assert any(item.risk_type == "unlimited_liability" for item in evidence)

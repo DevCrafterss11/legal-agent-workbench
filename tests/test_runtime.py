@@ -161,6 +161,9 @@ def test_feishu_event_bridge_challenge_and_text_review(tmp_path: Path) -> None:
 
     assert bridge.handle({"challenge": "abc"}) == {"challenge": "abc"}
     assert extract_document_id("https://example.feishu.cn/docx/AbCdEf123456") == "AbCdEf123456"
+    unauthenticated = bridge.handle({"schema": "2.0", "event": {}})
+    assert unauthenticated["ok"] is False
+    assert "authentication is not configured" in unauthenticated["error"]
 
     result = bridge.handle(
         {
@@ -175,7 +178,8 @@ def test_feishu_event_bridge_challenge_and_text_review(tmp_path: Path) -> None:
                     "content": '{"text":"## 赔偿责任\\n乙方承担全部损失且不设责任上限。"}',
                 },
             },
-        }
+        },
+        trusted_source=True,
     )
     assert result["ok"] is True
     assert result["status"] == "reviewed"
@@ -200,8 +204,8 @@ def test_feishu_event_bridge_ignores_duplicate_message(tmp_path: Path) -> None:
         },
     }
 
-    first = bridge.handle(payload)
-    second = bridge.handle(payload)
+    first = bridge.handle(payload, trusted_source=True)
+    second = bridge.handle(payload, trusted_source=True)
 
     assert first["status"] == "reviewed"
     assert second["status"] == "ignored"
@@ -225,7 +229,8 @@ def test_feishu_event_bridge_ignores_self_app_message(tmp_path: Path) -> None:
                     "content": '{"text":"合同审查完成：law_old\\n\\n完整报告：/tmp/old.md"}',
                 },
             },
-        }
+        },
+        trusted_source=True,
     )
 
     assert result["status"] == "ignored"
@@ -269,7 +274,8 @@ def test_feishu_event_bridge_downloads_and_reviews_file_attachment(tmp_path: Pat
                         "content": '{"file_key":"file_v3_test","file_name":"contract.docx"}',
                 },
             },
-        }
+        },
+        trusted_source=True,
     )
 
     assert result["ok"] is True
@@ -305,7 +311,8 @@ def test_feishu_event_bridge_reports_file_download_failure(tmp_path: Path) -> No
                     "content": '{"file_key":"file_v3_test","file_name":"contract.pdf"}',
                 },
             },
-        }
+        },
+        trusted_source=True,
     )
 
     assert result["ok"] is False
@@ -402,12 +409,38 @@ def test_uploaded_docx_can_be_reviewed(tmp_path: Path) -> None:
 
     assert record["status"] == "ready"
     assert "赔偿责任" in store.read_text(record["document_id"])
+    raw_file = next((tmp_path / ".lawbench" / "uploads").glob("raw_*.docx"))
+    assert raw_file.stat().st_mode & 0o777 == 0o600
+    assert (tmp_path / ".lawbench").stat().st_mode & 0o777 == 0o700
+    assert (tmp_path / ".lawbench" / "uploads").stat().st_mode & 0o777 == 0o700
 
     run = LegalAgentRuntime(tmp_path).review(record["path"])
 
     assert run.findings
     assert run.findings[0].risk_type == "unlimited_liability"
     assert "累计赔偿总额不超过事故发生前十二个月" in run.findings[0].suggestion
+
+
+def test_encrypted_uploaded_contract_can_be_reviewed(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setenv("LEGAL_WORKBENCH_ENCRYPTION_PROVIDER", "env")
+    monkeypatch.setenv(
+        "LEGAL_WORKBENCH_ENCRYPTION_KEY",
+        base64.urlsafe_b64encode(b"e" * 32).decode("ascii"),
+    )
+    runtime = LegalAgentRuntime(tmp_path)
+    runtime.init_samples()
+    store = ContractDocumentStore(tmp_path)
+
+    record = store.save_text(
+        filename="张三合同.md",
+        text="姓名：张三\n## 赔偿责任\n乙方承担全部损失且不设责任上限。",
+    )
+
+    persisted = Path(record["path"]).read_bytes()
+    assert persisted.startswith(b"LAWBENCH-ENC-v1\n")
+    assert "张三".encode() not in persisted
+    assert store.read_text(record["document_id"]).startswith("姓名：张三")
+    assert runtime.review(record["path"]).status == "completed"
 
 
 def test_rag_service_factory_reuses_warm_instance(tmp_path: Path, monkeypatch) -> None:

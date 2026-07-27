@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from legalworkbench.fs import atomic_write_text
 from legalworkbench.paths import workspace_dir
+from legalworkbench.secure_storage import secure_read_text, secure_write_text
 
 
 class ReviewTaskQueue:
@@ -80,8 +80,8 @@ class ReviewTaskQueue:
         if not self.path.exists():
             return []
         try:
-            raw = json.loads(self.path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
+            raw = json.loads(secure_read_text(self.path, cwd=self.cwd))
+        except (json.JSONDecodeError, UnicodeDecodeError):
             return []
         return raw if isinstance(raw, list) else []
 
@@ -157,8 +157,18 @@ class ReviewTaskQueue:
         return deleted
 
     def save(self, tasks: list[dict[str, Any]]) -> None:
-        tasks.sort(key=lambda item: (-int(item.get("priority", 0)), -float(item.get("updated_at", 0))))
-        atomic_write_text(self.path, json.dumps(tasks, ensure_ascii=False, indent=2) + "\n")
+        tasks.sort(
+            key=lambda item: (
+                -int(item.get("priority", 0)),
+                -float(item.get("updated_at", 0)),
+            )
+        )
+        secure_write_text(
+            self.path,
+            json.dumps(tasks, ensure_ascii=False, indent=2) + "\n",
+            cwd=self.cwd,
+            purpose="review-task-queue",
+        )
 
     def next_pending(self) -> dict[str, Any] | None:
         for task in self.list():
