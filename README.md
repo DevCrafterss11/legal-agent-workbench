@@ -15,6 +15,22 @@
 -> Session/Trace/Dashboard/Eval
 ```
 
+## 产品界面
+
+### 法务审查工作台
+
+![企业法务审查工作台](docs/screenshots/workbench-dashboard.png)
+
+| 智能合同审查与报告 | 后台任务中心 |
+| --- | --- |
+| ![智能合同审查与报告](docs/screenshots/smart-review-report.png) | ![后台审查任务中心](docs/screenshots/task-center.png) |
+
+### 企业级系统配置
+
+![RAG 与 Milvus 系统配置](docs/screenshots/system-configuration.png)
+
+> 截图使用无个人信息的演示合同生成，不包含真实客户合同、账号凭证或本地运行数据。
+
 ## 工程模块
 
 - `runtime/`：ReviewRun 执行门面，创建 Supervisor 并对外保持稳定 API
