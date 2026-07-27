@@ -19,6 +19,15 @@ class EmbeddingModel:
     def embed(self, text: str) -> list[float]:
         raise NotImplementedError
 
+    def embed_many(self, texts: list[str], *, batch_size: int = 64) -> list[list[float]]:
+        """Encode a corpus in batches.
+
+        Lightweight providers can keep the deterministic per-item fallback;
+        transformer providers override this to avoid thousands of tiny model calls.
+        """
+
+        return [self.embed(text) for text in texts]
+
 
 @dataclass
 class HashingEmbeddingModel(EmbeddingModel):
@@ -78,6 +87,18 @@ class SentenceTransformerEmbeddingModel(EmbeddingModel):
             show_progress_bar=False,
         )
         return [float(value) for value in vector.tolist()]
+
+    def embed_many(self, texts: list[str], *, batch_size: int = 64) -> list[list[float]]:
+        if not texts:
+            return []
+        vectors = self._model.encode(
+            texts,
+            batch_size=max(1, batch_size),
+            normalize_embeddings=self._normalize_embeddings,
+            convert_to_numpy=True,
+            show_progress_bar=False,
+        )
+        return [[float(value) for value in row] for row in vectors.tolist()]
 
 
 def cosine_similarity(left: list[float], right: list[float]) -> float:

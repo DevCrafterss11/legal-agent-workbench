@@ -60,14 +60,15 @@ CASE_TEMPLATES: tuple[tuple[str, str, list[str]], ...] = (
         "## 存续安排\n本约定于期间届满后依原有内容继续生效，任一方未作表示即视为认可延展。",
         ["auto_renewal"],
     ),
-    # 多风险混排样本：保密条款在知识库中覆盖稀疏（检索易漏），但规则引擎可兜底；
-    # 隐式补偿条款则相反（规则漏、检索中）——用于验证规则与检索的互补性
+    # 多风险混排样本。注意两处 gold 修正（真实 benchmark 校准时发现）：
+    # "按月支付服务费"与"双方可暂停履行"是均衡表述，不构成风险，
+    # 旧 gold 把它们计为 payment_acceptance / force_majeure 属于标注错误
     (
         "procurement",
         "## 付款\n甲方按月支付服务费。\n## 成果\n交付成果的知识产权归乙方所有，含衍生成果。\n"
         "## 保密\n双方对合作内容承担保密义务，未约定保密期限。\n"
         "## 补偿\n乙方承担全额补偿且金额不受合同总额约束。\n## 不可抗力\n发生不可抗力时双方可暂停履行。",
-        ["payment_acceptance", "ip_ownership", "confidentiality", "unlimited_liability", "force_majeure"],
+        ["ip_ownership", "confidentiality", "unlimited_liability"],
     ),
 )
 

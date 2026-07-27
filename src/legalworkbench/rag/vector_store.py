@@ -29,6 +29,11 @@ class VectorStore:
     def status(self) -> dict[str, Any]:
         raise NotImplementedError
 
+    def can_reuse(self, entries: list[KnowledgeEntry], *, dimension: int) -> bool:
+        """Return whether an already-built persistent index matches this corpus."""
+
+        return False
+
 
 class InMemoryVectorStore(VectorStore):
     name = "in-memory-vector-store"
@@ -93,10 +98,49 @@ class MilvusVectorStore(VectorStore):
                 }
                 for entry, vector in zip(entries, vectors)
             ]
-            if rows:
-                self._client.upsert(collection_name=self.collection, data=rows)
+            for offset in range(0, len(rows), 256):
+                self._client.upsert(
+                    collection_name=self.collection,
+                    data=rows[offset : offset + 256],
+                )
         except Exception as exc:  # pragma: no cover - depends on optional service
             self._connect_error = str(exc)
+
+    def can_reuse(self, entries: list[KnowledgeEntry], *, dimension: int) -> bool:
+        """Validate a Milvus collection without scanning or rebuilding every vector.
+
+        A persisted fingerprint in ``LegalRagService`` is the primary freshness
+        check. This method additionally verifies collection size, vector dimension,
+        and stable IDs sampled across the current corpus. The sampling check lets an
+        existing pre-fingerprint collection be adopted safely enough for a one-time
+        migration instead of forcing an expensive cold rebuild.
+        """
+
+        if self._client is None or not entries:
+            return False
+        try:
+            if not self._client.has_collection(collection_name=self.collection):
+                return False
+            stats = self._client.get_collection_stats(collection_name=self.collection)
+            if int(stats.get("row_count") or 0) < len(entries):
+                return False
+            description = self._client.describe_collection(collection_name=self.collection)
+            vector_dimension = _vector_dimension(description)
+            if vector_dimension and vector_dimension != dimension:
+                return False
+            indexes = sorted({0, len(entries) // 4, len(entries) // 2, (len(entries) * 3) // 4, len(entries) - 1})
+            expected = {_stable_int_id(entries[index].id): entries[index].id for index in indexes}
+            rows = self._client.query(
+                collection_name=self.collection,
+                filter=f"id in [{','.join(str(value) for value in expected)}]",
+                output_fields=["id", "entry_id"],
+                limit=len(expected),
+            )
+            actual = {int(row.get("id")): str(row.get("entry_id") or "") for row in rows}
+            return all(actual.get(row_id) == entry_id for row_id, entry_id in expected.items())
+        except Exception as exc:  # pragma: no cover - depends on optional service
+            self._connect_error = str(exc)
+            return False
 
     def search(self, vector: list[float], *, top_k: int, filters: dict[str, str] | None = None) -> list[VectorHit]:
         if self._client is None:
@@ -170,6 +214,18 @@ def _stable_int_id(value: str) -> int:
     import hashlib
 
     return int(hashlib.sha1(value.encode("utf-8")).hexdigest()[:15], 16)
+
+
+def _vector_dimension(description: dict[str, Any]) -> int:
+    for field in description.get("fields", []):
+        if field.get("name") != "vector":
+            continue
+        raw = (field.get("params") or {}).get("dim") or field.get("dimension")
+        try:
+            return int(raw or 0)
+        except (TypeError, ValueError):
+            return 0
+    return 0
 
 
 def _filter_expr(filters: dict[str, str]) -> str:

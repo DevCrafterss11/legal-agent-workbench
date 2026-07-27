@@ -19,16 +19,9 @@ SAMPLE_SETTINGS = {
         "final_top_k": 10,
         "connect_timeout": 1.0,
     },
-    "mcp_servers": {
-        "feishu_legal_workspace": {
-            "type": "mock",
-            "description": "Feishu Docs, approval tasks, and legal audit logs.",
-        },
-        "notion_legal_playbook": {
-            "type": "mock",
-            "description": "Notion legal playbook and review record database.",
-        },
-    }
+    # 不预置假连接器：真实 MCP server 用 `legal-agent lark-mcp` 或 Web 面板配置，
+    # 未配置就是未配置，连接失败会如实报 failed
+    "mcp_servers": {},
 }
 
 SAMPLE_KNOWLEDGE = [

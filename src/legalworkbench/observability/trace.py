@@ -3,22 +3,8 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
 
-from legalworkbench.models import ReviewRun, ToolCallTrace
-
-
-@dataclass
-class TraceRecorder:
-    """Collect tool call traces for one review run."""
-
-    traces: list[ToolCallTrace] = field(default_factory=list)
-
-    def add(self, trace: ToolCallTrace) -> None:
-        self.traces.append(trace)
-
-    def extend_run(self, run: ReviewRun) -> None:
-        run.tool_calls.extend(self.traces)
+from legalworkbench.models import ReviewRun
 
 
 def compute_run_metrics(run: ReviewRun, *, elapsed: float) -> dict[str, float]:

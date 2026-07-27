@@ -26,7 +26,6 @@ class BaselineResultRow:
     source_coverage_at_10: float
     high_risk_recall: float | None = None
     human_review_capture_rate: float | None = None
-    tool_success_rate: float = 1.0
 
     def to_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -125,7 +124,6 @@ def format_baseline_table(rows: list[BaselineResultRow]) -> str:
         "source@10",
         "high_recall",
         "human_review",
-        "tool_success",
     ]
     data = [
         [
@@ -137,7 +135,6 @@ def format_baseline_table(rows: list[BaselineResultRow]) -> str:
             _fmt(row.source_coverage_at_10),
             _fmt(row.high_risk_recall),
             _fmt(row.human_review_capture_rate),
-            _fmt(row.tool_success_rate),
         ]
         for row in rows
     ]

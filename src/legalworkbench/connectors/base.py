@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -20,13 +20,3 @@ class ConnectorResource:
     name: str
     uri: str
     description: str = ""
-
-
-class EnterpriseConnector(Protocol):
-    name: str
-
-    def tools(self) -> list[ConnectorTool]:
-        """Return tools exposed by this connector."""
-
-    def resources(self) -> list[ConnectorResource]:
-        """Return resources exposed by this connector."""

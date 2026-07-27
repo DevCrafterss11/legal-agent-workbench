@@ -7,17 +7,28 @@ from pathlib import Path
 
 import typer
 
-from legalworkbench.evals import BaselineEvaluator, format_baseline_table
-from legalworkbench.fs import atomic_write_text
+from legalworkbench.evals import (
+    REAL_BENCHMARK_METHODS,
+    BaselineEvaluator,
+    RealBenchmarkEvaluator,
+    format_baseline_table,
+    format_real_benchmark_table,
+)
 from legalworkbench.feishu_events import FeishuEventBridge, write_event_setup_guide
 from legalworkbench.feishu_stream import FeishuLongConnectionListener
-from legalworkbench.lark_mcp import DEFAULT_LEGAL_TOOLS, configure_lark_mcp, lark_login_command, lark_mcp_status
+from legalworkbench.fs import atomic_write_text
+from legalworkbench.lark_mcp import (
+    DEFAULT_LEGAL_TOOLS,
+    configure_lark_mcp,
+    lark_login_command,
+    lark_mcp_status,
+)
 from legalworkbench.mcp import McpConnectorRegistry
 from legalworkbench.memory import LegalMemoryStore
+from legalworkbench.paths import settings_path
 from legalworkbench.rag import LegalRagService
 from legalworkbench.rag.health import rag_health
 from legalworkbench.runtime import LegalAgentRuntime
-from legalworkbench.paths import settings_path
 from legalworkbench.secrets import load_secrets, save_secrets
 from legalworkbench.security_cli import register_security_commands
 from legalworkbench.tasks import ReviewTaskQueue, ReviewTaskWorker
@@ -104,6 +115,31 @@ def eval_baseline_cmd(
         return
     print("Baseline comparison:")
     print(format_baseline_table(rows))
+
+
+@app.command("eval-real")
+def eval_real_cmd(
+    cwd: str = typer.Option(str(Path.cwd()), "--cwd", help="Project root"),
+    methods: str = typer.Option(
+        ",".join(REAL_BENCHMARK_METHODS),
+        "--methods",
+        help="Comma list: rule_only,rag_only,rule_plus_rag,full_agent",
+    ),
+    limit: int = typer.Option(0, "--limit", help="Only evaluate first N contracts (0 = all)"),
+    json_output: bool = typer.Option(False, "--json", help="Print machine-readable JSON"),
+    save: str = typer.Option("", "--save", help="Also write JSON report to this path"),
+) -> None:
+    """Evaluate on the real-contract benchmark: precision/recall/F1 incl. full-agent mode."""
+
+    selected = tuple(m.strip() for m in methods.split(",") if m.strip())
+    report = RealBenchmarkEvaluator(cwd).run(methods=selected, limit=limit)
+    if save:
+        atomic_write_text(Path(save).resolve(), json.dumps(report.to_dict(), ensure_ascii=False, indent=2) + "\n")
+    if json_output:
+        print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+        return
+    print("Real-contract benchmark:")
+    print(format_real_benchmark_table(report))
 
 
 @app.command("tools")
@@ -267,7 +303,7 @@ def llm_config_cmd(
     model: str = typer.Option("qwen2.5:7b", "--model", help="Model name"),
     base_url: str = typer.Option("", "--base-url", help="OpenAI-compatible base URL (ollama defaults to http://127.0.0.1:11434/v1)"),
     api_key: str = typer.Option("", "--api-key", help="API key, stored in secrets.json (not settings.json)"),
-    timeout: float = typer.Option(30.0, "--timeout", help="Request timeout seconds"),
+    timeout: float = typer.Option(10.0, "--timeout", help="Request timeout seconds"),
 ) -> None:
     if provider not in {"local", "ollama", "openai_compatible"}:
         raise typer.BadParameter("--provider must be local, ollama, or openai_compatible")

@@ -12,14 +12,17 @@ import time
 from pathlib import Path
 
 from legalworkbench.agents import LegalReviewSupervisor
-from legalworkbench.agents.risk_reviewer import evidence_implies_risk, skill_implies_risk
+from legalworkbench.agents.risk_reviewer import (
+    evidence_implies_risk,
+    skill_implies_risk,
+)
 from legalworkbench.cache import create_cache
 from legalworkbench.compact import LegalContextCompactor
 from legalworkbench.connectors import EnterpriseConnectorRegistry
 from legalworkbench.evals import BenchmarkRunner, HumanBenchmarkRunner
 from legalworkbench.fs import atomic_write_text
 from legalworkbench.governance import LegalPermissionChecker, PermissionMode
-from legalworkbench.hooks import HookEvent, HookEventBus
+from legalworkbench.hooks import HookEventBus
 from legalworkbench.llm import LlmClient
 from legalworkbench.memory import LegalMemoryStore
 from legalworkbench.models import ReviewRun
@@ -102,15 +105,6 @@ class LegalAgentRuntime:
         if not path.is_absolute():
             path = self.cwd / path
         return path.resolve()
-
-    def _fail(self, run: ReviewRun, error: str) -> ReviewRun:
-        run.status = "failed"
-        run.error = error
-        run.updated_at = time.time()
-        self.store.save_run(run)
-        self.sessions.save_snapshot(run, event="failed", metadata={"error": error})
-        self.hooks.emit(HookEvent("review.failed", run.review_run_id, {"error": error}))
-        return run
 
     def _supervisor(self) -> LegalReviewSupervisor:
         return LegalReviewSupervisor(

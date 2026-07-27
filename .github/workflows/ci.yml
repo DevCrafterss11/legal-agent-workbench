@@ -21,14 +21,26 @@ jobs:
         run: python -m pip install -e ".[dev,redis]"
       - name: Run tests
         run: python -m pytest tests/ -q
-      - name: Baseline eval sanity
+      - name: Eval regression floors
         run: |
           python -c "from legalworkbench.cli import app; app()" init
           python -c "from legalworkbench.cli import app; app()" eval --scaled
           python -c "from legalworkbench.cli import app; app()" eval-baseline --dataset synthetic --json > baseline.json
+          python -c "from legalworkbench.cli import app; app()" eval-real --methods rule_only --json > real_rule.json
           python - <<'EOF'
           import json
+          # 合成集自规则引擎重写为不利模式检测后已饱和，作回归下限护栏使用
           rows = {row["method"]: row for row in json.load(open("baseline.json"))}
-          assert rows["rule_only"]["risk_recall_at_10"] < rows["rag_only"]["risk_recall_at_10"] <= rows["full_system"]["risk_recall_at_10"], rows
-          print("baseline ordering ok:", {k: v["risk_recall_at_10"] for k, v in rows.items()})
+          assert rows["full_system"]["risk_recall_at_10"] >= 0.95, rows
+          assert rows["rule_only"]["risk_recall_at_10"] >= 0.9, rows
+          # 真实合同集：规则层必须同时守住精确率与注入召回，防止规则改动回退
+          real = json.load(open("real_rule.json"))
+          rule = next(m for m in real["methods"] if m["method"] == "rule_only")
+          assert rule["precision"] >= 0.5, rule
+          assert rule["injected_recall"] >= 0.7, rule
+          print("regression floors ok:", {
+              "synthetic_full": rows["full_system"]["risk_recall_at_10"],
+              "real_rule_precision": rule["precision"],
+              "real_rule_injected_recall": rule["injected_recall"],
+          })
           EOF

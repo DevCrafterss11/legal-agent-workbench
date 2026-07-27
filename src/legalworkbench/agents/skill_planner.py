@@ -29,21 +29,31 @@ class SkillPlannerAgent(LegalReviewAgent):
         ctx.run.selected_skills = [skill.name for skill in selected]
         profile = dict(ctx.skills.review_profile(ctx.run.contract_type))
 
-        decision = ctx.llm.decide(
-            task="plan_review",
-            payload={
-                "contract_type": ctx.run.contract_type,
-                "clause_titles": [clause.title for clause in ctx.run.clauses][:20],
-                "current_risk_focus": list(profile.get("risk_focus") or []),
-                "default_retrieval_top_k": int(profile.get("retrieval_top_k") or 10),
-                "allowed_risk_types": list(KNOWN_RISK_TYPES),
-                "instruction": (
-                    "判断该合同是否需要调整检索深度或补充风险关注点。"
-                    '返回 {"adjust": bool, "retrieval_top_k": int, "extra_risk_focus": [..], "reason": str}。'
-                ),
-            },
-            fallback={"adjust": False},
-        )
+        if len(ctx.run.clauses) <= 3:
+            # 短合同的完整条款已经能在一次检索中覆盖，远端模型调整 top-k
+            # 收益很低，却会固定增加一次网络往返。
+            decision = {
+                "adjust": False,
+                "decision_source": "short_contract_fast_path",
+                "reason": "three or fewer clauses use the configured skill profile",
+            }
+        else:
+            decision = ctx.llm.decide(
+                task="plan_review",
+                payload={
+                    "contract_type": ctx.run.contract_type,
+                    "clause_titles": [clause.title for clause in ctx.run.clauses][:20],
+                    "current_risk_focus": list(profile.get("risk_focus") or []),
+                    "default_retrieval_top_k": int(profile.get("retrieval_top_k") or 10),
+                    "allowed_risk_types": list(KNOWN_RISK_TYPES),
+                    "instruction": (
+                        "判断该合同是否需要调整检索深度或补充风险关注点。"
+                        '返回 {"adjust": bool, "retrieval_top_k": int, '
+                        '"extra_risk_focus": [..], "reason": str}。'
+                    ),
+                },
+                fallback={"adjust": False},
+            )
         if decision.get("adjust"):
             try:
                 requested = int(decision.get("retrieval_top_k") or profile.get("retrieval_top_k") or 10)

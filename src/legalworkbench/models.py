@@ -161,13 +161,17 @@ class BenchmarkCase(BaseModel):
 
 
 class BenchmarkResult(BaseModel):
+    """合成回归 benchmark 结果。
+
+    只保留能从数据真实计算的指标；tool_success_rate / context_retention_rate /
+    hallucination_block_rate 属于单次审查的运行期指标，由 observability.trace
+    从真实 run 计算，不在这里出现。
+    """
+
     cases: int
     risk_recall_at_10: float
     source_coverage: float
-    tool_success_rate: float
     memory_recall_at_5: float
-    context_retention_rate: float
-    hallucination_block_rate: float
 
 
 class HumanAnnotatedRisk(BaseModel):

@@ -1,21 +1,37 @@
-from pathlib import Path
 import base64
 import json
+from pathlib import Path
 
 from typer.testing import CliRunner
 
+import legalworkbench.rag.service as rag_service
 from legalworkbench.cli import app
+from legalworkbench.documents.store import ContractDocumentStore
+from legalworkbench.evals import (
+    BaselineEvaluator,
+    HumanBenchmarkRunner,
+    format_baseline_table,
+)
 from legalworkbench.feishu_api import FeishuApiError, FeishuDownloadedFile
-from legalworkbench.feishu_events import FeishuEventBridge, extract_document_id, normalize_feishu_event_payload
+from legalworkbench.feishu_events import (
+    FeishuEventBridge,
+    extract_document_id,
+    normalize_feishu_event_payload,
+)
 from legalworkbench.feishu_stream import FeishuLongConnectionListener
 from legalworkbench.lark_mcp import configure_lark_mcp, lark_mcp_status
 from legalworkbench.mcp import _run_async_blocking
-from legalworkbench.documents.store import ContractDocumentStore
-from legalworkbench.evals import BaselineEvaluator, HumanBenchmarkRunner, format_baseline_table
-from legalworkbench.models import ContractClause, KnowledgeEntry, LegalMemory, LegalSkill, RetrievedEvidence, ReviewRun, RiskFinding
+from legalworkbench.models import (
+    ContractClause,
+    KnowledgeEntry,
+    LegalMemory,
+    LegalSkill,
+    RetrievedEvidence,
+    ReviewRun,
+    RiskFinding,
+)
 from legalworkbench.paths import knowledge_dir, skills_path
 from legalworkbench.rag import clear_rag_service_cache, get_rag_service
-import legalworkbench.rag.service as rag_service
 from legalworkbench.runtime import LegalAgentRuntime
 from legalworkbench.secrets import connector_secret
 from legalworkbench.store import write_model_list
@@ -35,11 +51,13 @@ def test_runtime_review_eval_and_cli(tmp_path: Path) -> None:
     assert run.mcp_context["agent_architecture"]["pattern"] == "supervisor_worker"
     assert "evidence_agent" in run.mcp_context["agent_architecture"]["workers"]
     assert "Agent 执行架构" in run.report_markdown
-    assert any(trace.metadata.get("agent") == "evidence_agent" for trace in run.tool_calls)
+    assert any(
+        trace.metadata.get("agent") == "evidence_agent" for trace in run.tool_calls
+    )
 
     result = runtime.benchmark()
     assert result.cases >= 1
-    assert result.tool_success_rate == 1.0
+    assert 0.0 <= result.risk_recall_at_10 <= 1.0
 
     runner = CliRunner()
     cli_result = runner.invoke(app, ["runs", "--cwd", str(tmp_path)])
@@ -116,7 +134,9 @@ def test_baseline_evaluator_and_cli(tmp_path: Path) -> None:
     assert "full_system" in format_baseline_table(rows)
 
     runner = CliRunner()
-    cli_result = runner.invoke(app, ["eval-baseline", "--cwd", str(tmp_path), "--dataset", "synthetic"])
+    cli_result = runner.invoke(
+        app, ["eval-baseline", "--cwd", str(tmp_path), "--dataset", "synthetic"]
+    )
     assert cli_result.exit_code == 0
     assert "Baseline comparison" in cli_result.output
     assert "rule_only" in cli_result.output
@@ -138,7 +158,10 @@ def test_lark_mcp_configuration_keeps_secret_local(tmp_path: Path) -> None:
     assert secret["APP_SECRET"] == "test_secret_value"
 
     status_again = lark_mcp_status(tmp_path)
-    assert status_again["tools"] == ["docx.v1.document.rawContent", "task.v2.task.create"]
+    assert status_again["tools"] == [
+        "docx.v1.document.rawContent",
+        "task.v2.task.create",
+    ]
     assert "test_secret_value" not in str(status_again)
 
     runner = CliRunner()
@@ -160,7 +183,10 @@ def test_feishu_event_bridge_challenge_and_text_review(tmp_path: Path) -> None:
     bridge = FeishuEventBridge(tmp_path)
 
     assert bridge.handle({"challenge": "abc"}) == {"challenge": "abc"}
-    assert extract_document_id("https://example.feishu.cn/docx/AbCdEf123456") == "AbCdEf123456"
+    assert (
+        extract_document_id("https://example.feishu.cn/docx/AbCdEf123456")
+        == "AbCdEf123456"
+    )
     unauthenticated = bridge.handle({"schema": "2.0", "event": {}})
     assert unauthenticated["ok"] is False
     assert "authentication is not configured" in unauthenticated["error"]
@@ -214,14 +240,22 @@ def test_feishu_event_bridge_ignores_duplicate_message(tmp_path: Path) -> None:
 
 
 def test_feishu_event_bridge_ignores_self_app_message(tmp_path: Path) -> None:
-    configure_lark_mcp(tmp_path, app_id="cli_self_app", app_secret="test_secret_value", tools=["im.v1.message.create"])
+    configure_lark_mcp(
+        tmp_path,
+        app_id="cli_self_app",
+        app_secret="test_secret_value",
+        tools=["im.v1.message.create"],
+    )
     bridge = FeishuEventBridge(tmp_path)
     result = bridge.handle(
         {
             "schema": "2.0",
             "header": {"event_type": "im.message.receive_v1"},
             "event": {
-                "sender": {"sender_type": "app", "sender_id": {"app_id": "cli_self_app"}},
+                "sender": {
+                    "sender_type": "app",
+                    "sender_id": {"app_id": "cli_self_app"},
+                },
                 "message": {
                     "message_id": "msg_self",
                     "chat_id": "oc_test",
@@ -238,9 +272,12 @@ def test_feishu_event_bridge_ignores_self_app_message(tmp_path: Path) -> None:
     assert LegalAgentRuntime(tmp_path).store.list_runs() == []
 
 
-def test_feishu_event_bridge_downloads_and_reviews_file_attachment(tmp_path: Path) -> None:
-    from docx import Document
+def test_feishu_event_bridge_downloads_and_reviews_file_attachment(
+    tmp_path: Path,
+) -> None:
     from io import BytesIO
+
+    from docx import Document
 
     LegalAgentRuntime(tmp_path).init_samples()
     bridge = FeishuEventBridge(tmp_path)
@@ -271,7 +308,7 @@ def test_feishu_event_bridge_downloads_and_reviews_file_attachment(tmp_path: Pat
                     "message_id": "msg_file",
                     "chat_id": "",
                     "message_type": "file",
-                        "content": '{"file_key":"file_v3_test","file_name":"contract.docx"}',
+                    "content": '{"file_key":"file_v3_test","file_name":"contract.docx"}',
                 },
             },
         },
@@ -370,7 +407,9 @@ def test_feishu_reply_is_actionable_for_high_risk_clause(tmp_path: Path) -> None
     assert "累计赔偿总额不超过事故发生前十二个月" in reply
 
 
-def test_clause_rewriter_prefers_specific_template_over_short_rule(tmp_path: Path) -> None:
+def test_clause_rewriter_prefers_specific_template_over_short_rule(
+    tmp_path: Path,
+) -> None:
     result = ClauseRewriterTool().execute(
         {
             "risk_type": "unlimited_liability",
@@ -421,7 +460,9 @@ def test_uploaded_docx_can_be_reviewed(tmp_path: Path) -> None:
     assert "累计赔偿总额不超过事故发生前十二个月" in run.findings[0].suggestion
 
 
-def test_encrypted_uploaded_contract_can_be_reviewed(tmp_path: Path, monkeypatch) -> None:
+def test_encrypted_uploaded_contract_can_be_reviewed(
+    tmp_path: Path, monkeypatch
+) -> None:
     monkeypatch.setenv("LEGAL_WORKBENCH_ENCRYPTION_PROVIDER", "env")
     monkeypatch.setenv(
         "LEGAL_WORKBENCH_ENCRYPTION_KEY",
@@ -463,7 +504,9 @@ def test_rag_service_factory_reuses_warm_instance(tmp_path: Path, monkeypatch) -
     assert calls["count"] == 1
 
 
-def test_review_reuses_rag_service_across_clause_retrievals(tmp_path: Path, monkeypatch) -> None:
+def test_review_reuses_rag_service_across_clause_retrievals(
+    tmp_path: Path, monkeypatch
+) -> None:
     LegalAgentRuntime(tmp_path).init_samples()
     clear_rag_service_cache()
     calls = {"count": 0}
@@ -499,13 +542,17 @@ def test_rag_service_cache_invalidates_when_knowledge_changes(tmp_path: Path) ->
     clear_rag_service_cache()
     first = get_rag_service(tmp_path)
     knowledge_path = paths["knowledge"]
-    knowledge_path.write_text(knowledge_path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+    knowledge_path.write_text(
+        knowledge_path.read_text(encoding="utf-8") + "\n", encoding="utf-8"
+    )
     second = get_rag_service(tmp_path)
 
     assert first is not second
 
 
-def test_feishu_long_connection_status_and_payload_normalization(tmp_path: Path) -> None:
+def test_feishu_long_connection_status_and_payload_normalization(
+    tmp_path: Path,
+) -> None:
     configure_lark_mcp(
         tmp_path,
         app_id="cli_test_app",
@@ -575,13 +622,17 @@ def test_skill_focus_can_promote_rag_evidence_into_finding(tmp_path: Path) -> No
         ],
     )
     contract = tmp_path / "support.md"
-    contract.write_text("## 单方解除\n任一方可以随时单方解除本合同，无需提前通知。", encoding="utf-8")
+    contract.write_text(
+        "## 单方解除\n任一方可以随时单方解除本合同，无需提前通知。", encoding="utf-8"
+    )
 
     run = LegalAgentRuntime(tmp_path).review(contract)
 
     assert "support_contract_review" in run.selected_skills
     assert run.mcp_context["skill_profile"]["retrieval_top_k"] == 12
-    finding = next(item for item in run.findings if item.risk_type == "termination_notice")
+    finding = next(
+        item for item in run.findings if item.risk_type == "termination_notice"
+    )
     assert "skill_focus" in finding.rule_hits
     assert "Skill 审查策略" in run.report_markdown
 
@@ -621,7 +672,9 @@ def test_task_queue_reviews_uploaded_contract_and_links_report(tmp_path: Path) -
 def test_task_queue_can_delete_invalid_legacy_failures(tmp_path: Path) -> None:
     queue = ReviewTaskQueue(tmp_path)
     invalid = queue.add(title="旧任务", source="manual")
-    valid = queue.add(title="有效失败任务", source="manual", contract_path="/tmp/missing.md")
+    valid = queue.add(
+        title="有效失败任务", source="manual", contract_path="/tmp/missing.md"
+    )
     queue.update(invalid["task_id"], status="failed", error="contract_path required")
     queue.update(valid["task_id"], status="failed", error="missing file")
 

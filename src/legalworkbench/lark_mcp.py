@@ -245,7 +245,7 @@ def lark_mcp_status(cwd: str | Path | None = None, *, server_name: str = DEFAULT
         "app_id_configured": bool(server.get("app_id") or secret.get("APP_ID")),
         "app_secret_configured": bool(secret.get("APP_SECRET")),
         "user_access_token_configured": bool(secret.get("USER_ACCESS_TOKEN")),
-        "auth_mode": server.get("auth_mode") or "mock",
+        "auth_mode": server.get("auth_mode") or "unconfigured",
         "domain": server.get("domain") or "https://open.feishu.cn",
         "tools": _as_list(server.get("tools")) or DEFAULT_LEGAL_TOOLS,
         "server": safe_server_config(server_name, server, cwd) if server else {},

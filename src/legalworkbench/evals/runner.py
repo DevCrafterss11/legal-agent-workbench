@@ -38,8 +38,5 @@ class BenchmarkRunner:
             cases=len(cases),
             risk_recall_at_10=round(recall_hits / max(1, expected_total), 4),
             source_coverage=round(source_hits / max(1, expected_total), 4),
-            tool_success_rate=1.0,
             memory_recall_at_5=round(memory_hits / max(1, len(cases)), 4),
-            context_retention_rate=0.92,
-            hallucination_block_rate=0.0,
         )

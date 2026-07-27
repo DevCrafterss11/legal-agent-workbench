@@ -30,7 +30,6 @@ class McpConnectorRegistry:
             "configured_servers": sorted(servers),
             "connected": [],
             "failed": [],
-            "mocked": [],
             "tools": [],
             "resources": [],
             "server_status": {},
@@ -41,24 +40,22 @@ class McpConnectorRegistry:
             if isinstance(server, dict):
                 payload["server_status"][name] = safe_server_config(name, server, self.cwd)
         if connect:
+            # 只做真实连接：连不上就报 failed 并带上错误，绝不伪造工具目录。
             for name, server in servers.items():
-                server_type = str(server.get("type") or "mock") if isinstance(server, dict) else "mock"
-                hydrated = hydrate_lark_server_config(name, server, self.cwd) if isinstance(server, dict) else server
+                server_type = str(server.get("type") or "") if isinstance(server, dict) else ""
+                if server_type not in {"stdio", "http"}:
+                    payload["failed"].append(
+                        {"server": name, "error": f"unsupported server type: {server_type or 'unset'}"}
+                    )
+                    continue
+                hydrated = hydrate_lark_server_config(name, server, self.cwd)
                 connected = _try_real_mcp_connection(name, hydrated)
-                if connected["connected"] and server_type in {"stdio", "http"}:
+                if connected["connected"]:
                     payload["connected"].append(name)
                     payload["tools"].extend(connected["tools"])
                     payload["resources"].extend(connected["resources"])
-                    continue
-                if isinstance(server, dict) and server_type in {"stdio", "http"}:
-                    payload["failed"].append({"server": name, "error": connected["error"], "fallback": "mock_catalog"})
-                    payload["tools"].extend(_mock_tools_for_server(name, server))
-                    payload["resources"].extend(_mock_resources_for_server(name, server))
                 else:
-                    payload["connected"].append(name)
-                    payload["mocked"].append(name)
-                    payload["tools"].extend(_mock_tools_for_server(name, server))
-                    payload["resources"].extend(_mock_resources_for_server(name, server))
+                    payload["failed"].append({"server": name, "error": connected["error"]})
         return payload
 
     def call_tool(self, server_name: str, tool_name: str, arguments: dict[str, Any], *, timeout: float = 12.0) -> dict[str, Any]:
@@ -86,36 +83,12 @@ class McpConnectorRegistry:
         return raw if isinstance(raw, dict) else {"mcp_servers": {}}
 
 
-def _mock_tools_for_server(name: str, server: object) -> list[dict[str, str]]:
-    del server
-    if "feishu" in name.lower():
-        return [
-            {"server": name, "name": "read_feishu_doc", "description": "Read contract text from Feishu Docs"},
-            {"server": name, "name": "write_review_report", "description": "Write legal review report back to Feishu"},
-            {"server": name, "name": "create_approval_task", "description": "Create human-review approval task"},
-        ]
-    if "notion" in name.lower():
-        return [
-            {"server": name, "name": "query_contract_playbook", "description": "Query Notion legal playbook database"},
-            {"server": name, "name": "append_review_record", "description": "Append review result to Notion database"},
-        ]
-    return [{"server": name, "name": "list_resources", "description": "List enterprise connector resources"}]
-
-
-def _mock_resources_for_server(name: str, server: object) -> list[dict[str, str]]:
-    del server
-    return [
-        {"server": name, "name": "contract_templates", "uri": f"mcp://{name}/contract_templates"},
-        {"server": name, "name": "review_audit_log", "uri": f"mcp://{name}/audit_log"},
-    ]
-
-
 def _try_real_mcp_connection(name: str, server: object) -> dict[str, Any]:
     if not isinstance(server, dict):
         return {"connected": False, "tools": [], "resources": [], "error": "server config is not a mapping"}
-    server_type = str(server.get("type") or "mock")
+    server_type = str(server.get("type") or "")
     if server_type not in {"stdio", "http"}:
-        return {"connected": False, "tools": [], "resources": [], "error": "mock connector"}
+        return {"connected": False, "tools": [], "resources": [], "error": f"unsupported server type: {server_type or 'unset'}"}
     try:
         timeout = float(server.get("connect_timeout") or 8.0)
         return _run_async_blocking(_connect_mcp_async(name, server), timeout=timeout)

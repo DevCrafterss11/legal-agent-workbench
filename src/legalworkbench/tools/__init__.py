@@ -1,26 +1,6 @@
-"""Tool registry and legal review tool implementations."""
-
-from legalworkbench.tools.base import ToolContext, ToolResult, LegalTool, ToolRegistry
-from legalworkbench.tools.contract import ContractParserTool
-from legalworkbench.tools.retrieval import ClauseRetrieverTool
-from legalworkbench.tools.risk import RiskRuleTool
-from legalworkbench.tools.governance import PermissionGuardTool
-from legalworkbench.tools.report import ReportExportTool
-
-__all__ = [
-    "ToolContext",
-    "ToolResult",
-    "LegalTool",
-    "ToolRegistry",
-    "ContractParserTool",
-    "ClauseRetrieverTool",
-    "RiskRuleTool",
-    "PermissionGuardTool",
-    "ReportExportTool",
-]
 """Registered tools for the legal agent runtime."""
 
-from legalworkbench.tools.base import ToolRegistry
+from legalworkbench.tools.base import ToolContext, ToolResult, LegalTool, ToolRegistry
 from legalworkbench.tools.contract import ContractParserTool
 from legalworkbench.tools.governance import PermissionGuardTool
 from legalworkbench.tools.report import ReportExportTool
@@ -43,12 +23,15 @@ def build_default_tool_registry() -> ToolRegistry:
 
 
 __all__ = [
-    "build_default_tool_registry",
     "ClauseRetrieverTool",
     "ClauseRewriterTool",
     "ContractParserTool",
+    "LegalTool",
     "PermissionGuardTool",
     "ReportExportTool",
     "RiskRuleTool",
+    "ToolContext",
     "ToolRegistry",
+    "ToolResult",
+    "build_default_tool_registry",
 ]

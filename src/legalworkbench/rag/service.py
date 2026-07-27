@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import json
 from pathlib import Path
 import threading
 from typing import Any
 
 from legalworkbench.models import KnowledgeEntry, RetrievedEvidence
-from legalworkbench.paths import settings_path
+from legalworkbench.fs import atomic_write_text
+from legalworkbench.paths import settings_path, workspace_dir
 from legalworkbench.rag.embeddings import EmbeddingModel, HashingEmbeddingModel, SentenceTransformerEmbeddingModel
 from legalworkbench.rag.reranker import build_reranker
 from legalworkbench.rag.vector_store import InMemoryVectorStore, MilvusVectorStore, VectorStore
@@ -27,6 +29,7 @@ class RagConfig:
     embedding_device: str = "cpu"
     embedding_normalize: bool = True
     embedding_fallback: bool = True
+    embedding_batch_size: int = 64
     lexical_top_k: int = 32
     vector_top_k: int = 32
     final_top_k: int = 10
@@ -56,7 +59,9 @@ class LegalRagService:
         self.store = WorkbenchStore(self.cwd)
         self.vector_store = self._build_vector_store()
         self._indexed_entries: list[KnowledgeEntry] = []
-        self.reindex()
+        self.index_reused = False
+        self.index_fingerprint = _knowledge_fingerprint(self.cwd)
+        self._prepare_index()
 
     def _build_vector_store(self) -> VectorStore:
         if self.config.vector_backend.lower() == "milvus":
@@ -78,11 +83,53 @@ class LegalRagService:
                     raise
         return HashingEmbeddingModel()
 
-    def reindex(self) -> None:
+    def _prepare_index(self) -> None:
         entries = self.store.load_knowledge()
-        vectors = [self.embedding_model.embed(_entry_text(entry)) for entry in entries]
+        self._indexed_entries = entries
+        if isinstance(self.vector_store, MilvusVectorStore) and self._can_reuse_milvus(entries):
+            self.index_reused = True
+            self._write_index_state(entries)
+            return
+        self.reindex(entries)
+
+    def _can_reuse_milvus(self, entries: list[KnowledgeEntry]) -> bool:
+        state = _load_index_state(self.cwd)
+        expected = self._index_state(entries)
+        if state and any(state.get(key) != value for key, value in expected.items()):
+            return False
+        return self.vector_store.can_reuse(entries, dimension=self.embedding_model.dimensions)
+
+    def reindex(self, entries: list[KnowledgeEntry] | None = None) -> None:
+        entries = entries if entries is not None else self.store.load_knowledge()
+        vectors = self.embedding_model.embed_many(
+            [_entry_text(entry) for entry in entries],
+            batch_size=self.config.embedding_batch_size,
+        )
         self.vector_store.upsert(entries, vectors)
         self._indexed_entries = entries
+        self.index_reused = False
+        self.index_fingerprint = _knowledge_fingerprint(self.cwd)
+        self._write_index_state(entries)
+
+    def _index_state(self, entries: list[KnowledgeEntry]) -> dict[str, Any]:
+        return {
+            "version": 1,
+            "knowledge_fingerprint": self.index_fingerprint,
+            "entries": len(entries),
+            "vector_backend": self.config.vector_backend,
+            "milvus_uri": self.config.milvus_uri,
+            "collection": self.config.collection,
+            "embedding_model": self.embedding_model.name,
+            "dimensions": self.embedding_model.dimensions,
+        }
+
+    def _write_index_state(self, entries: list[KnowledgeEntry]) -> None:
+        if not isinstance(self.vector_store, MilvusVectorStore):
+            return
+        atomic_write_text(
+            _index_state_path(self.cwd),
+            json.dumps(self._index_state(entries), ensure_ascii=False, indent=2) + "\n",
+        )
 
     def retrieve(self, query: str, *, contract_type: str, top_k: int | None = None) -> list[RetrievedEvidence]:
         final_top_k = top_k or self.config.final_top_k
@@ -161,12 +208,15 @@ class LegalRagService:
             "rerank_error": self.rerank_error,
             "vector_store": self.vector_store.status(),
             "indexed_entries": len(self._indexed_entries),
+            "index_reused": self.index_reused,
+            "knowledge_fingerprint": self.index_fingerprint,
             "config": self.config.__dict__,
         }
 
 
 _SERVICE_CACHE: dict[tuple[str, str, str], LegalRagService] = {}
 _SERVICE_CACHE_LOCK = threading.Lock()
+_SERVICE_BUILDING: set[str] = set()
 
 
 def get_rag_service(cwd: str | Path | None = None) -> LegalRagService:
@@ -181,8 +231,12 @@ def get_rag_service(cwd: str | Path | None = None) -> LegalRagService:
     with _SERVICE_CACHE_LOCK:
         service = _SERVICE_CACHE.get(key)
         if service is None:
-            service = LegalRagService(root, config=config)
-            _SERVICE_CACHE[key] = service
+            _SERVICE_BUILDING.add(str(root))
+            try:
+                service = LegalRagService(root, config=config)
+                _SERVICE_CACHE[key] = service
+            finally:
+                _SERVICE_BUILDING.discard(str(root))
         return service
 
 
@@ -213,6 +267,8 @@ def lightweight_rag_status(cwd: str | Path | None = None) -> dict[str, Any]:
             "warm": False,
         },
         "indexed_entries": 0,
+        "index_reused": False,
+        "warming": str(root) in _SERVICE_BUILDING,
         "config": config.__dict__,
         "warm": False,
     }
@@ -245,7 +301,22 @@ def _knowledge_fingerprint(cwd: Path) -> str:
         except FileNotFoundError:
             continue
         parts.append(f"{path.name}:{stat.st_mtime_ns}:{stat.st_size}")
-    return "|".join(parts)
+    return hashlib.sha256("|".join(parts).encode("utf-8")).hexdigest()
+
+
+def _index_state_path(cwd: Path) -> Path:
+    return workspace_dir(cwd) / "rag_index_state.json"
+
+
+def _load_index_state(cwd: Path) -> dict[str, Any]:
+    path = _index_state_path(cwd)
+    if not path.exists():
+        return {}
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return value if isinstance(value, dict) else {}
 
 
 def _load_rag_config(cwd: Path) -> RagConfig:
@@ -268,6 +339,7 @@ def _load_rag_config(cwd: Path) -> RagConfig:
         embedding_device=str(rag.get("embedding_device") or "cpu"),
         embedding_normalize=bool(rag.get("embedding_normalize", True)),
         embedding_fallback=bool(rag.get("embedding_fallback", True)),
+        embedding_batch_size=max(1, int(rag.get("embedding_batch_size") or 64)),
         lexical_top_k=int(rag.get("lexical_top_k") or 32),
         vector_top_k=int(rag.get("vector_top_k") or 32),
         final_top_k=int(rag.get("final_top_k") or 10),
