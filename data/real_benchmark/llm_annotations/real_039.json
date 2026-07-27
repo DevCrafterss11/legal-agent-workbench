@@ -1,0 +1,68 @@
+{
+  "contract_id": "real_039",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C006",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "学驾人一次性支付理论知识培训费与教材费等，可能存在付款过度前置的风险。",
+      "expected_suggestion": "建议改为分期支付或根据实际完成培训进度支付，以降低付款风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "先学后付模式下仅理论与教材等小额费用预付，驾驶培训每次结束后按学时付费，付款结构整体对学员有利"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "data_security",
+      "risk_level": "medium",
+      "rationale": "如确因培训机构过错导致学驾人个人信息泄露的，应承担相应的法律责任。",
+      "expected_suggestion": "增加个人信息泄露时的具体赔偿标准和处理流程，以及泄露通知的时限和方式。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款系培训机构的信息保护义务及泄露担责承诺，属保护学员条款，非风险"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "sla_remedy",
+      "risk_level": "low",
+      "rationale": "未明确服务水平无故障分级、响应时限和补偿标准。",
+      "expected_suggestion": "明确服务水平标准，包括故障分级、响应时限和相应的补偿措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "对驾培服务合同泛化套用SLA概念，属凭空过度解读"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "培训机构可单方解除合同且无明确通知期。",
+      "expected_suggestion": "建议增加培训机构单方解除合同的通知期限，并明确通知方式。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "培训机构解除权仅限学员不具备申领驾照资格或严重扰乱教学安全秩序拒不纠正等法定化情形，且解除后须退还未培训费用，非任意解除"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "因学驾人原因造成预约成功后不能参加培训的（包括没有成功取消预约的），学驾人应按本次预约培训费用的 % 支付违约金。",
+      "expected_suggestion": "建议增加学驾人取消预约的通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "违约金比例为空白待填，且培训机构对应违约金比率明文约定不小于学员一侧，双向对等；归入termination_notice亦错误"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同中未明确付款周期与验收/成果确认的绑定关系，可能导致付款前置或过度预付",
+      "expected_suggestion": "建议明确付款周期与验收/成果确认的绑定关系，确保付款与培训服务的完成和质量相匹配",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为合同份数生效条款及费用明细表附件，无付款前置内容，rationale凭空"
+    }
+  ],
+  "errors": []
+}

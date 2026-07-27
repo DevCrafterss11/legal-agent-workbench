@@ -1,0 +1,78 @@
+{
+  "contract_id": "real_048",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C001",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "合同中未明确付款周期和方式，可能导致付款过度前置。",
+      "expected_suggestion": "明确约定付款周期和方式，避免一次性预付或过度前置付款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C001为协议书封面空白填写页，付款周期在通用/专用条款另有约定，属对示范文本留白的过度解读"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "合同中未提及服务水平故障分级、响应时限和补偿措施。",
+      "expected_suggestion": "增加服务水平协议条款，明确故障分级、响应时限和相应的补偿措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "招标代理合同无SLA概念，纯属对缺失内容的机械套模板"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定解除合同的通知期限和交接事宜。",
+      "expected_suggestion": "增加合同解除条款，明确双方解除合同的通知期限和交接责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "封面页本无解除内容，通用条款第五部分已有变更解除约定，属缺失式过度标注"
+    },
+    {
+      "clause_id": "C003",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同中规定委托人应在合同签订后10日内支付不少于全部代理报酬20%的代理预付款，以及在中标人与委托人签订承包合同5日内支付全部代理报酬，付款过度前置且存在一次性预付的风险。",
+      "expected_suggestion": "建议调整付款周期，避免过度前置和一次性预付，可以采用分期付款的方式，降低甲方财务风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "20%预付款系服务类合同常规且额度可在专用条款另行约定，非明显不利；'5日内一次性支付全部报酬'系'由中标人支付'情形，rationale误读为委托人义务"
+    },
+    {
+      "clause_id": "C003",
+      "risk_type": "termination_notice",
+      "risk_level": "low",
+      "rationale": "合同中未明确约定单方任意解除合同且无通知期的情况，但需注意通用条款中可能存在的此类风险。",
+      "expected_suggestion": "建议在专用条款中明确约定解除合同的通知期限和条件，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "自认'未明确约定'并猜测'可能存在'，无条款依据的推测式标注；通用条款解除须双方协商一致，均衡"
+    },
+    {
+      "clause_id": "C003",
+      "risk_type": "sla_remedy",
+      "risk_level": "low",
+      "rationale": "合同中未明确服务水平无故障分级、响应时限和补偿的具体内容，需关注通用条款中可能存在的此类风险。",
+      "expected_suggestion": "建议在专用条款中详细约定服务水平标准、故障响应时限和相应的补偿措施，保障甲方服务质量。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "招标代理合同无SLA概念，缺失式推测标注"
+    },
+    {
+      "clause_id": "C004",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定仲裁委员会或法院的具体信息，可能导致争议解决的不确定性。",
+      "expected_suggestion": "明确约定争议解决的具体仲裁委员会或法院信息，确保争议解决的可操作性。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁/诉讼二选一及机构名称留空系示范文本标准填写项，属正常留白"
+    }
+  ],
+  "errors": []
+}

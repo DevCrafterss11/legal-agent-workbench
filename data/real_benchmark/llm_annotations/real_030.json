@@ -1,0 +1,20 @@
+{
+  "contract_id": "real_030",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C004",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定双方协商一致后的具体仲裁机构或法院，可能导致甲方在争议解决时处于不利地位。",
+      "expected_suggestion": "建议明确约定争议解决的具体仲裁机构或法院，以及仲裁或诉讼的优先顺序。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁/诉讼二选一为示范文本正常待填留白，双向中性，不构成对存货人一方的书面风险。"
+    }
+  ],
+  "errors": [
+    "C005: _ssl.c:993: The handshake operation timed out"
+  ]
+}

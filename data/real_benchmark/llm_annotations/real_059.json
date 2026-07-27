@@ -1,0 +1,108 @@
+{
+  "contract_id": "real_059",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C005",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "因甲方未按约定完成工作，影响工期，工期顺延。",
+      "expected_suggestion": "建议增加甲方未按约定完成工作导致工期延误时的责任承担条款，以平衡双方权利义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "甲方原因致工期顺延系正常对等的工期安排，与解除通知无关，归类错误。"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方不按时参加隐蔽工程和中间工程验收，乙方可自行验收，甲方应予承认。",
+      "expected_suggestion": "增加甲方未按时验收的违约责任条款，如赔偿乙方因自行验收而产生的额外费用。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方自行验收以甲方怠于到场为前提且甲方仍保留复验权，系施工示范文本通行安排，且与解除通知归类不符。"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "若甲方要求复验时，乙方应按要求办理复验。若复验合格，甲方应承担复验费用，由此造成停工，工期顺延；若复验不合格，其复验及返工费用由乙方承担，但工期也予顺延。",
+      "expected_suggestion": "明确复验不合格的工期顺延补偿标准，确保甲方承担合理的责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "复验费用按责任方分担系均衡安排，隐蔽工程返工顺延为示范文本通行处理，sla_remedy归类不当。"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "payment_acceptance",
+      "risk_level": "low",
+      "rationale": "条款中未明确付款与验收/成果确认的绑定关系。",
+      "expected_suggestion": "增加条款，明确验收合格后支付相应款项，确保付款与验收/成果确认绑定。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "付款安排另见第六条（C007），属对质量验收条款的缺失类过度解读。"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "甲方分次支付工程款，尾款竣工结算时一次结清，付款过度前置。",
+      "expected_suggestion": "建议调整付款周期，避免一次性预付或过度前置付款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "分次支付、尾款竣工结清系正常付款结构，付款比例为空白待填表格，'过度前置'无原文依据。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "甲方供应的材料，经乙方验收后，由乙方负责保管，甲方应支付材料价值 % 的保管费。",
+      "expected_suggestion": "建议明确保管费用的计算方式和支付条件，避免无明确标准的费用承担。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "保管费比例为空白待填字段，乙方保管不当须赔偿系对等安排，payment_acceptance归类错误。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "termination_notice",
+      "risk_level": "low",
+      "rationale": "条款中未提及任何关于终止合同的通知期或交接责任。",
+      "expected_suggestion": "建议增加合同终止时的通知期限和交接责任条款，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "对材料供应条款未涉内容的缺失类指摘，非条款书面风险。"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "合同中未对赔偿的间接损失进行限制，且无上限。",
+      "expected_suggestion": "建议增加赔偿上限条款，明确赔偿范围和最高赔偿金额。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "违约责任双向对等且金额均为留白待填，'无上限'系缺失类指摘而非单方不利条款。"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未规定合同解除的通知期限。",
+      "expected_suggestion": "建议增加合同解除的通知期限条款，明确双方在解除合同时的通知义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款已约定'因一方原因合同无法履行时应通知对方，办理合同终止协议'且双向适用，rationale与原文不符。"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定仲裁机构，且在未达成书面仲裁协议时，甲方可能面临向乙方所在地法院起诉的不利情况。",
+      "expected_suggestion": "建议明确约定仲裁机构，并确保仲裁条款对双方均公平，避免争议解决过程中对甲方的不利影响。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁机构留白、诉讼按法定管辖系双向对等的示范条款，'乙方所在地法院'系凭空推测。"
+    }
+  ],
+  "errors": []
+}

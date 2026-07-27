@@ -1,0 +1,1428 @@
+{
+  "variants": [
+    {
+      "variant_id": "real_001_redline",
+      "base_contract_id": "real_001",
+      "contract_type": "general",
+      "file": "contracts/real_001_redline.md",
+      "injected": 3
+    },
+    {
+      "variant_id": "real_003_redline",
+      "base_contract_id": "real_003",
+      "contract_type": "consumer",
+      "file": "contracts/real_003_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_005_redline",
+      "base_contract_id": "real_005",
+      "contract_type": "lease",
+      "file": "contracts/real_005_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_007_redline",
+      "base_contract_id": "real_007",
+      "contract_type": "procurement",
+      "file": "contracts/real_007_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_009_redline",
+      "base_contract_id": "real_009",
+      "contract_type": "construction",
+      "file": "contracts/real_009_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_011_redline",
+      "base_contract_id": "real_011",
+      "contract_type": "sales",
+      "file": "contracts/real_011_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_013_redline",
+      "base_contract_id": "real_013",
+      "contract_type": "service",
+      "file": "contracts/real_013_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_015_redline",
+      "base_contract_id": "real_015",
+      "contract_type": "general",
+      "file": "contracts/real_015_redline.md",
+      "injected": 3
+    },
+    {
+      "variant_id": "real_017_redline",
+      "base_contract_id": "real_017",
+      "contract_type": "consumer",
+      "file": "contracts/real_017_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_019_redline",
+      "base_contract_id": "real_019",
+      "contract_type": "lease",
+      "file": "contracts/real_019_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_021_redline",
+      "base_contract_id": "real_021",
+      "contract_type": "procurement",
+      "file": "contracts/real_021_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_023_redline",
+      "base_contract_id": "real_023",
+      "contract_type": "construction",
+      "file": "contracts/real_023_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_025_redline",
+      "base_contract_id": "real_025",
+      "contract_type": "general",
+      "file": "contracts/real_025_redline.md",
+      "injected": 3
+    },
+    {
+      "variant_id": "real_027_redline",
+      "base_contract_id": "real_027",
+      "contract_type": "sales",
+      "file": "contracts/real_027_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_029_redline",
+      "base_contract_id": "real_029",
+      "contract_type": "lease",
+      "file": "contracts/real_029_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_031_redline",
+      "base_contract_id": "real_031",
+      "contract_type": "general",
+      "file": "contracts/real_031_redline.md",
+      "injected": 3
+    },
+    {
+      "variant_id": "real_033_redline",
+      "base_contract_id": "real_033",
+      "contract_type": "sales",
+      "file": "contracts/real_033_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_035_redline",
+      "base_contract_id": "real_035",
+      "contract_type": "lease",
+      "file": "contracts/real_035_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_037_redline",
+      "base_contract_id": "real_037",
+      "contract_type": "construction",
+      "file": "contracts/real_037_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_039_redline",
+      "base_contract_id": "real_039",
+      "contract_type": "consumer",
+      "file": "contracts/real_039_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_041_redline",
+      "base_contract_id": "real_041",
+      "contract_type": "construction",
+      "file": "contracts/real_041_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_043_redline",
+      "base_contract_id": "real_043",
+      "contract_type": "consumer",
+      "file": "contracts/real_043_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_045_redline",
+      "base_contract_id": "real_045",
+      "contract_type": "construction",
+      "file": "contracts/real_045_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_047_redline",
+      "base_contract_id": "real_047",
+      "contract_type": "general",
+      "file": "contracts/real_047_redline.md",
+      "injected": 3
+    },
+    {
+      "variant_id": "real_049_redline",
+      "base_contract_id": "real_049",
+      "contract_type": "sales",
+      "file": "contracts/real_049_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_051_redline",
+      "base_contract_id": "real_051",
+      "contract_type": "construction",
+      "file": "contracts/real_051_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_053_redline",
+      "base_contract_id": "real_053",
+      "contract_type": "construction",
+      "file": "contracts/real_053_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_055_redline",
+      "base_contract_id": "real_055",
+      "contract_type": "construction",
+      "file": "contracts/real_055_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_057_redline",
+      "base_contract_id": "real_057",
+      "contract_type": "construction",
+      "file": "contracts/real_057_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_059_redline",
+      "base_contract_id": "real_059",
+      "contract_type": "construction",
+      "file": "contracts/real_059_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_061_redline",
+      "base_contract_id": "real_061",
+      "contract_type": "construction",
+      "file": "contracts/real_061_redline.md",
+      "injected": 4
+    },
+    {
+      "variant_id": "real_063_redline",
+      "base_contract_id": "real_063",
+      "contract_type": "general",
+      "file": "contracts/real_063_redline.md",
+      "injected": 3
+    },
+    {
+      "variant_id": "real_065_redline",
+      "base_contract_id": "real_065",
+      "contract_type": "general",
+      "file": "contracts/real_065_redline.md",
+      "injected": 3
+    }
+  ],
+  "gold": {
+    "real_001_redline": [
+      {
+        "clause_id": "C015",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C021",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C022",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_003_redline": [
+      {
+        "clause_id": "C018",
+        "risk_type": "prepaid_refund",
+        "risk_level": "high",
+        "rationale": "预付费用概不退还且余额清零，消费者权益受损。",
+        "expected_suggestion": "建议明确未消费余额退还路径、退款期限与手续费边界。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C019",
+        "risk_type": "data_security",
+        "risk_level": "high",
+        "rationale": "个人信息处理缺少目的限制、安全措施与泄露通知约定。",
+        "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限与责任分担。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C020",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C021",
+        "risk_type": "auto_renewal",
+        "risk_level": "medium",
+        "rationale": "自动续约缺少通知期与退出路径，容易被动续约。",
+        "expected_suggestion": "建议明确续约前至少30日书面通知，并保留到期不续约路径。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_005_redline": [
+      {
+        "clause_id": "C028",
+        "risk_type": "deposit_return",
+        "risk_level": "medium",
+        "rationale": "保证金返还条件、扣除范围和期限均由单方决定。",
+        "expected_suggestion": "建议明确返还条件、扣除范围、返还期限与逾期责任。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C029",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C030",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C031",
+        "risk_type": "auto_renewal",
+        "risk_level": "medium",
+        "rationale": "自动续约缺少通知期与退出路径，容易被动续约。",
+        "expected_suggestion": "建议明确续约前至少30日书面通知，并保留到期不续约路径。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_007_redline": [
+      {
+        "clause_id": "C014",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C022",
+        "risk_type": "ip_ownership",
+        "risk_level": "high",
+        "rationale": "成果归属整体偏向乙方，限制甲方使用与商业化。",
+        "expected_suggestion": "建议交付成果归甲方，乙方背景知识产权另行授权。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C023",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C024",
+        "risk_type": "confidentiality",
+        "risk_level": "medium",
+        "rationale": "保密义务单方且无限期、无例外情形，义务不对等。",
+        "expected_suggestion": "建议双向保密、明确范围期限与法定披露等例外情形。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_009_redline": [
+      {
+        "clause_id": "C013",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C033",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C034",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C035",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_011_redline": [
+      {
+        "clause_id": "C020",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C030",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C031",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C032",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_013_redline": [
+      {
+        "clause_id": "C009",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C015",
+        "risk_type": "sla_remedy",
+        "risk_level": "medium",
+        "rationale": "SLA 缺少故障分级、响应时限和补偿机制。",
+        "expected_suggestion": "建议补充可用性指标、故障分级、响应时限与服务抵扣机制。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C016",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C017",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_015_redline": [
+      {
+        "clause_id": "C015",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C016",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C017",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_017_redline": [
+      {
+        "clause_id": "C019",
+        "risk_type": "prepaid_refund",
+        "risk_level": "high",
+        "rationale": "预付费用概不退还且余额清零，消费者权益受损。",
+        "expected_suggestion": "建议明确未消费余额退还路径、退款期限与手续费边界。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C020",
+        "risk_type": "data_security",
+        "risk_level": "high",
+        "rationale": "个人信息处理缺少目的限制、安全措施与泄露通知约定。",
+        "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限与责任分担。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C021",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C022",
+        "risk_type": "auto_renewal",
+        "risk_level": "medium",
+        "rationale": "自动续约缺少通知期与退出路径，容易被动续约。",
+        "expected_suggestion": "建议明确续约前至少30日书面通知，并保留到期不续约路径。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_019_redline": [
+      {
+        "clause_id": "C016",
+        "risk_type": "deposit_return",
+        "risk_level": "medium",
+        "rationale": "保证金返还条件、扣除范围和期限均由单方决定。",
+        "expected_suggestion": "建议明确返还条件、扣除范围、返还期限与逾期责任。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C017",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C018",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C019",
+        "risk_type": "auto_renewal",
+        "risk_level": "medium",
+        "rationale": "自动续约缺少通知期与退出路径，容易被动续约。",
+        "expected_suggestion": "建议明确续约前至少30日书面通知，并保留到期不续约路径。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_021_redline": [
+      {
+        "clause_id": "C013",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C017",
+        "risk_type": "ip_ownership",
+        "risk_level": "high",
+        "rationale": "成果归属整体偏向乙方，限制甲方使用与商业化。",
+        "expected_suggestion": "建议交付成果归甲方，乙方背景知识产权另行授权。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C018",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C019",
+        "risk_type": "confidentiality",
+        "risk_level": "medium",
+        "rationale": "保密义务单方且无限期、无例外情形，义务不对等。",
+        "expected_suggestion": "建议双向保密、明确范围期限与法定披露等例外情形。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_023_redline": [
+      {
+        "clause_id": "C014",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C029",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C030",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C031",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_025_redline": [
+      {
+        "clause_id": "C025",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C026",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C027",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_027_redline": [
+      {
+        "clause_id": "C008",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C013",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C014",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C015",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_029_redline": [
+      {
+        "clause_id": "C014",
+        "risk_type": "deposit_return",
+        "risk_level": "medium",
+        "rationale": "保证金返还条件、扣除范围和期限均由单方决定。",
+        "expected_suggestion": "建议明确返还条件、扣除范围、返还期限与逾期责任。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C015",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C016",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C017",
+        "risk_type": "auto_renewal",
+        "risk_level": "medium",
+        "rationale": "自动续约缺少通知期与退出路径，容易被动续约。",
+        "expected_suggestion": "建议明确续约前至少30日书面通知，并保留到期不续约路径。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_031_redline": [
+      {
+        "clause_id": "C011",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C019",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C020",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_033_redline": [
+      {
+        "clause_id": "C007",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C013",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C014",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C015",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_035_redline": [
+      {
+        "clause_id": "C011",
+        "risk_type": "deposit_return",
+        "risk_level": "medium",
+        "rationale": "保证金返还条件、扣除范围和期限均由单方决定。",
+        "expected_suggestion": "建议明确返还条件、扣除范围、返还期限与逾期责任。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C012",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C013",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C014",
+        "risk_type": "auto_renewal",
+        "risk_level": "medium",
+        "rationale": "自动续约缺少通知期与退出路径，容易被动续约。",
+        "expected_suggestion": "建议明确续约前至少30日书面通知，并保留到期不续约路径。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_037_redline": [
+      {
+        "clause_id": "C001",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C036",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C037",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C038",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_039_redline": [
+      {
+        "clause_id": "C019",
+        "risk_type": "prepaid_refund",
+        "risk_level": "high",
+        "rationale": "预付费用概不退还且余额清零，消费者权益受损。",
+        "expected_suggestion": "建议明确未消费余额退还路径、退款期限与手续费边界。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C020",
+        "risk_type": "data_security",
+        "risk_level": "high",
+        "rationale": "个人信息处理缺少目的限制、安全措施与泄露通知约定。",
+        "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限与责任分担。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C021",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C022",
+        "risk_type": "auto_renewal",
+        "risk_level": "medium",
+        "rationale": "自动续约缺少通知期与退出路径，容易被动续约。",
+        "expected_suggestion": "建议明确续约前至少30日书面通知，并保留到期不续约路径。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_041_redline": [
+      {
+        "clause_id": "C012",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C036",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C037",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C038",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_043_redline": [
+      {
+        "clause_id": "C026",
+        "risk_type": "prepaid_refund",
+        "risk_level": "high",
+        "rationale": "预付费用概不退还且余额清零，消费者权益受损。",
+        "expected_suggestion": "建议明确未消费余额退还路径、退款期限与手续费边界。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C027",
+        "risk_type": "data_security",
+        "risk_level": "high",
+        "rationale": "个人信息处理缺少目的限制、安全措施与泄露通知约定。",
+        "expected_suggestion": "建议补充处理目的、保存期限、安全措施、泄露通知时限与责任分担。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C028",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C029",
+        "risk_type": "auto_renewal",
+        "risk_level": "medium",
+        "rationale": "自动续约缺少通知期与退出路径，容易被动续约。",
+        "expected_suggestion": "建议明确续约前至少30日书面通知，并保留到期不续约路径。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_045_redline": [
+      {
+        "clause_id": "C019",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C025",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C026",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C027",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_047_redline": [
+      {
+        "clause_id": "C009",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C014",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C015",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_049_redline": [
+      {
+        "clause_id": "C004",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C007",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C008",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C009",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_051_redline": [
+      {
+        "clause_id": "C011",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C018",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C019",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C020",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_053_redline": [
+      {
+        "clause_id": "C023",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C032",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C033",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C034",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_055_redline": [
+      {
+        "clause_id": "C010",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C011",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C012",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C013",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_057_redline": [
+      {
+        "clause_id": "C013",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C018",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C019",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C020",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_059_redline": [
+      {
+        "clause_id": "C010",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C014",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C015",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C016",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_061_redline": [
+      {
+        "clause_id": "C032",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C058",
+        "risk_type": "payment_cycle",
+        "risk_level": "medium",
+        "rationale": "付款过度前置，未与交付进度匹配。",
+        "expected_suggestion": "建议拆分首付款、进度款与尾款，并绑定里程碑。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C059",
+        "risk_type": "payment_acceptance",
+        "risk_level": "medium",
+        "rationale": "付款义务未与验收或成果确认绑定，先付款后争议。",
+        "expected_suggestion": "建议将付款与交付完成、验收通过和发票开具绑定。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C060",
+        "risk_type": "force_majeure",
+        "risk_level": "low",
+        "rationale": "不可抗力免责单方化，缺少通知、证明与减损义务。",
+        "expected_suggestion": "建议约定通知期限、证明材料和双方对等的减损义务。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      }
+    ],
+    "real_063_redline": [
+      {
+        "clause_id": "C007",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C008",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      },
+      {
+        "clause_id": "C009",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ],
+    "real_065_redline": [
+      {
+        "clause_id": "C008",
+        "risk_type": "unlimited_liability",
+        "risk_level": "high",
+        "rationale": "责任范围覆盖间接损失且无金额上限，赔付敞口不可控。",
+        "expected_suggestion": "建议限定为直接损失，并设置累计赔偿上限（如合同总额或近12个月已付费用）。",
+        "mode": "modified",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C014",
+        "risk_type": "jurisdiction",
+        "risk_level": "medium",
+        "rationale": "管辖地单方偏向乙方，增加甲方维权成本和不确定性。",
+        "expected_suggestion": "建议改为甲方所在地法院或双方认可的中立仲裁机构。",
+        "mode": "injected",
+        "phrasing": "explicit"
+      },
+      {
+        "clause_id": "C015",
+        "risk_type": "termination_notice",
+        "risk_level": "medium",
+        "rationale": "单方任意解除且无通知期与交接安排，业务连续性风险高。",
+        "expected_suggestion": "建议设置提前书面通知期、整改期与交接过渡安排。",
+        "mode": "injected",
+        "phrasing": "paraphrase"
+      }
+    ]
+  }
+}

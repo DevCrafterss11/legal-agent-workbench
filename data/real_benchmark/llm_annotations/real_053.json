@@ -1,0 +1,218 @@
+{
+  "contract_id": "real_053",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C006",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "特许经营期限最长不得超过30年，但未明确约定特许经营权授予方在何种情况下可以单方解除合同，且无通知期。",
+      "expected_suggestion": "明确约定特许经营权授予方单方解除合同的条件和通知期限，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "本文本系条款编制指引（'本条主要包括以下内容'），非可执行条款；30年上限为法定要求，终止事项在第二十四条框架另有安排"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "条款中未明确不可抗力事件的范围，且未规定在不可抗力事件发生时双方的通知义务和减损义务。",
+      "expected_suggestion": "明确不可抗力事件的范围，并规定双方在不可抗力事件发生时的通知义务和减损义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "不可抗力范围在第七条定义中已详细列举，双方减损与声称程序在第二十三条已有框架要求，rationale与文本不符"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "特许经营权授予方解除全部或尚未支取的履约保函（或其他方式的担保）项下的金额的时间或条件未明确甲方通知期。",
+      "expected_suggestion": "明确约定甲方解除合同的通知期限和条件，确保甲方有合理的时间进行准备和应对。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文即是'应明确保函解除时间或条件'的编制指引，本身无操作性内容；且保函由项目公司提供，与甲方（授予方）解除通知期无关"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "条款中未明确不可抗力事件的范围和甲方在不可抗力事件发生时的减损义务。",
+      "expected_suggestion": "明确不可抗力事件的范围，并规定甲方在不可抗力事件发生时的减损义务和通知义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条本身规定不可抗力致完工延误时双方责任免除并顺延工期，不可抗力定义见第七条，缺失式过度标注"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "特许经营权授予方选择自行或指定第三方运营和维护的权利，未明确具体的服务水平故障分级、响应时限和补偿措施。",
+      "expected_suggestion": "明确服务水平故障分级、响应时限和相应的补偿措施，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "介入运营权属于甲方（授予方）自身的救济手段，对甲方有利；处置标准由附件2技术规范约定，缺失式标注"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "特许经营权授予方有权在整个特许期内调配垃圾供应，甲方（项目公司）无权单方面解除合同。",
+      "expected_suggestion": "建议增加甲方在特定条件下有权解除合同的权利，并规定相应的通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "rationale将项目公司误认为甲方，本合同甲方即特许经营权授予方，视角颠倒；垃圾调配供应恰是甲方权利"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "项目公司需在特许期内将项目的人民币收入兑换成外汇，可能存在付款过度前置的风险。",
+      "expected_suggestion": "建议明确外汇兑换的具体条件和时间，避免一次性预付或过度前置付款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "外汇兑换系利用外资情形下项目公司的结汇安排，与甲方付款周期毫无关系，归类和事实均错误"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "ip_ownership",
+      "risk_level": "medium",
+      "rationale": "条款中未明确知识产权归属，可能存在成果知识产权归属偏向乙方的情况。",
+      "expected_suggestion": "建议明确知识产权的归属和使用权限，确保甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C017为项目融资与财务管理条款，与知识产权无关；无形资产移交在第二十条已有安排，缺失式标注"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "明确项目公司应承担移交日期前垃圾处理设施的全部或部分损失或损坏的风险，除非损失或损坏是由特许经营权授予方的违约所致。",
+      "expected_suggestion": "建议增加特许经营权授予方在违约情况下的赔偿责任，以平衡双方风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "移交前设施风险由项目公司（乙方）承担并已排除甲方违约情形，对甲方有利；risk_type与内容也不符"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "条款中未明确保证金/押金返还条件、扣除范围的具体规定。",
+      "expected_suggestion": "建议明确保证金/押金返还的具体条件和扣除范围，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "第(15)项恰要求明确运营与维护保函余额解除的时间或条件；且保函由乙方提供，返还条件与甲方风险无关"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "条款中未明确服务水平无故障分级、响应时限和补偿的具体内容。",
+      "expected_suggestion": "建议明确服务水平标准、故障响应时限和相应的补偿措施，保障服务质量。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C018为特许期结束后移交条款，与SLA无关，机械套模板"
+    },
+    {
+      "clause_id": "C019",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "监督检查工作不得妨碍项目公司的正常生产经营活动。",
+      "expected_suggestion": "明确监督检查的具体内容和频率，以及可能对项目公司造成的妨碍和相应的补偿措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "'不得妨碍正常经营'系对行政监督权的正当限制，非服务水平条款，归类错误且无甲方风险"
+    },
+    {
+      "clause_id": "C019",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "明确特许经营权授予方对项目公司在特许经营期间有不当行为时的终止协议或取消特许经营权的情况。",
+      "expected_suggestion": "明确双方在终止协议或取消特许经营权时的通知期限和程序，以及相应的补偿条款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该项系甲方（授予方）针对乙方不当行为的终止权编制指引，对甲方有利，方向颠倒"
+    },
+    {
+      "clause_id": "C020",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "项目公司单方提出解除协议的提前申请时限及在特许经营权授予方同意解除协议前，项目公司履行正常经营的义务。",
+      "expected_suggestion": "增加甲方单方解除协议的权利和通知期限，确保双方权利平衡。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该项约束项目公司（乙方）退出、保障公用事业连续性，对甲方（授予方）有利，方向颠倒"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "明确不可抗力事件期间的支付条件和方式，可能存在对甲方不利的支付调整。",
+      "expected_suggestion": "建议明确不可抗力事件期间甲方权益的保护措施，如支付调整的触发条件和补偿机制。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "系'应明确不可抗力期间支付条件'的双向编制指引并含双方减损责任要求，'可能不利'纯属推测，无书面风险"
+    },
+    {
+      "clause_id": "C022",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "特许经营权授予方有权立即发出终止意向通知，且项目公司违约事件下，特许经营权授予方在任何时候终止协议的权利。",
+      "expected_suggestion": "增加甲方在特定违约情况下的通知期，并明确违约事件的具体定义和判定标准。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该终止权属于甲方（授予方）自身且以项目公司违约为前提，第(2)项亦对等赋予项目公司终止权，对甲方无风险"
+    },
+    {
+      "clause_id": "C023",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "赔偿含间接损失且无上限",
+      "expected_suggestion": "建议明确赔偿上限，避免因间接损失导致无限责任",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文系'每一方应有权获得赔偿'的双向框架指引，第(5)项仅要求对间接损失责任作出约定而非设定无上限赔偿，rationale与原文不符"
+    },
+    {
+      "clause_id": "C024",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "赔偿含间接损失且无上限",
+      "expected_suggestion": "建议明确赔偿的上限，避免间接损失无限制赔偿",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为双向对等的人身伤亡及财产损害赔偿框架指引，全文无'间接损失''无上限'表述，rationale凭空引用"
+    },
+    {
+      "clause_id": "C025",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "协议的转让条款未明确约定转让方或受让方单方解除协议的条件和通知期限。",
+      "expected_suggestion": "明确约定转让方或受让方单方解除协议的条件和通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "转让条款与解除权无关，终止事项在第二十四条另有框架，缺失式过度标注"
+    },
+    {
+      "clause_id": "C026",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "特许经营权授予方对合同的批准并不免除项目公司在本协议项下的任何义务或责任，可能存在单方任意解除合同的风险。",
+      "expected_suggestion": "建议增加特许经营权授予方解除合同的条件和通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "批准不免除项目公司责任系对乙方的约束、对甲方有利，与'单方任意解除'毫无逻辑关联"
+    },
+    {
+      "clause_id": "C028",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式只能选择仲裁机构和法院中的一种，未明确约定仲裁机构或法院所在地，可能对甲方不利。",
+      "expected_suggestion": "明确约定仲裁机构或法院所在地，确保争议解决地点对甲方有利。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁与诉讼二选一系我国仲裁法的法定要求，具体机构留待填写属示范文本正常留白，非管辖风险"
+    }
+  ],
+  "errors": []
+}

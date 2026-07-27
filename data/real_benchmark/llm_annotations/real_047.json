@@ -1,0 +1,98 @@
+{
+  "contract_id": "real_047",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C002",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "单方任意解除且无通知期",
+      "expected_suggestion": "增加双方协商解除条款，并规定合理的通知期限",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C002仅为承包林地面积、期限的空白填写条款，全无解除内容，rationale系凭空捏造"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "发包方有权维护承包方的林地承包经营权或林地经营权，不得非法变更、解除承包合同。",
+      "expected_suggestion": "建议明确双方解除合同的条件和通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引条文是发包方'不得非法变更解除合同'的义务，恰恰保护承包方一侧，属有利条款"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "sla_remedy",
+      "risk_level": "low",
+      "rationale": "合同中未明确服务水平无故障分级、响应时限和补偿的具体条款。",
+      "expected_suggestion": "建议增加服务水平保障条款，明确故障响应时限和相应的补偿措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "林地承包合同不存在服务水平/SLA概念，纯属对缺失内容的机械套模板"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "任何一方不得擅自终止合同",
+      "expected_suggestion": "明确约定单方解除合同的条件和通知期限",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "'任何一方不得擅自终止'系双向对等约束，反而增强合同稳定性，不构成对一方的风险"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "承包方在承包期内交回承包地的，在承包期内不得再要求承包林地",
+      "expected_suggestion": "考虑增加承包方在特定条件下再次承包的机会",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "系《农村土地承包法》法定规则，且以承包方自愿交回并可获补偿为前提，非解除通知期风险"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同期满后，发包方可依法再行发包或延包",
+      "expected_suggestion": "明确发包方再行发包或延包的具体条件和程序",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "期满依法再发包属正常安排，且条款明确原承包方同等条件下有优先权，对承包方中性偏有利"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "经劝阻无效发包方可依法解除合同，并由承包方承担林地恢复费用。",
+      "expected_suggestion": "建议增加甲方在违约情况下的解除合同权利，并明确双方在合同解除后的责任划分。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "以承包方改变林地用途、造成永久性损害且经劝阻无效为前提的过错解除，附恢复费用属公平的违约后果，非任意解除"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "unlimited_liability",
+      "risk_level": "medium",
+      "rationale": "由此给承包方造成经济损失的，由发包方负责全额赔偿。",
+      "expected_suggestion": "建议明确赔偿范围和上限，避免因间接损失导致无上限赔偿。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该赔偿义务落在发包方、受益方是承包方一侧，对甲方视角为有利条款，风险方向颠倒"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式中未明确约定具体法院或仲裁机构，可能导致甲方在争议解决时面临不确定性。",
+      "expected_suggestion": "建议明确约定争议解决的法院或仲裁机构，以及适用的法律，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "'□仲裁 □诉讼'为示范文本标准勾选项且先经协商调解，属正常留白，非管辖风险"
+    }
+  ],
+  "errors": []
+}

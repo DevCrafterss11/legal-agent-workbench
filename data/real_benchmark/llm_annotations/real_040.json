@@ -1,0 +1,108 @@
+{
+  "contract_id": "real_040",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C005",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "一次性支付，支付时间未明确约定，可能导致甲方资金周转压力。",
+      "expected_suggestion": "建议改为分次支付，并明确每次支付的时间和比例，以减轻甲方资金压力。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "支付方式为□一次性/□分次的空白选择项，未勾选填写即无从构成风险"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "ip_ownership",
+      "risk_level": "medium",
+      "rationale": "成果知识产权归属偏向乙方",
+      "expected_suggestion": "建议明确约定知识产权的归属及双方的权利义务",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为共同承揽与乙方就第三人工作成果负责的约定，无任何知识产权内容，rationale凭空"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "甲方未支付报酬或材料费，乙方即享有留置权或拒绝交付的权利。",
+      "expected_suggestion": "建议增加条款明确甲方支付报酬或材料费的具体条件和时间，以及乙方在甲方未支付情况下的通知义务和解决机制。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "承揽人留置权系民法典第783条法定默认规则，且本条为□可选项并附其他措施选项，非明显不利条款"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "unlimited_liability",
+      "risk_level": "medium",
+      "rationale": "赔偿金额未明确上限，可能导致甲方承担过大的赔偿责任",
+      "expected_suggestion": "明确赔偿金额上限或赔偿计算方式，避免无上限赔偿责任",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为乙方迟延交付向甲方赔偿的空白待填项，系甲方权利而非甲方责任，方向判断颠倒"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "unlimited_liability",
+      "risk_level": "medium",
+      "rationale": "赔偿金额未明确上限，可能导致甲方承担过大的赔偿责任。",
+      "expected_suggestion": "明确赔偿金额的上限或计算方式，以避免无限责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为乙方宽限期满仍不能交付时向甲方赔偿的空白待填项，对甲方有利，方向判断颠倒"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方可以单方解除合同，但乙方仅赔偿金额未明确，缺乏对甲方利益的充分保障。",
+      "expected_suggestion": "明确赔偿金额的计算方式，确保甲方在合同解除时的损失得到合理补偿。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款赋予甲方在乙方擅自转包时的解除权与索赔权，对甲方有利，赔偿金额系空白待填"
+    },
+    {
+      "clause_id": "C019",
+      "risk_type": "unlimited_liability",
+      "risk_level": "medium",
+      "rationale": "因保管不善造成毁损、灭失的，应当承担赔偿责任",
+      "expected_suggestion": "明确赔偿金额上限，避免无上限赔偿责任",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "保管不善的赔偿责任由乙方向甲方承担，系甲方权利，方向判断颠倒"
+    },
+    {
+      "clause_id": "C020",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方不履行协助义务时，乙方有权解除合同，但未规定甲方解除合同的通知期。",
+      "expected_suggestion": "建议增加甲方解除合同的通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "以甲方不履行协助义务且经催告仍不履行为前提，与民法典第778条一致，属法定对等安排"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方在乙方完成工作前解除合同，造成乙方损失的，赔偿金额和其他赔偿约定未明确具体标准。",
+      "expected_suggestion": "明确约定甲方解除合同的具体赔偿标准和计算方法，以及乙方损失的具体范围。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "定作人任意解除并赔偿损失系民法典第787条法定后果，赔偿金额为空白待填项，非风险模式"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决条款中，甲方和乙方未协商确定具体的法院或仲裁委员会，可能存在争议解决的不确定性。",
+      "expected_suggestion": "明确约定争议解决的法院或仲裁委员会，确保争议解决过程的明确性和可预测性。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "诉讼/仲裁为□空白选择项，双向对等的示范文本留白，非风险"
+    }
+  ],
+  "errors": []
+}

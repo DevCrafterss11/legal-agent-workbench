@@ -1,0 +1,108 @@
+{
+  "contract_id": "real_044",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C004",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "合同中规定分期付款方式，但未明确每期付款的具体时间点，可能导致付款时间的不确定性。",
+      "expected_suggestion": "建议明确每期付款的具体时间点，确保付款的及时性和合同的执行效率。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "计价与付款方式为待选留白且各期时间均为空白待填项，未填写即无从构成风险"
+    },
+    {
+      "clause_id": "C004",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "合同中定金返还条件不明确，可能导致定金返还的争议。",
+      "expected_suggestion": "建议明确定金返还的具体条件和时间，以减少潜在的争议。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文已明确定金安排：一次性付款的期满后一次性返还、分期付款的在末期价款中抵扣，rationale与原文不符"
+    },
+    {
+      "clause_id": "C005",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方在本合同约定的流转林地期限届满后收回流转林地经营权，但未明确乙方是否有提前解除合同的权利及通知期。",
+      "expected_suggestion": "建议增加条款明确乙方在何种情况下有权解除合同，以及提前解除合同的通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为甲方权利义务条款且期满收回系流转合同当然安排，乙方解除权在第八条已有约定，非对甲方不利"
+    },
+    {
+      "clause_id": "C005",
+      "risk_type": "deposit_return",
+      "risk_level": "low",
+      "rationale": "条款中未提及保证金/押金返还条件、扣除范围，但通常此类信息会在合同的其他部分或附件中详细说明。",
+      "expected_suggestion": "建议在合同附件或相关条款中明确保证金/押金的返还条件和扣除范围。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "rationale自认条款未涉保证金，定金安排另见第三条，属凭空指摘"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同期满后，乙方不再继续流转经营，只需在合同期满后日内将原流转的林地交还给甲方，未规定甲方有通知期。",
+      "expected_suggestion": "建议增加甲方在合同期满前有合理通知期的条款，以便甲方有足够时间准备和处理相关事宜。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "期满交还林地系合同自然终止的正常安排且天数为空白待填，收回方为甲方本身，无对甲方不利"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "auto_renewal",
+      "risk_level": "low",
+      "rationale": "合同中未明确提及自动续约条款，但存在乙方继续经营需提前申请的表述。",
+      "expected_suggestion": "如需自动续约，应明确约定续约条件和通知期，以及甲方退出路径。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为乙方须于期满前90日书面申请方可续约的机制，并无自动续约，rationale凭空"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "乙方有权解除合同，甲方承担违约责任。",
+      "expected_suggestion": "建议增加甲方违约解除合同的条件，并规定双方的通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方解除权以甲方逾期交地、权属瑕疵或干涉经营等自身违约为前提，与第（四）项乙方违约时甲方解除权对称，双向对等"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "逾期超过 \t日，甲方有权解除合同，乙方应承担违约责任。",
+      "expected_suggestion": "建议调整付款周期，避免一次性预付或过度前置付款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引为乙方逾期付款时甲方的解除权，对甲方有利；归入payment_cycle亦错误"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式约定偏向乙方所在地，可能对甲方不利。",
+      "expected_suggestion": "建议增加争议解决地点的灵活性，或明确双方协商确定争议解决地点的条款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为□当地农村土地仲裁机构/□有权管辖法院的待选项，未指向任何一方所在地，『偏向乙方所在地』系凭空"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定解除合同的通知期限和条件，可能对甲方不利。",
+      "expected_suggestion": "建议在合同中明确约定解除合同的通知期限和条件，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为附则与签署内容，解除条件已在第七、八条另有明确约定，属过度解读"
+    }
+  ],
+  "errors": []
+}

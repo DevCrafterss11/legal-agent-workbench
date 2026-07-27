@@ -1,0 +1,158 @@
+{
+  "contract_id": "real_051",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C004",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "甲方应当依法终止特许经营协议，取消其特许经营权，并实施临时接管",
+      "expected_suggestion": "明确约定甲方终止协议的具体条件和通知期限，保障甲方权益",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "本合同甲方即政府授予方，该条是甲方针对乙方法定违规情形的终止权，对甲方有利，方向颠倒"
+    },
+    {
+      "clause_id": "C004",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "乙方应向甲方提供履约保函，但未明确保函返还条件和扣除范围",
+      "expected_suggestion": "明确约定履约保函的返还条件和扣除范围，保障甲方权益",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "履约保函由乙方提供、甲方持有，返还条件缺失只可能不利于乙方，对甲方视角无风险"
+    },
+    {
+      "clause_id": "C005",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "特许经营期限届满时，特许经营协议自动终止，但甲方没有明确的通知期。",
+      "expected_suggestion": "增加甲方在特许经营期限届满前一定期限的通知权利。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "期限届满自动终止属自然终止，且条款已要求终止日180日前完成谈判并签署终止协议，无通知期风险"
+    },
+    {
+      "clause_id": "C005",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "提前终止条款中提到因不可抗力或一方认为有必要时可以提前终止，但未明确甲方的通知义务。",
+      "expected_suggestion": "明确甲方在不可抗力情况下应尽的通知义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "提前终止须双方协商一致且'任何一方不得擅自提前终止'，双向对等；通知义务在第十一章不可抗力条款已有明确规定"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "乙方应建立应急抢修抢险救灾预案和相应的组织、指挥、设备、物资等保障体系并保证在出现事关燃气应急事故时，保障体系能够正常启动。",
+      "expected_suggestion": "建议明确乙方在紧急情况下的响应时限和补偿标准，确保甲方在紧急情况下的权益得到保障。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "系乙方承担的应急保障义务（含24小时热线），对甲方有利；服务标准另见附件五约定"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "data_security",
+      "risk_level": "low",
+      "rationale": "条款中未提及个人信息/数据处理的具体安全措施和泄露通知约定。",
+      "expected_suggestion": "建议增加个人信息/数据处理的安全措施和泄露通知的约定，确保用户信息安全。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "供气安全条款与个人信息处理无关，缺失式机械套模板"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "燃气费结算方式按照适用法律，实行周期抄表并结算燃气费。",
+      "expected_suggestion": "建议明确结算周期，避免因周期过长导致甲方资金回笼延迟。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "抄表结算发生在乙方与用户之间，甲方（政府）并非付款方，不存在甲方付款周期风险"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "乙方有义务且必须就由于建设、运营和维护市政管道燃气设施而造成的环境污染及因此而导致的任何损害、费用、损失或责任，对甲方予以赔偿。",
+      "expected_suggestion": "建议明确赔偿的上限，避免无上限的赔偿责任对甲方造成过大的财务风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "赔偿义务人是乙方、受偿方是甲方，对甲方视角为有利条款，风险方向颠倒"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "data_security",
+      "risk_level": "medium",
+      "rationale": "乙方必须将有关市政管道燃气设施设计、建设和运行的所有技术数据提交给甲方。",
+      "expected_suggestion": "建议增加数据安全保护措施，明确数据泄露通知义务，确保甲方数据安全。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "甲方是数据接收方，该条服务于甲方监管职能，对甲方有利，非数据安全风险"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "未经甲方同意，乙方不得擅自决定中断供气、解散、歇业。",
+      "expected_suggestion": "建议明确乙方单方解除合同的通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条限制乙方擅自停业，正是保护甲方及公共利益的条款，方向颠倒"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "乙方有普遍服务和持续经营义务，但未明确服务水平无故障分级、响应时限和补偿标准。",
+      "expected_suggestion": "建议明确服务水平标准，包括故障分级、响应时限和相应的补偿措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "普遍服务义务由乙方承担，对甲方有利；服务标准在第七章及附件十已另行约定"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "包括对方因违约方的违约行为导致的向第三方支付的赔偿",
+      "expected_suggestion": "明确赔偿上限，避免无上限赔偿风险",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "'协议任何一方违约'适用于双方，系双向对等的赔偿条款，并附非违约方减损义务与过失相抵，均衡"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方认为乙方有致使其特许经营权被取消的行为时，应以书面形式告知，并给予补救期",
+      "expected_suggestion": "明确甲方解除协议的条件和通知期限，保障甲方权益",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "书面告知加补救期系取消特许权前的正当程序安排，取消条件在第三章已列明，无风险模式"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "不可抗力免责条款中未规定乙方在不可抗力事件发生后的减损义务。",
+      "expected_suggestion": "建议增加条款，明确乙方在不可抗力事件发生后的减损义务，以平衡双方风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文明确'声称受到不可抗力的一方应在任何时候采取合理的行动，以避免或尽量减少不可抗力事件的影响'，rationale与条款原文直接矛盾"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定双方所在地法院或仲裁机构，可能对甲方不利。",
+      "expected_suggestion": "建议明确约定争议解决的具体法院或仲裁机构，确保对甲方有利。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "先协商、后依法仲裁或向有管辖权法院起诉，系中性标准安排，属示范文本正常留白"
+    }
+  ],
+  "errors": []
+}

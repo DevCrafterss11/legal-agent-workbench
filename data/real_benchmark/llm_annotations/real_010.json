@@ -1,0 +1,15 @@
+{
+  "contract_id": "real_010",
+  "annotations": [
+    {
+      "clause_id": "C014",
+      "risk_type": "prepaid_refund",
+      "risk_level": "medium",
+      "rationale": "第七条第（十）项约定办理退费时'已转付给第三方并无法索回的代收代支费用以及已向银行（第三方）支付的合理手续费用等……由乙方承担'，且未区分退费是否因培训机构违约所致，消费者一侧的预付费退款可被多项扣减侵蚀。",
+      "expected_suggestion": "建议明确因培训机构违约导致退费的，第三方代收代支费用及银行手续费由机构承担，且各项扣减须经消费者书面确认。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_real_clause"
+    }
+  ],
+  "annotator": "llm:claude-fable-5"
+}

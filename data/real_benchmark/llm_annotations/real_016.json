@@ -1,0 +1,15 @@
+{
+  "contract_id": "real_016",
+  "annotations": [
+    {
+      "clause_id": "C002",
+      "risk_type": "ip_ownership",
+      "risk_level": "medium",
+      "rationale": "通用条件约定'监理人对其编制的文件拥有著作权'，且监理人仅在合同履行期间及终止后两年内出版涉及本工程资料时须征得委托人同意，两年后不受限，成果知识产权归属与使用控制偏向乙方。",
+      "expected_suggestion": "约定委托人对监理成果文件享有著作权或永久免费使用权，监理人出版涉及本工程的资料须经委托人书面同意且不设两年期限。",
+      "requires_human_review": false,
+      "annotation_notes": "llm_real_clause"
+    }
+  ],
+  "annotator": "llm:claude-fable-5"
+}

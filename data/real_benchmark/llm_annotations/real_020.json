@@ -1,0 +1,15 @@
+{
+  "contract_id": "real_020",
+  "annotations": [
+    {
+      "clause_id": "C008",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "违约责任条款约定'由于不可抗力的原因或者政府行为造成停气，使用气人受到损失的，供气人不承担赔偿责任'，免责仅指向供气人一侧且将'政府行为'并入免责事由扩大免责范围，用气人一侧无对等免责安排，该免责亦未附随通知与减损义务。",
+      "expected_suggestion": "建议将不可抗力免责改为双方对等适用，删除或限定'政府行为'的免责范围，并明确免责方须及时通知对方并采取减损、抢修措施，否则不得免除相应扩大损失的责任。",
+      "requires_human_review": false,
+      "annotation_notes": "llm_real_clause"
+    }
+  ],
+  "annotator": "llm:claude-fable-5"
+}

@@ -1,0 +1,138 @@
+{
+  "contract_id": "real_043",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C011",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "组团社可以在紧急情况下单方决定内容的变更，且无需提供通知期。",
+      "expected_suggestion": "建议增加组团社在紧急情况下变更内容前需通知旅游者的条款，并规定通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "紧急变更以不可抗力/意外事件且无法征求意见为前提，并须提供必要说明和证据，属合理限定；归入termination_notice亦错误"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "合同中未明确不可抗力或意外事件的定义，且组团社在紧急情况下可单方决定变更。",
+      "expected_suggestion": "建议明确不可抗力或意外事件的定义，并规定在发生此类情况时，组团社应采取的必要措施和通知义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "不可抗力与意外事件在第一条词语定义中均有明确定义，rationale与合同原文相悖"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定甲方（旅游者）在何种情况下可以解除合同，以及解除合同的通知期限。",
+      "expected_suggestion": "建议增加甲方在特定情况下可以解除合同的权利，并明确通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "转团须事先征得旅游者书面同意且组团社先行承担责任，为保护旅游者条款；解除权在第十二至十四条另有约定"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "旅游者提出解除合同时，如已办理签证/签注的，应当扣除签证/签注费用。",
+      "expected_suggestion": "建议增加条款，明确扣除签证/签注费用的具体计算方法和合理性，以及是否允许在特定情况下部分或全额退还。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "扣除签证费限于已实际发生费用，且组团社提出解除时明文不得扣除，双向安排合理对等"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "旅游者不得要求组团社退还旅游费用，如给组团社造成经济损失的，应当承担相应赔偿责任。",
+      "expected_suggestion": "建议增加旅游者合理解除合同的条件，并明确退还费用的具体标准和流程。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "不退费以旅游者境外擅自脱团这一严重违约行为为前提，系示范文本对特定违约情形的正常安排，非任意剥夺权利"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "旅游者在出发前得知组团社擅自将旅游者转至其他旅行社出团时，有权解除合同，但仅按旅游费用总额的10%支付违约金。",
+      "expected_suggestion": "建议增加旅游者在出发后得知时的违约金比例，以平衡双方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为组团社违约责任条款：全额退款加违约金、不足部分按实际损失赔偿，且出发后得知已明文按20%赔付，对旅游者有利，rationale与原文不符"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "旅游者出发前30日内提出解除合同，需支付高额业务损失费，且无明确通知期。",
+      "expected_suggestion": "建议增加旅游者解除合同的通知期，并降低解除合同时的业务损失费比例。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "业务损失费按第一条定义对应已实际发生费用并设旅游费用总额上限，时点按解约通知到达日计算并无通知期缺失，所指问题与termination_notice归类均不成立"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "unlimited_liability",
+      "risk_level": "medium",
+      "rationale": "如给组团社造成损失的，旅游者还应当承担赔偿责任。",
+      "expected_suggestion": "明确赔偿范围和上限，避免无上限赔偿责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "赔偿以旅游者自身材料问题致拒签等过错为前提，系法定过错责任重述，组团社一侧亦有对等的实际损失赔偿义务"
+    },
+    {
+      "clause_id": "C020",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "旅游费用支付的方式和时间未明确约定，可能导致付款过度前置或一次性预付",
+      "expected_suggestion": "明确约定旅游费用支付的具体方式和时间，避免过度前置或一次性预付",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "支付方式和时间为空白待填项，示范文本正常留白非风险"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "旅游者委托组团社办理旅游保险，但未明确保险费用支付与保险服务提供之间的绑定关系，可能存在先付费后服务不达标的情形。",
+      "expected_suggestion": "建议明确保险费用的支付与保险服务的提供绑定，确保旅游者权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "保险委托为同意/不同意待填选择项，无先付费后服务的书面风险内容"
+    },
+    {
+      "clause_id": "C023",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未提供甲方选择的灵活性，仅规定提交仲裁或起诉，可能对甲方不利。",
+      "expected_suggestion": "增加甲方选择争议解决方式的条款，如协商、调解、仲裁或诉讼，并明确不同方式的具体流程。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文已含协商、调解前置及仲裁/诉讼二选一待选留白，双向对等，rationale与原文不符"
+    },
+    {
+      "clause_id": "C024",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "旅游者行前退团，旅游者应当支付组团社的业务损失费占旅游费用总额的百分比",
+      "expected_suggestion": "明确业务损失费的计算方式和上限，避免过高费用对甲方造成不利影响",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为签署页及黄金周退团比例空白表格，百分比均未填写，无实体风险内容"
+    },
+    {
+      "clause_id": "C024",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "旅游者行前退团，旅游者应当支付组团社的业务损失费占旅游费用总额的百分比",
+      "expected_suggestion": "考虑将业务损失费与旅游费用总额的比例进行调整，以减轻甲方负担",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "同为空白待填表格的重复标注，且退团损失费与付款周期无关，归类错误"
+    }
+  ],
+  "errors": []
+}

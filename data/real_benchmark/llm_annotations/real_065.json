@@ -1,0 +1,68 @@
+{
+  "contract_id": "real_065",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C004",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "合同要求用热人在每年固定日期前全额支付热费，付款周期过度前置，对甲方（用热人）的资金流动性构成较大压力。",
+      "expected_suggestion": "建议修改为按月结算或根据实际用热量结算，减轻甲方一次性大额付款的压力。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "付款日期为空白待填字段，'过度前置'无原文依据，采暖费按年结算系供热行业示范文本通行安排，其他用热已按月结算。"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "供热人有权中断供热，但未明确用热人单方解除合同的权利和通知期。",
+      "expected_suggestion": "增加条款明确用热人单方解除合同的权利和通知期，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "中断供热以用热人存在安全隐患或约定期限内拒不交费为前提，且C007已赋予用热人暂停、停止用热的权利，属缺失类指摘。"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "force_majeure",
+      "risk_level": "low",
+      "rationale": "合同中未明确不可抗力事件的范围和供热人减损义务的具体规定。",
+      "expected_suggestion": "明确不可抗力事件的范围，并规定供热人在不可抗力事件发生时的减损义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "对不可抗力范围的缺失类指摘，且原文已要求供热人不可抗力中断时及时抢修并限时通知，非条款书面风险。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "unlimited_liability",
+      "risk_level": "medium",
+      "rationale": "供热人责任事故造成损失，供热人承担赔偿责任，但未明确赔偿上限。",
+      "expected_suggestion": "明确赔偿金额上限或计算方式，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "供热人（对方）赔偿责任无上限系对甲方用热人有利，非甲方风险。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "由于不可抗力的原因或者政府行为造成停止供热，供热人不承担赔偿责任。",
+      "expected_suggestion": "明确不可抗力事件的范围，并规定甲方在不可抗力事件发生时的权利和救济措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "不可抗力及政府行为免责系法定免责范围的通行表述，非单方免责扩张，未剥夺甲方其他救济。"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定双方所在地法院或仲裁机构，可能导致甲方在争议解决中处于不利地位。",
+      "expected_suggestion": "建议明确约定争议解决的具体法院或仲裁机构，并确保其位于甲方所在地或双方协商一致的地方。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁/诉讼任选且机构留白的对等争议解决条款，系示范文本标准写法，非甲方风险。"
+    }
+  ],
+  "errors": []
+}

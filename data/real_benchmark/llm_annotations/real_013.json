@@ -1,0 +1,24 @@
+{
+  "contract_id": "real_013",
+  "annotations": [
+    {
+      "clause_id": "C007",
+      "risk_type": "prepaid_refund",
+      "risk_level": "medium",
+      "rationale": "供水人可按用水人此前最高月用水量估算本期水量水费，且明确'如用水人三个月不能解决妨碍抄验表问题，供水人不退还多估水费'，多收款项概不返还，对用水人明显不利。",
+      "expected_suggestion": "改为妨碍抄表情形消除后按实际用水量重新核算，多估多收的水费应予退还或抵扣后期水费。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_real_clause"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "'由于不可抗力的原因或者政府行为造成停水、使用水人受到损失的，供水人不承担赔偿责任'，免责仅指向供水人一方且将政府行为并入免责范围，未约定供水人的通知义务与减损措施。",
+      "expected_suggestion": "约定供水人遇不可抗力或政府行为停水时应及时通知用水人并采取减损措施，不可抗力免责对双方对等适用。",
+      "requires_human_review": false,
+      "annotation_notes": "llm_real_clause"
+    }
+  ],
+  "annotator": "llm:claude-fable-5"
+}

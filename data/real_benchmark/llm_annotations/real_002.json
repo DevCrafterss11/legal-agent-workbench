@@ -1,0 +1,15 @@
+{
+  "contract_id": "real_002",
+  "annotations": [
+    {
+      "clause_id": "C007",
+      "risk_type": "ip_ownership",
+      "risk_level": "medium",
+      "rationale": "通用条件默认约定“咨询人为履行本合同约定而编制的成果文件，其著作权属于咨询人”，委托人仅可为实现合同目的复制使用，未经咨询人书面同意不得修改、不得用于合同以外目的或提供给第三方，付费方对成果的权利明显受限，归属偏向乙方（咨询人）。",
+      "expected_suggestion": "在专用条件中约定咨询成果文件著作权归委托人所有，或至少赋予委托人对成果的无偿、可转授权的永久使用权（含后续项目阶段使用及提供给相关第三方）。",
+      "requires_human_review": false,
+      "annotation_notes": "llm_real_clause"
+    }
+  ],
+  "annotator": "llm:claude-fable-5"
+}

@@ -1,8 +1,10 @@
-# Human Annotated Legal Benchmark
+# Curated Template Benchmark（模板构造回归集）
 
-- Contracts: 30
+> 命名澄清：目录名沿用 `human_benchmark`（避免破坏既有命令），但这是**模板构造**
+> 的评测集，标注随构造自动产生——**不是人工标注数据集**。
+> 真实合同评测集见 `data/real_benchmark/`，模板回归集说明见 `docs/benchmarks/TEMPLATE_BENCHMARK.md`。
+
+- Contracts: 30（13 类风险条款模板拼装）
 - Clause-level risk annotations: 120
-- Risk taxonomy: auto_renewal, unlimited_liability, data_security, payment_acceptance, payment_cycle, ip_ownership, sla_remedy, jurisdiction, confidentiality, termination_notice, force_majeure, deposit_return, prepaid_refund
-- Evaluation command: `.venv/bin/legal-agent eval --human`
-
-This is a curated v1 benchmark in human-annotation format. It can be reviewed or edited by real legal reviewers without changing evaluator code.
+- 用途：秒级确定性回归护栏（CI）；分数接近饱和，不作为能力证明
+- Evaluation command: `legal-agent eval --human`

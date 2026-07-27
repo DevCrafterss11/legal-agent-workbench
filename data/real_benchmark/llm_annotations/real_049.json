@@ -1,0 +1,18 @@
+{
+  "contract_id": "real_049",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C004",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定双方所在地法院或仲裁机构，可能对甲方不利。",
+      "expected_suggestion": "明确约定争议解决的具体法院或仲裁机构，确保对双方均公平。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "'仲裁委员会___/依法向人民法院起诉'二选一填写项系示范文本标准留白，先经协商调解，非管辖风险"
+    }
+  ],
+  "errors": []
+}
