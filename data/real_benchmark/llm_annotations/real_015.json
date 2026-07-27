@@ -1,0 +1,15 @@
+{
+  "contract_id": "real_015",
+  "annotations": [
+    {
+      "clause_id": "C009",
+      "risk_type": "data_security",
+      "risk_level": "medium",
+      "rationale": "数据安全要求仅笼统约定'各方应当严格依据……法律法规处理标的数据'，未约定中介方接触、展示标的数据时的具体安全保护措施及发生泄露时对甲方的通知与补救义务。",
+      "expected_suggestion": "增加乙方对标的数据的保密与安全管理措施，并约定发生数据泄露或滥用时限时通知甲方、采取补救措施的具体义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_real_clause"
+    }
+  ],
+  "annotator": "llm:claude-fable-5"
+}

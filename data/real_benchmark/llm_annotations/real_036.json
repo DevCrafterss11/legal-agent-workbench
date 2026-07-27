@@ -1,0 +1,165 @@
+{
+  "contract_id": "real_036",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C009",
+      "risk_type": "prepaid_refund",
+      "risk_level": "medium",
+      "rationale": "预付卡有效期限顺延，但未明确预付费概不退还/余额清零的具体条件",
+      "expected_suggestion": "明确预付费概不退还/余额清零的具体条件，如未消费部分可退还或转为其他服务",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款约定未标识有效期视为无期限且暂停营业时顺延，系保护购卡人条款，所称退费风险原文不存在"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "仅因甲方名称变更、注册或经营地址变更或者法定代表人、负责人、控股出资人、实际控制人变更而不履行约定义务",
+      "expected_suggestion": "增加甲方变更相关信息的提前通知义务，并明确违约责任",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为明文禁止经营者不当行为的保护性条款，rationale引用的是被禁止的情形而非风险，归类亦不当"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "借助“职业闭店”“无责闭店”恶意转移财产、逃废债务，损害消费者合法权益、危害社会公共利益",
+      "expected_suggestion": "明确甲方不得恶意转移财产、逃废债务，并规定相应的法律责任和赔偿措施",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引内容系合同明文禁止的行为清单，条款本身即为消费者保护条款，非风险"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方未按本条要求履行告知义务，给乙方造成损失的，应承担相应责任（包括但不限于退费等）。",
+      "expected_suggestion": "建议增加甲方单方解除合同需提前通知乙方的时间限制，并明确乙方在此期间的权利。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款已要求经营者提前30日公告告知并对未告知承担退费等责任，为保护性条款，不存在单方解除无通知期问题"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "乙方有权解除合同并要求甲方在7日内返还预付费用余额，但甲方原因导致退卡时，乙方无义务提供明确的解除通知期。",
+      "expected_suggestion": "建议增加甲方解除合同时应提前通知乙方的条款，明确通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款赋予消费者解除权并要求经营者7日内退还余额并付息，属退卡保护条款，非风险"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "合同中未明确保证金/押金返还的具体条件和扣除范围，可能存在甲方权益受损的风险。",
+      "expected_suggestion": "建议明确保证金/押金返还的具体条件和扣除范围，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款不涉及保证金/押金，且退费条件与计算公式原文已逐项列明，rationale凭空"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "prepaid_refund",
+      "risk_level": "medium",
+      "rationale": "预付费概不退还/余额清零",
+      "expected_suggestion": "建议明确退卡后的预付费退还比例或条件，避免无端扣除合理费用。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文约定扣除已消费金额及合理费用后15日内一次性返还余额，与『概不退还/余额清零』的rationale相悖"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "prepaid_refund",
+      "risk_level": "medium",
+      "rationale": "预付费概不退还/余额清零",
+      "expected_suggestion": "明确预付费部分在何种情况下可以退还，以及退还的比例和流程。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款仅约定退费按缴费原路径退回及手续费由违约方承担，与『概不退还/余额清零』的rationale不符"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "退货金额不足100元（含）的，可支付现金。",
+      "expected_suggestion": "建议明确退货金额不足100元时的支付方式，避免甲方承担现金支付的不便。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "小额退款可付现金系便利性中性安排，不构成对任何一方明显不利的风险"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中乙方可以单方要求变更合同，但未规定甲方是否有同等权利或通知期。",
+      "expected_suggestion": "建议增加条款，明确甲方在何种情况下有权要求变更合同，并规定双方的通知期。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "变更条款以协商一致为原则，另赋予消费者情势变更时的变更请求权，属对等及保护性条款"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同终止条件中未明确约定甲方解除合同的通知期和交接事宜。",
+      "expected_suggestion": "建议增加甲方解除合同的通知期限和交接责任条款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "终止情形限于期满、协商一致、不可抗力及法定情形，双向对等，无单方解除风险"
+    },
+    {
+      "clause_id": "C019",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方解除合同的条件较为宽松，且未规定乙方解除合同的通知期。",
+      "expected_suggestion": "建议增加乙方解除合同的条件和通知期，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "经营者解除权以消费者严重违法违规或经不少于15日催告仍不付费为前提，条件具体合理，并非宽松解除"
+    },
+    {
+      "clause_id": "C020",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "甲方未经乙方同意将预付式消费合同义务转移给第三人",
+      "expected_suggestion": "增加甲方转移合同义务需经乙方同意的条款，并明确乙方同意的具体流程",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引内容是触发消费者解除权的情形之一，该条整体为消费者保护条款，非风险"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定具体法院或仲裁机构，可能存在争议解决地不明确的风险。",
+      "expected_suggestion": "建议明确约定争议解决的法院或仲裁机构，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "『按下列第__种方式解决』为示范文本待选留白，属正常留白非风险"
+    },
+    {
+      "clause_id": "C022",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决单方固定偏向乙方所在地",
+      "expected_suggestion": "建议改为双方协商确定争议解决法院，避免单方固定管辖地",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "管辖法院为空白待填，『单方固定偏向乙方所在地』系凭空，费用由违约方承担亦为双向约定"
+    }
+  ],
+  "errors": [
+    "C001: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C003: _ssl.c:993: The handshake operation timed out",
+    "C004: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C005: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C006: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C008: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)"
+  ]
+}

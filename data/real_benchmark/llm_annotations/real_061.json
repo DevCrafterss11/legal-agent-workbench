@@ -1,0 +1,368 @@
+{
+  "contract_id": "real_061",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C006",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方代表易人，甲方应于易人前 7 天通知乙方，后任继续履行合同文件约定的前任的权利和义务。",
+      "expected_suggestion": "建议增加甲方代表变更时的通知期限，并明确乙方在甲方代表变更后的权利和责任调整机制。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "甲方代表易人提前7天通知系中性程序条款，与乙方侧C008完全对等，且约束的是甲方自身。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "乙方代表易人，乙方应于易人前 7 天通知甲方，后任继续履行合同文件约定的前任的权利和义务。",
+      "expected_suggestion": "建议增加甲方对乙方代表更换的审批权，或明确更换代表的条件和程序。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方代表易人通知安排与甲方侧C006对等，中性程序条款，非甲方风险。"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "乙方未履行上述义务造成工程、财产和人身伤害，由乙方承担责任及所发生的费用。",
+      "expected_suggestion": "建议增加甲方在乙方未履行义务时的责任承担条款，明确甲方在特定情况下的责任范围和赔偿标准。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方未履约由乙方担责，系对甲方有利条款，且与解除通知归类不符。"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "由于乙方不履行上述义务，造成工期延误和经济损失，责任由乙方承担。",
+      "expected_suggestion": "建议明确工期延误和经济损失的赔偿计算方式和标准，以及甲方在特定情况下的权利和救济途径。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方不履约致损由乙方承担责任，系对甲方有利条款。"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方代表不同意延期要求或乙方未在规定时间内提出延期开工要求，竣工工期不予顺延。",
+      "expected_suggestion": "建议增加甲方在特定情况下同意延期开工的条款，并明确相应的通知和审批流程。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引内容为竣工工期不予顺延的约束乙方条款，对甲方有利，非风险。"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方代表未能在规定时间内提出处理意见或未答复复工要求，乙方可自行复工，停工责任在甲方。",
+      "expected_suggestion": "明确甲方代表在规定时间内未提出处理意见或未答复复工要求的处理机制，如延长停工责任期限或增加违约责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文停工责任按原因归属划分而非因未答复即归甲方，48小时答复系双向程序安排，rationale曲解原文。"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "非上述原因，工程不能按合同工期竣工，乙方按协议条款约定承担违约责任。",
+      "expected_suggestion": "建议增加甲方违约责任条款，确保甲方在未按时提供开工条件、未按时支付工程款等情况下承担相应责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方原因逾期竣工由乙方担责对甲方有利，甲方原因情形该条已列为工期顺延事由，归类亦错误。"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方应在7天内给予批准，但未规定乙方在提前竣工协议未获批准时的权利和期限。",
+      "expected_suggestion": "增加条款，明确乙方在甲方未按时批准提前竣工协议时的权利和期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "提前竣工协议审批系中性程序条款，所提缺失系乙方视角问题，非甲方风险。"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "单方任意解除且无通知期/交接",
+      "expected_suggestion": "增加乙方解除合同的通知期限，明确交接流程和责任",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C015为检查和返工条款，不含任何解除内容，rationale系凭空引用。"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "服务水平无故障分级/响应时限/补偿",
+      "expected_suggestion": "明确乙方施工质量不合格时的责任和赔偿标准，包括响应时限和补偿措施",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "模板化rationale与条款原文无对应，且原文已规定乙方承担返工费用并赔偿甲方损失。"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方代表一经发现质量问题即可要求乙方返工，但乙方无权要求甲方承担因质量问题导致的追加合同价款或工期顺延。",
+      "expected_suggestion": "建议增加条款，明确因甲方原因导致的质量问题，甲方应承担相应的追加合同价款和工期顺延。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文已明确'因甲方原因达不到约定条件，由甲方承担返工追加价款，工期相应顺延'，rationale与原文不符。"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方代表未能按时参加验收，乙方可自行组织验收，甲方应承认验收记录。",
+      "expected_suggestion": "增加甲方代表延期要求的具体期限和通知方式，以及甲方代表未按时提出延期要求的后果说明。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "隐蔽工程甲方怠于参验则乙方自行验收系施工示范文本通行安排且以48小时事先通知为前提，与解除通知归类不符。"
+    },
+    {
+      "clause_id": "C019",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同价款调整需乙方通知甲方代表后7天内甲方不作答复视为批准，付款周期可能过度前置。",
+      "expected_suggestion": "建议明确合同价款调整的响应时限，避免付款周期过度前置。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "7天不答复视为批准系调价确认程序且调整事由均以甲方代表确认为前提，与付款周期前置无关，归类错误。"
+    },
+    {
+      "clause_id": "C020",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "甲方需在开工前一次性预付工程款，且未按约定预付时乙方有权停止施工并要求支付利息和承担违约责任。",
+      "expected_suggestion": "建议修改为分阶段支付，并明确每阶段支付的时间节点和比例，以降低甲方一次性支付的风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文预付时间数额由协议条款留白约定并逐次扣回，'一次性预付'无原文依据，停工利息以甲方违约为前提。"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "甲方代表收到乙方报告后 7 天内未进行计量，从第 8 天起，乙方报告中开列的工程量视为已被确认，作为工程款支付的依据。",
+      "expected_suggestion": "建议增加条款，明确甲方代表未按时核实工程量时，乙方有权要求暂停工程款支付，直至甲方完成核实。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该失权安排与'乙方不参加计量则甲方自行计量结果有效'互为对等的双向条款，且expected_suggestion逻辑不通。"
+    },
+    {
+      "clause_id": "C022",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "甲方在计量结果签字后超过 7 天不予支付，乙方可停止施工。",
+      "expected_suggestion": "建议增加甲方付款的宽限期，并明确乙方停止施工前应采取的协商程序。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方停工权以甲方签字确认后仍逾期不付且经通知催告为前提，系针对甲方违约的正常救济，非不利风险模式。"
+    },
+    {
+      "clause_id": "C023",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "供应时间早于清单约定时间，甲方承担因此发生的保管费用。",
+      "expected_suggestion": "建议增加条款，明确保管费用的承担比例或上限，避免甲方承担过重的费用。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "甲方提前供货自担保管费系自身偏离清单约定的后果分配，公平合理，与付款周期无关，归类错误。"
+    },
+    {
+      "clause_id": "C023",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "无论乙方是否派人参加验收，验收后由乙方妥善保管，甲方支付相应的保管费用。",
+      "expected_suggestion": "建议增加条款，明确保管期限和解除合同时的费用结算方式，避免甲方在合同解除后仍需承担保管费用。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "甲供材由乙方保管、损坏丢失由乙方赔偿系对等安排，与解除通知归类不符。"
+    },
+    {
+      "clause_id": "C023",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "发生损坏或丢失，由乙方负责赔偿。",
+      "expected_suggestion": "建议增加条款，明确赔偿的具体标准和流程，以及甲方在赔偿后的保证金返还问题。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "损坏丢失由乙方赔偿系对甲方有利条款，与定金/押金返还毫无关联，归类错误。"
+    },
+    {
+      "clause_id": "C025",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方变更设计需及时通知乙方，但未规定乙方在接到通知后停止施工的具体期限，可能导致甲方单方任意解除合同。",
+      "expected_suggestion": "明确乙方停止施工的期限，或规定乙方在接到通知后一定期限内未能提出异议，视为接受变更设计。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "设计变更条款不含解除权，原文已规定'接到通知后立即停止施工'，'单方任意解除'系凭空推测。"
+    },
+    {
+      "clause_id": "C026",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "服务水平无故障分级/响应时限/补偿未明确约定",
+      "expected_suggestion": "建议增加设计变更后的响应时限和补偿措施的具体条款",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "模板化缺失类指摘，与设计变更对工程影响条款的原文无对应内容。"
+    },
+    {
+      "clause_id": "C028",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方代表在收到乙方送交的竣工验收报告7天内无正当理由不组织验收，或验收后7天内不予批准且不能提出修改意见，视为竣工验收报告已被批准。",
+      "expected_suggestion": "增加甲方代表未能按时验收的违约责任条款，明确甲方代表的验收期限延长及违约责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "逾期视为批准以'无正当理由'为前提，系防止发包方拖延验收的示范文本通行安排，与解除通知归类不符。"
+    },
+    {
+      "clause_id": "C029",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "甲方无正当理由收到竣工报告后14天内不办理结算，从第15天起按施工企业向银行同期贷款的最高利率支付工程款的利息，并承担违约责任。",
+      "expected_suggestion": "建议增加甲方办理结算的合理期限，并明确违约责任的具体计算方式，以减轻甲方因结算延误而产生的财务负担。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "支付利息以甲方无正当理由逾期结算的违约行为为前提，属正常违约后果而非付款周期风险。"
+    },
+    {
+      "clause_id": "C030",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "保修期内，甲方可委托其他单位或人员修理，但未明确乙方在保修期内单方解除合同的权利和通知期。",
+      "expected_suggestion": "明确约定保修期内乙方单方解除合同的权利和通知期，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "保修条款不含解除内容且甲方可另行委托修理并从保修金扣费，对甲方有利，rationale系凭空引申。"
+    },
+    {
+      "clause_id": "C031",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决单方固定偏向乙方所在地",
+      "expected_suggestion": "建议明确争议解决地点或仲裁机构，避免争议解决地点对甲方不利",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为协商/调解/约定仲裁/依法起诉的中性安排，'固定乙方所在地'系凭空捏造，与原文不符。"
+    },
+    {
+      "clause_id": "C032",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "赔偿因其违约给甲方造成的损失。",
+      "expected_suggestion": "明确赔偿范围和上限，避免无上限赔偿风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引'赔偿给甲方造成的损失'系乙方违约责任，对甲方有利，且整条违约责任双向对等。"
+    },
+    {
+      "clause_id": "C032",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "违约方承担上述违约责任后仍应继续履行合同。",
+      "expected_suggestion": "增加甲方在违约情况下的解除合同权利和通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "继续履行义务双向适用，且原文已含书面通知中止/解除机制，rationale所指风险不成立。"
+    },
+    {
+      "clause_id": "C033",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方在接到索赔资料后7天内未作答复，视为该索赔已经批准，缺乏对甲方单方解除权的限制。",
+      "expected_suggestion": "增加甲方在接到索赔资料后一定期限内的答复权，如未答复则视为未批准。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "索赔逾期视为批准属索赔确认程序，与解除通知归类不符，'单方解除权'表述与原文无关。"
+    },
+    {
+      "clause_id": "C034",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "乙方承担由于自身原因造成的财产损失和伤亡事故的责任和费用，无上限。",
+      "expected_suggestion": "建议明确赔偿上限，以避免乙方承担过大的经济责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方对自身原因事故担责系对甲方有利条款，设上限之议系乙方视角。"
+    },
+    {
+      "clause_id": "C034",
+      "risk_type": "data_security",
+      "risk_level": "medium",
+      "rationale": "合同中未提及个人信息或数据处理的安全措施和泄露通知约定。",
+      "expected_suggestion": "建议增加个人信息或数据处理的安全措施条款，并明确泄露通知的义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "安全施工条款与个人信息/数据处理无关，属凭空指摘。"
+    },
+    {
+      "clause_id": "C036",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "因不可抗力发生的费用由双方分别承担，但未明确不可抗力免责单方化、无通知减损义务。",
+      "expected_suggestion": "建议明确不可抗力事件发生时，双方均有减损义务，并规定乙方在不可抗力事件发生后的通知期限和减损措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文已明确乙方24小时内通报并采取减损措施，费用分担系施工合同通行风险分配，rationale与原文相悖。"
+    },
+    {
+      "clause_id": "C037",
+      "risk_type": "data_security",
+      "risk_level": "medium",
+      "rationale": "乙方在发生事故后需向甲方提供损失情况和估价的报告，但合同中未明确提及个人信息或数据处理的安全措施以及泄露通知的约定。",
+      "expected_suggestion": "建议在合同中增加乙方在处理和报告损失情况时对个人信息和数据的保护措施，以及发生泄露时的通知义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "保险条款与个人信息/数据处理无关，属凭空指摘。"
+    },
+    {
+      "clause_id": "C038",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定甲方在工程停建或缓建时的通知义务和责任划分。",
+      "expected_suggestion": "建议增加条款，明确甲方在工程停建或缓建时的通知义务和责任划分，确保甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条已就停缓建时的保护移交、费用与损失承担作出安排且限于双方之外原因，属缺失类过度解读。"
+    },
+    {
+      "clause_id": "C038",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "条款中未对不可抗力事件进行明确界定，可能导致责任承担不明确。",
+      "expected_suggestion": "建议增加不可抗力事件的定义和发生时的处理流程，明确双方责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "不可抗力已在第一条词语含义（C002）中定义并由协议条款补充量化，rationale与合同事实不符。"
+    },
+    {
+      "clause_id": "C049",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "预付时间和比例未明确，可能导致付款过度前置。",
+      "expected_suggestion": "明确预付时间和比例，避免一次性预付过多款项。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C049为协议条款空白待填字段，系示范文本正常留白，非既成风险。"
+    },
+    {
+      "clause_id": "C056",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "合同中未明确不可抗力事件的具体范围和免责条款的具体内容，可能导致甲方在不可抗力事件发生时承担不必要的责任。",
+      "expected_suggestion": "建议明确不可抗力事件的范围，并规定在不可抗力事件发生时甲乙双方的责任和义务，包括通知义务和减损义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C056为不可抗力量化标准的空白待填字段及使用说明，系示范文本正常留白，非既成风险。"
+    }
+  ],
+  "errors": []
+}

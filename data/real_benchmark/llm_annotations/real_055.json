@@ -1,0 +1,48 @@
+{
+  "contract_id": "real_055",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C001",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定甲方（分包人）单方解除合同的条件和通知期。",
+      "expected_suggestion": "建议在合同中明确甲方单方解除合同的条件和通知期，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "视角错位：本合同委托侧为承包人而非分包人；且通用条款已明确双向解除机制（欠付停工超28天分包人可解除、转包再分包承包人可解除等），rationale与原文不符"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "sla_remedy",
+      "risk_level": "low",
+      "rationale": "合同中未明确约定服务水平故障分级、响应时限和补偿标准。",
+      "expected_suggestion": "建议在合同中明确服务水平故障分级、响应时限和补偿标准，以保障甲方服务质量。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "施工分包合同无SLA概念，质量标准与违约责任另有专门条款，机械套模板"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "deposit_return",
+      "risk_level": "low",
+      "rationale": "合同中未明确约定保证金/押金返还条件和扣除范围。",
+      "expected_suggestion": "建议在合同中明确保证金/押金返还条件和扣除范围，以保障甲方资金安全。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "本合同无押金安排，履约/支付担保系专用条款待填写留白且额度受总包担保上限约束，缺失式过度标注"
+    },
+    {
+      "clause_id": "C005",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定甲方所在地法院或仲裁机构，可能导致争议解决地不利。",
+      "expected_suggestion": "建议明确约定争议解决地为甲方所在地法院或仲裁机构，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁/诉讼二选一填写项系示范文本标准留白，属正常安排，非管辖风险"
+    }
+  ],
+  "errors": []
+}

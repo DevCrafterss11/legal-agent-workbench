@@ -1,0 +1,108 @@
+{
+  "contract_id": "real_058",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C004",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同中未明确付款周期，可能导致付款过度前置。",
+      "expected_suggestion": "建议明确付款周期和具体时间节点，避免一次性预付或过度前置付款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C004为甲方义务清单，与付款周期无关，付款安排另见第十条，属对示范文本留白的凭空指摘。"
+    },
+    {
+      "clause_id": "C004",
+      "risk_type": "ip_ownership",
+      "risk_level": "medium",
+      "rationale": "合同中未明确测绘成果的知识产权归属。",
+      "expected_suggestion": "建议明确测绘成果的知识产权归属甲方，确保甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "属缺失类指摘，且'允许乙方内部使用'与C005'允许甲方内部使用'互为对等，非甲方书面风险。"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "对乙方所提供的测绘成果的质量有争议的，由测区所在地的省级测绘产品质量监督检验站裁决。",
+      "expected_suggestion": "建议增加争议解决的具体流程和时限，以及双方协商解决的可能性，避免单方裁决可能带来的不利影响。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "省级测绘质检站系中立官方鉴定机构且费用由败诉方承担，对甲方无明显不利，sla_remedy归类不当。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "预付工程预算总价款的百分比过高，且付款与验收/成果确认未绑定。",
+      "expected_suggestion": "调整预付款比例，并确保付款与验收/成果确认绑定。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "预付比例为空白待填字段，'比例过高'无原文依据，且原文明确尾款自验收合格之日起结清，rationale与原文不符。"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "deposit_return",
+      "risk_level": "high",
+      "rationale": "甲方无权请求返还定金，且没有约定定金的具体数额和返还条件。",
+      "expected_suggestion": "明确约定定金的数额、返还条件和扣除范围，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "甲方违约不返还定金系法定定金罚则，与C011乙方违约双倍返还对等，数额留白系示范文本正常待填。"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同终止时甲方无权请求返还定金，可能存在单方任意解除合同的风险。",
+      "expected_suggestion": "增加合同终止时的定金返还条款，明确双方的权利和义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款为甲方违约责任约定，不存在单方任意解除情形，rationale与原文不符且归类错误。"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "乙方擅自转包本合同标的的，甲方有权解除合同，并可要求乙方偿付预算工程费 30% 的违约金。",
+      "expected_suggestion": "增加乙方违约解除合同的通知期限，并明确甲方解除合同的条件和程序。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方擅自转包时甲方享有解除权和违约金请求权，系对甲方有利条款。"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "合同签订后，如乙方擅自中途停止或解除合同，乙方应向甲方双倍返还定金。",
+      "expected_suggestion": "明确定金的返还条件和扣除范围，避免乙方单方面决定。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方违约向甲方双倍返还定金系对甲方有利的法定定金罚则。"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "在甲方提供了必要的工作、生活条件，并且保证了工程款按时到位，乙方未能按合同规定的日期提交测绘成果时，应向甲方赔偿拖期损失费。",
+      "expected_suggestion": "明确拖期损失费的计算方式和上限，避免无上限赔偿。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方逾期向甲方赔偿拖期损失费系对甲方有利条款，'无上限'之忧属乙方视角风险。"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "confidentiality",
+      "risk_level": "medium",
+      "rationale": "对于甲方提供的图纸和技术资料以及属于甲方的测绘成果，乙方有保密义务，不得向第三人转让。",
+      "expected_suggestion": "明确保密期限和保密信息的范围，以及违反保密义务的具体赔偿标准。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "乙方对甲方资料承担保密义务并附20%赔偿标准，系对甲方有利条款。"
+    }
+  ],
+  "errors": []
+}

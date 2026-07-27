@@ -1,0 +1,110 @@
+{
+  "contract_id": "real_026",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C005",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未约定甲方单方解除合同的条件和通知期限。",
+      "expected_suggestion": "建议增加甲方单方解除合同的条件和提前通知期限的条款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C005是工程期限条款，与合同解除无关，且合同第十二部分已有违约与解除约定，rationale与条款原文不符。"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "单方任意解除且无通知期",
+      "expected_suggestion": "增加乙方解除合同需提前通知甲方并说明理由的条款",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C015是工期顺延须经甲方确认的条款，无任何解除权内容，rationale凭空引用，且该条对甲方有利。"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "因不可抗力或甲方其他原因导致工期延误的。",
+      "expected_suggestion": "建议增加甲方因不可抗力或其他原因导致工期延误时的通知义务和责任划分。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C016是甲方自身原因或不可抗力时工期自动顺延的通行规则，属合理风险分配，与termination_notice类别无关。"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "因甲方原因导致的，乙方可协助甲方返工维修，相关费用由甲方承担。",
+      "expected_suggestion": "建议增加甲方因原因导致维修的赔偿条款，以平衡双方责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "甲方自身原因造成的质量问题由甲方承担费用是公平的按过错分配，非风险条款，且归入termination_notice类别错误。"
+    },
+    {
+      "clause_id": "C025",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "甲方应到乙方财务部门缴纳款项或直接转入指定账户，付款方式较为前置。",
+      "expected_suggestion": "建议增加付款与验收/成果确认的绑定，确保付款后乙方提供符合约定的服务或产品。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条仅约定付款渠道与资金存管账户（且乙方对账户真实性负责），不涉及付款时点前置，rationale与原文不符。"
+    },
+    {
+      "clause_id": "C026",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "不足以弥补甲方损失，甲方有权要求乙方赔偿。",
+      "expected_suggestion": "明确赔偿上限，避免无上限赔偿风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条是乙方质量责任下甲方的索赔权利，对甲方有利而非不利，从甲方视角不构成风险。"
+    },
+    {
+      "clause_id": "C030",
+      "risk_type": "jurisdiction",
+      "risk_level": "high",
+      "rationale": "争议解决方式单方固定偏向乙方所在地，且未提供甲方选择的灵活性。",
+      "expected_suggestion": "增加条款，允许甲方在多个仲裁委员会或人民法院中选择解决争议的地点，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为仲裁/诉讼两项待填空白选项，并无'乙方所在地'字样，rationale凭空引用。"
+    },
+    {
+      "clause_id": "C033",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "签订合同当日即需支付30%的款项",
+      "expected_suggestion": "建议调整付款时间，例如中期工程验收后支付款项",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "附件付款表比例为留白，'建议不超过30%'是保护甲方的上限提示，其余款项均绑定各阶段验收，属均衡的分期付款模板。"
+    },
+    {
+      "clause_id": "C033",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定单方解除合同的通知期限",
+      "expected_suggestion": "明确约定单方解除合同的通知期限和条件",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C033是保修单及附件签署页，与解除通知无关，且正文C027已约定书面解约及违约金机制，rationale与条款不符。"
+    },
+    {
+      "clause_id": "C033",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定保证金/押金返还的条件和扣除范围",
+      "expected_suggestion": "明确约定保证金/押金返还的具体条件和扣除范围",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C033为附件表格留白，合同并未设置甲方缴纳押金的义务（质量保证金反而是从应付款中预留、对甲方有利），属过度解读。"
+    }
+  ],
+  "errors": [
+    "C004: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)"
+  ]
+}

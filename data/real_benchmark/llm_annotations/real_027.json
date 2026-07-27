@@ -1,0 +1,78 @@
+{
+  "contract_id": "real_027",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C004",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "签订本合同后乙方应于 \t年 \t月 \t日前向甲方付清合同价款，计人民币\n元（大写 \t元）。",
+      "expected_suggestion": "建议增加分期付款的条款，避免一次性预付大额款项带来的财务压力。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "付款方式为三选一的待填空白项（直付/贷款/其他），付款日期留白由双方约定，不构成书面上的付款前置风险。"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "乙方所购汽车如在保修期内出现质量问题，甲方（生产厂）应明确承担维修任务的维修站（厂）负责免费维修，若乙方自行选择维修站（厂）自费维修，不影响其继续依法享有汽车“三包权利”。",
+      "expected_suggestion": "建议明确乙方在保修期内自行选择维修站（厂）的后果和责任，避免因自行选择维修站而影响保修权利。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条明确自选维修站不影响三包权利，是保护消费者（买方）的条款，且与termination_notice类别毫无关系。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "延期交付车辆超过1个月，乙方有权解除合同，要求双倍返还定金，并可要求甲方赔偿损失。",
+      "expected_suggestion": "明确赔偿损失的上限，避免无上限赔偿风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该句是买方（消费者一侧）对出卖人迟延交车的法定救济权利，对消费者有利，不构成风险。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "乙方不按时验收接车，且经甲方通知后超过1个月仍未验收接车的，甲方有权解除合同。",
+      "expected_suggestion": "增加乙方验收期限的合理性和必要性说明，避免单方任意解除合同。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "解除以通知加1个月宽限期为前提，且与买方因迟延交车的解除权对称，属双向对等的违约解除安排。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "甲乙双方因不可抗力不能履行本合同的，根据不可抗力的影响部分或者全部免除责任。",
+      "expected_suggestion": "明确不可抗力的定义和认定标准，避免单方免责。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "系民法典法定不可抗力规则的双向复述（含迟延履行后不免责），非单方免责，不构成风险。"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式单方固定偏向乙方所在地",
+      "expected_suggestion": "建议增加条款，允许双方协商选择争议解决地点或法院",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为仲裁/诉讼待填空白选项，管辖地留白，并无偏向任何一方的固定约定，rationale凭空引用。"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "confidentiality",
+      "risk_level": "medium",
+      "rationale": "保密义务单方/无限期/无例外",
+      "expected_suggestion": "增加条款，明确保密期限和例外情况，以保障甲方权益",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条是出卖人对买方个人信息的保密义务，专门保护消费者一方，方向判断完全颠倒。"
+    }
+  ],
+  "errors": []
+}

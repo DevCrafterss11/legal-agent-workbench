@@ -1,0 +1,28 @@
+{
+  "contract_id": "real_060",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C001",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "合同中未明确付款周期和方式，可能导致付款过度前置或一次性预付，对甲方不利。",
+      "expected_suggestion": "明确约定付款周期和方式，避免一次性预付或过度前置付款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C001为合同首部当事人信息，不含付款内容，结算方式另见第七条，属凭空指摘。"
+    },
+    {
+      "clause_id": "C003",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "已售商品达一定比例后才结算，付款周期较长。",
+      "expected_suggestion": "建议缩短结算周期，如每月结算一次，以加快资金回笼。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "结算方式为示范文本供双方勾选的备选项且比例留白待填，甲方可径选按月结算，非既成书面风险。"
+    }
+  ],
+  "errors": []
+}

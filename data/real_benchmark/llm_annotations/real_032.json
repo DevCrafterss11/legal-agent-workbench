@@ -1,0 +1,161 @@
+{
+  "contract_id": "real_032",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C001",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同中未明确付款周期与验收/成果确认的绑定关系。",
+      "expected_suggestion": "建议在合同中明确付款周期与验收/成果确认的绑定关系，确保付款与验收同步进行。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C001是示范文本编制说明与目录，不含任何付款条款；付款与验收绑定在通用/专用条款中另有约定，rationale与条款原文不符。"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定单方解除合同的通知期限。",
+      "expected_suggestion": "建议在合同中明确单方解除合同的通知期限，保障甲方在解除合同时有合理的时间准备。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C001是示范文本编制说明与目录，不涉及合同解除；解除机制在通用条款第16条已有完整约定，属凭空标注。"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "合同中未明确保证金/押金返还的条件和扣除范围。",
+      "expected_suggestion": "建议在合同中明确保证金/押金返还的条件和扣除范围，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "合同未设置发包人缴纳押金义务，质量保证金系向承包人预留、对发包人有利，rationale与文本不符。"
+    },
+    {
+      "clause_id": "C002",
+      "risk_type": "jurisdiction",
+      "risk_level": "high",
+      "rationale": "合同中未明确约定争议解决的具体地点或法院，可能存在争议解决地偏向乙方所在地的风险。",
+      "expected_suggestion": "建议在合同中明确约定争议解决的具体地点或法院，确保争议解决对双方公平。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C002是合同协议书主体，争议解决在专用条款中为仲裁/诉讼待填空白选项，'偏向乙方所在地'纯属推测，无书面依据。"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "ip_ownership",
+      "risk_level": "medium",
+      "rationale": "关于发包人提供给承包人的图纸、技术规范等文件的著作权的归属未明确约定归甲方所有。",
+      "expected_suggestion": "建议明确约定上述文件的著作权归甲方所有，或至少在合同中约定甲方对文件的合理使用权利。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "知识产权归属为专用条款横道线待填项（示范文本明示可填'无'或划'/'），正常留白不构成书面风险。"
+    },
+    {
+      "clause_id": "C033",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "发包人未按本合同约定接收全部或部分工程的，违约金的计算方法为：\t。",
+      "expected_suggestion": "建议增加发包人接收工程的通知期限，避免单方任意解除合同的情况发生。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "发包人与承包人未按时接收/移交工程的违约金计算方法均为对称留白，双向对等，且归入termination_notice类别错误。"
+    },
+    {
+      "clause_id": "C040",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "承包人按 16.1.1 项〔发包人违约的情形〕约定暂停施工满 \t天后发包人仍不纠正其 违约行为并致使合同目的不能实现的，承包人有权解除合同。",
+      "expected_suggestion": "增加甲方违约解除合同的条件和通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "承包人因发包人违约暂停施工满一定天数后方可解除，系GF-2017-0201通用条款的标准双向违约解除机制，天数留白，非对甲方单方不利。"
+    },
+    {
+      "clause_id": "C040",
+      "risk_type": "force_majeure",
+      "risk_level": "low",
+      "rationale": "未明确不可抗力的具体范围和确认程序。",
+      "expected_suggestion": "明确不可抗力的具体范围和确认程序，以及双方在不可抗力发生时的权利和义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "不可抗力定义与确认程序在通用合同条款第17条已有完整约定，专用条款仅为补充留白，rationale与文本结构不符。"
+    },
+    {
+      "clause_id": "C044",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决条款未明确约定争议解决地点或法院，可能存在争议解决地偏向乙方所在地的情况。",
+      "expected_suggestion": "明确约定争议解决地点或法院，确保争议解决对双方公平。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C044争议评审为可选机制且全部留白，无任何管辖地约定，'偏向乙方所在地'凭空推测。"
+    },
+    {
+      "clause_id": "C045",
+      "risk_type": "jurisdiction",
+      "risk_level": "high",
+      "rationale": "争议解决方式未明确约定双方所在地法院或仲裁机构，可能导致甲方在争议解决中处于不利地位。",
+      "expected_suggestion": "明确约定争议解决地点或仲裁机构，确保双方在争议解决中享有平等权利。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁/诉讼为二选一待填空白项，管辖机构留白，示范文本正常留白不构成书面风险。"
+    },
+    {
+      "clause_id": "C046",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定解除合同的通知期限和程序，可能导致甲方在合同解除时处于不利地位。",
+      "expected_suggestion": "建议在合同中明确约定解除合同的通知期限和程序，确保甲方在解除合同时有明确的权利和义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C046是通知送达条款，与解除程序无关，rationale与条款原文不符。"
+    },
+    {
+      "clause_id": "C046",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定付款周期和条件，可能导致甲方在付款时承担过大的财务风险。",
+      "expected_suggestion": "建议在合同中明确约定付款周期和条件，确保甲方在付款时有明确的依据和保障。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C046是通知送达条款，不含任何付款内容，rationale与条款原文不符。"
+    },
+    {
+      "clause_id": "C046",
+      "risk_type": "sla_remedy",
+      "risk_level": "low",
+      "rationale": "合同中未明确约定服务水平故障的分级、响应时限和补偿标准，但通常此类合同会有相关标准或规范可参照。",
+      "expected_suggestion": "建议在合同中明确服务水平故障的分级、响应时限和补偿标准，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C046是通知送达条款，与SLA故障分级无关，且施工合同不适用该风险类型，属类型错配。"
+    }
+  ],
+  "errors": [
+    "C003: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C004: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C005: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C006: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C009: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C010: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C011: _ssl.c:993: The handshake operation timed out",
+    "C012: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C013: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C014: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C015: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C016: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C017: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C019: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C023: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C029: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C030: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C031: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C032: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C034: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C036: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C037: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)"
+  ]
+}

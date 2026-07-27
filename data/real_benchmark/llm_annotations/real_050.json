@@ -1,0 +1,88 @@
+{
+  "contract_id": "real_050",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C005",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "一次性付款方式要求委托人在签署合同日内缴纳全部中介服务费，付款过度前置。",
+      "expected_suggestion": "建议改为分期付款，分阶段支付，降低甲方财务风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款同时提供一次性与分期两种可选方案且金额天数均留白，属选择项；另有第五条分阶段退费兜底，非书面上的强制预付"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "委托人单方面要求解除合同，合同终止时，委托人已支付的全部中介服务费按实际履行阶段扣除一定比例后退回。",
+      "expected_suggestion": "建议增加委托人单方面解除合同时的赔偿条款，以平衡双方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "分阶段退费系保护消费者的退出机制，对甲方有利；建议反而要求甲方承担赔偿，方向颠倒且归类错误"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定付款周期，可能导致付款时间过长或过短。",
+      "expected_suggestion": "建议明确约定付款周期，确保双方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "付款期限在第四条(C005)已有约定，C006为退费条款，rationale与条款内容不符"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定保证金/押金返还的具体条件和扣除范围。",
+      "expected_suggestion": "建议明确约定保证金/押金返还的具体条件和扣除范围，保障委托人权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "本合同不存在保证金/押金；C006恰恰详细列明了各阶段退费条件与扣除比例（比例留白系示范文本正常留白）"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "payment_acceptance",
+      "risk_level": "high",
+      "rationale": "委托人迟延支付中介服务费超过一定期限，受托人有权解除合同，但未明确违约金支付与合同解除的绑定关系。",
+      "expected_suggestion": "建议明确违约金支付与合同解除的绑定关系，确保违约金支付作为合同解除的条件之一。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所指为委托人自身迟延付款的违约后果，属正常违约救济；与payment_acceptance（付款与验收绑定）风险类型不符"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未规定受托人违约时委托人解除合同的通知期限。",
+      "expected_suggestion": "建议增加受托人违约时委托人解除合同的通知期限条款，保障委托人的权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C007明确受托人违约时委托人有权解除并获全额退费加违约金，对甲方有利；'通知期限缺失'系缺失式过度标注"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "合同中不可抗力免责条款单方化，且未规定减损义务。",
+      "expected_suggestion": "建议增加不可抗力事件发生后，双方应采取的减损措施，以及双方协商确定责任免除或延期履行的具体流程。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款适用于'遇有不可抗力的一方'即双向对等，并含及时通知和15日举证义务，'单方化'与原文不符"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定具体法院或仲裁机构，可能导致甲方在争议解决过程中处于不利地位。",
+      "expected_suggestion": "建议明确约定争议解决的法院或仲裁机构，以及所在地，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "'□仲裁 □诉讼 □其他'为示范文本标准勾选项，属正常留白"
+    }
+  ],
+  "errors": []
+}

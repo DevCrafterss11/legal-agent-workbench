@@ -1,0 +1,13 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+.lawbench/
+# Public corpus sources are reproducible; keep binary originals out of Git.
+data/common_contracts/raw_docx/
+dist/
+build/
+*.egg-info/

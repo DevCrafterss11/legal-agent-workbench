@@ -1,0 +1,198 @@
+{
+  "contract_id": "real_041",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C009",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "由出卖人支付【已付房价款一倍】【买受人全部损失】的赔偿金。",
+      "expected_suggestion": "建议明确赔偿金的计算方式，避免因损失难以确定而导致的争议。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引赔偿金系出卖人向买受人支付，为保护买受人的条款，方向判断颠倒"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "买受人应当在签订合同前支付定金，且一次性付款或分期付款的期限均未明确说明，可能导致付款过度前置。",
+      "expected_suggestion": "明确付款期限，避免付款过度前置，建议增加条款说明分期付款的具体时间节点和比例。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "付款方式与各期限均为空白选择/待填项，定金先付系预售制度常规安排且房款须存入预售资金监管账户"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "买受人未按约定时间付款，出卖人有权解除合同，且买受人需支付高额违约金。",
+      "expected_suggestion": "建议增加买受人逾期付款的宽限期，并降低违约金比率，以减轻买方压力。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "逾期付款责任与第十二条出卖人逾期交付责任对称设置、违约金比率互相挂钩且均为空白待填，双向对等；归类亦错误"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "出卖人未按时达到交付使用条件时，买受人没有明确的解除合同的权利和通知期。",
+      "expected_suggestion": "增加买受人有权在出卖人未按时达到交付使用条件时，在一定期限内解除合同的权利，并规定相应的通知期。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文明确基础设施逾期按第十二条由出卖人承担逾期交付责任（含买受人解除权）或按日支付违约金，rationale与原文不符"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "由于买受人原因导致该商品房未能按期交付的，双方同意按照以下方式处理：",
+      "expected_suggestion": "建议增加买受人未能按期交付时的赔偿条款，明确赔偿标准和计算方式。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引处理方式为（1）（2）空白待填项，无书面风险内容"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "买受人解除合同需书面通知出卖人，出卖人退还房款及利息，但未明确出卖人单方任意解除合同的条件。",
+      "expected_suggestion": "明确出卖人单方解除合同的条件和通知期限，以及买受人相应的权利和救济措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条系出卖人逾期交付时买受人的解除权及退款、利息加违约金安排，为保护买受人条款，rationale所指并非风险"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "买受人解除合同时，出卖人退还全部房款并支付利息，但未明确房款支付与验收/成果确认的绑定关系。",
+      "expected_suggestion": "建议明确房款支付与房屋验收/面积确认的绑定关系，确保买受人验收合格后再支付尾款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "面积差异条款设3%内据实结算、超3%解除权及超出部分双倍返还机制，为保护买受人条款，rationale离题"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "买受人解除合同需书面通知出卖人，出卖人退还房款及利息，但未规定出卖人单方解除合同的条件和通知期。",
+      "expected_suggestion": "增加出卖人单方解除合同的条件和通知期，明确双方解除合同的具体流程和责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "规划变更条款要求出卖人10日内书面通知并赋予买受人解除权及退款付息加违约金，为保护买受人条款"
+    },
+    {
+      "clause_id": "C019",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "出卖人未在规定期限内通知买受人的，买受人有权解除合同。",
+      "expected_suggestion": "建议增加出卖人未通知的违约责任条款，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引内容即买受人解除权，属保护性条款，非风险"
+    },
+    {
+      "clause_id": "C020",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "买受人解除合同需书面通知出卖人，出卖人应当自解除合同通知送达之日起15日内退还买受人已付全部房款（含已付贷款部分），并自买受人付款之日起，按照%（不低于中国人民银行公布的同期贷款基准利率）计算给付利息；同时，出卖人按照全部房价款的%向买受人支付违约金。",
+      "expected_suggestion": "增加出卖人单方解除合同的通知期限，并明确违约责任的具体计算方式和上限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "设计变更条款赋予买受人解除权并获退款、利息加违约金，为保护买受人条款，非风险"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "买受人解除合同后，出卖人退还全部房款并支付利息，但未明确与验收/成果确认绑定。",
+      "expected_suggestion": "建议明确房款退还与验收/成果确认的绑定关系，确保验收合格后再支付房款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "质量条款赋予买受人解除权、检测费由出卖人承担及赔偿请求权，为保护买受人条款，rationale离题"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "买受人解除合同需书面通知出卖人，但未规定出卖人需承担的通知义务。",
+      "expected_suggestion": "建议增加出卖人收到解除合同通知后的回复期限和未回复的处理措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文已规定出卖人自通知送达之日起15日内退款付息的明确义务，rationale与原文不符"
+    },
+    {
+      "clause_id": "C022",
+      "risk_type": "unlimited_liability",
+      "risk_level": "medium",
+      "rationale": "出卖人不承担因买受人不当使用造成的房屋及其附属设施的损害的保修责任。",
+      "expected_suggestion": "建议明确买受人不当使用的界定标准，避免因定义模糊导致甲方承担不必要的责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "不可抗力及买受人自身不当使用造成损害不予保修属合理免责范围，且归入unlimited_liability错误"
+    },
+    {
+      "clause_id": "C025",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "因买受人的原因未能在约定期限内完成房屋所有权转移登记的，出卖人不承担责任。",
+      "expected_suggestion": "建议增加买受人因自身原因未能按时完成登记时的责任承担条款，以平衡双方权利义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "因买受人自身原因致登记逾期时出卖人免责属过错归责的合理安排，出卖人原因致逾期已另设解除权与违约金"
+    },
+    {
+      "clause_id": "C026",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "服务水平无故障分级/响应时限/补偿未明确约定",
+      "expected_suggestion": "建议明确服务水平故障分级、响应时限及相应的补偿措施",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "对前期物业管理条款泛化套用SLA概念，属凭空过度解读"
+    },
+    {
+      "clause_id": "C027",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "因预测面积与实测面积差异，导致买受人不能享受税收优惠政策而增加的税收负担，由买受人承担。",
+      "expected_suggestion": "建议增加条款，明确因预测面积与实测面积差异导致的税收负担由卖方承担，或提供相应的补偿措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "税负承担方在原文为空白待填，『由买受人承担』系rationale凭空虚构；归入payment_cycle亦错误"
+    },
+    {
+      "clause_id": "C029",
+      "risk_type": "data_security",
+      "risk_level": "medium",
+      "rationale": "个人信息/数据处理缺安全措施",
+      "expected_suggestion": "建议增加具体的安全措施和泄露通知的约定",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为出卖人对买受人信息的保密义务与用途限制，属保护买受人条款，非风险"
+    },
+    {
+      "clause_id": "C030",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式仅限房屋所在地人民法院或仲裁委员会，未提供甲方选择的灵活性。",
+      "expected_suggestion": "增加争议解决方式的多样性，允许甲方选择更便利的法院或仲裁机构。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "房屋所在地法院系不动产纠纷法定专属管辖，且另有协商、调解及仲裁待选项，非不利约定"
+    },
+    {
+      "clause_id": "C031",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "补充协议中含有不合理的减轻或免除出卖人责任，或不合理的加重买受人责任、排除买受人主要权利内容。",
+      "expected_suggestion": "确保补充协议中买受人权益得到充分保障，避免单方任意解除且无通知期的情况。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文规定补充协议不合理减免出卖人责任或加重买受人责任时仍以本合同为准，系保护买受人条款，判断完全颠倒"
+    }
+  ],
+  "errors": []
+}

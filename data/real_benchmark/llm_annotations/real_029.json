@@ -1,0 +1,90 @@
+{
+  "contract_id": "real_029",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C001",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定解除合同的通知期限和交接事宜。",
+      "expected_suggestion": "建议增加解除合同的通知期限和交接责任条款，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C001是工程状况与租期条款，合同第十条已专门约定双向解除情形、另有'提前__天协商'条款，rationale与条款不符。"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "合同中未明确约定保证金/押金返还的条件和扣除范围。",
+      "expected_suggestion": "建议明确保证金/押金返还的具体条件和扣除范围，避免争议。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "全合同未设置任何保证金/押金义务，凭空标注不存在的风险。"
+    },
+    {
+      "clause_id": "C004",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "承租人未经出租人同意对工程进行装修，自行承担由此引起的一切责任。",
+      "expected_suggestion": "建议增加条款，明确未经同意装修的责任承担范围，并规定出租人同意的流程。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "擅自装修自担责任是民法典租赁的通行规则，责任源于承租人自身违约行为，且与termination_notice类别无关。"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "承租人因经营需要，经出租人同意，在办理有关手续后，可将工程转租给第三人使用。",
+      "expected_suggestion": "增加承租人转租前需通知甲方并取得甲方同意的条款，以及转租对甲方权益的影响评估。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "转租须经出租人同意是法定通行规则，条款本身已含annotation所建议的内容，且归类错误。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "出租人有权单方解除合同且无通知期",
+      "expected_suggestion": "增加出租人单方解除合同的通知期限，并明确通知方式",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "第十条同时列明出租人与承租人各自的违约解除情形，双向对等且均以对方违约为前提，非单方任意解除。"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "因工程主体结构造成承租人人身受到伤害或者财产损毁的，负责赔偿损失。",
+      "expected_suggestion": "明确赔偿上限，避免无上限赔偿风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该句是出租人对承租人人身财产损害的赔偿责任，对承租人（消费者一侧）有利，方向判断颠倒。"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "因国家战备需要终止合同，出租人不负赔偿责任。",
+      "expected_suggestion": "增加出租人提前通知义务，保障承租人权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "人防工程平时利用须服从战备需要是人民防空法下的法定强制属性，非合同自设的不利安排，且属免责事由而非解除通知问题，归类错误。"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定双方所在地法院或仲裁机构，可能导致争议解决的不便。",
+      "expected_suggestion": "建议明确约定争议解决的具体法院或仲裁机构，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁/诉讼为待填空白选项，示范文本正常留白，不构成书面风险。"
+    }
+  ],
+  "errors": [
+    "C012: The read operation timed out"
+  ]
+}

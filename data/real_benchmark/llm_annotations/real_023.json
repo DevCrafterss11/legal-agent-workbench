@@ -1,0 +1,24 @@
+{
+  "contract_id": "real_023",
+  "annotations": [
+    {
+      "clause_id": "C008",
+      "risk_type": "ip_ownership",
+      "risk_level": "low",
+      "rationale": "条款约定'未经监理人同意，不得将监理人用于本工程监理服务的任何文件直接或间接用于其他工程建设之中'，甲方付费取得的监理成果文件复用权受乙方单方同意限制，'任何文件''直接或间接'范围过宽，成果使用权偏向乙方。",
+      "expected_suggestion": "建议约定甲方对已支付酬金对应的监理成果文件享有使用权，仅限制未经同意对外转让或商业化利用，并明确可复用的文件范围。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_real_clause"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "条款约定甲方收到支付申请书后'7天内未发出异议通知，则按通用合同条款第三十二条、第三十三条、第三十四条的约定支付'，沉默即视为认可酬金并触发付款义务，付款不以甲方对监理服务成果的实际核验确认为前提，且7天异议期过短。",
+      "expected_suggestion": "建议延长异议审核期并明确付款以甲方对监理服务成果核验确认为前提，逾期未答复不视为认可付款。",
+      "requires_human_review": false,
+      "annotation_notes": "llm_real_clause"
+    }
+  ],
+  "annotator": "llm:claude-fable-5"
+}

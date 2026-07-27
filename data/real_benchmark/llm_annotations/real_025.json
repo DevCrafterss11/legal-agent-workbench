@@ -1,0 +1,118 @@
+{
+  "contract_id": "real_025",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C004",
+      "risk_type": "ip_ownership",
+      "risk_level": "medium",
+      "rationale": "条款中未明确甲方对标的数据所享有的具体产权范围，可能导致知识产权归属不明确。",
+      "expected_suggestion": "建议明确甲方对标的数据所享有的具体产权范围，包括但不限于使用权、复制权、修改权等。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款为示范文本待填空白（产权范围由双方勾选填写），正常留白不构成书面风险。"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "数据交付完成时间未明确约定故障分级、响应时限及补偿措施，可能导致甲方权益受损。",
+      "expected_suggestion": "建议明确数据交付完成的标准，包括故障分级、响应时限和相应的补偿措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款是交付完成时点的中性认定规则，与SLA故障分级无关，风险类型归错且属对留白的过度解读。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "付款过度前置、一次性预付",
+      "expected_suggestion": "建议改为分期付款或按实际使用量支付，避免一次性预付带来的财务压力。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款仅为固定价格/按量计费的待选空白项，原文并无付款前置或一次性预付内容，rationale与原文不符。"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "付款过度前置，合同签订后即需支付部分费用。",
+      "expected_suggestion": "建议调整付款周期，例如将首付款延迟至数据交付或验收通过后支付。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "分期/一次性支付均为□待选项且比例、时点全部留白，含验收通过后支付选项，不构成付款前置风险。"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "data_security",
+      "risk_level": "medium",
+      "rationale": "数据交付后风险转由甲方承担",
+      "expected_suggestion": "建议明确乙方在数据交付后仍承担一定期限的数据安全责任，或约定数据泄露通知义务",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "风险随交付转移且限于不可归责于双方的事由，系民法典通行的风险负担规则，中性对等，且归入data_security类别不当。"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "data_security",
+      "risk_level": "medium",
+      "rationale": "涉及知识产权和商业秘密的保护措施不足",
+      "expected_suggestion": "增加具体的安全措施和泄露通知约定",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款为'各方'互不侵权的双向对等约定，对甲方无不利，属对示范文本的过度解读。"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "confidentiality",
+      "risk_level": "medium",
+      "rationale": "保密义务无限期，无例外情况说明",
+      "expected_suggestion": "增加保密期限，明确例外情况",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "保密义务系'各方'双向承担，且原文明确'直至相关信息经合法渠道成为公开信息'即有终点和例外，rationale与原文不符。"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "甲方有权单方解除合同且无通知期",
+      "expected_suggestion": "增加乙方单方解除合同的通知期限，并明确通知方式",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条赋予甲方解除权，对甲方有利而非不利，且已设置催告加宽限期机制。"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "乙方有权单方解除合同，且无明确的通知期要求。",
+      "expected_suggestion": "增加甲方单方解除合同的通知期限，并明确通知方式。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "与C016甲方解除权完全对称的双向解除条款，且以催告加宽限期为前提，不构成对甲方明显不利。"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未提供选择，仅固定为乙方所在地法院或仲裁委员会。",
+      "expected_suggestion": "建议增加甲方所在地法院或仲裁委员会作为争议解决选项，以平衡双方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为法院/仲裁两项待填空白选项，并无'乙方所在地'字样，rationale凭空引用。"
+    },
+    {
+      "clause_id": "C022",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "验收与付款未绑定，可能导致付款后数据问题难以追责。",
+      "expected_suggestion": "建议将付款与验收结果绑定，验收合格后方可付款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为附件验收程序示例（含整批退回机制），付款条款C009本身已提供验收通过后付款选项，rationale不成立。"
+    }
+  ],
+  "errors": []
+}

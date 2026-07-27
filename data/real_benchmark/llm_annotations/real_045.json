@@ -1,0 +1,218 @@
+{
+  "contract_id": "real_045",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C004",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "特许经营期间，乙方如拒绝履行本协议规定的义务、支付违约金或不及时实施事故处理，甲方可以提取履约担保作为违约金或用于事故处理，但不能挪作他用。",
+      "expected_suggestion": "建议增加甲方在提取履约担保前需提前通知乙方的条款，并规定合理的通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "提取履约担保系甲方权利且以乙方违约为前提，对甲方有利，方向判断颠倒"
+    },
+    {
+      "clause_id": "C004",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "凡用于乙方违约金及事故处理等费用支出的部分履约担保金额，乙方须于事项处理后的10日内向甲方补齐履约担保金额。",
+      "expected_suggestion": "建议明确违约金及事故处理费用的计算方法和扣除范围，并规定在乙方履行义务后及时返还剩余履约担保的条款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "补齐履约担保系乙方义务，对甲方有利，非甲方的押金返还风险"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "ip_ownership",
+      "risk_level": "high",
+      "rationale": "供热设施的所有权与经营权归乙方所有，可能导致甲方在特许经营期限结束后无法继续使用相关设施。",
+      "expected_suggestion": "建议明确约定特许经营期限结束后，甲方是否可以继续使用供热设施，以及使用条件。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为所有权依法律确定权属、乙方仅有特许期内经营维修权，期满资产移交甲方另见第十三章，rationale误引原文且归类错误"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "无甲方事先书面同意，乙方不得变更该土地用途或将该土地使用权转让、出租和抵押。",
+      "expected_suggestion": "建议增加甲方在特定情况下有权解除协议的条款，并明确通知期限和交接责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "土地用途变更须经甲方书面同意系对乙方的限制，对甲方有利，非风险"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方出于公共利益的需要可依法征用或征收供热设施，乙方应予配合，并获得补偿。",
+      "expected_suggestion": "建议增加甲方征用或征收供热设施时的通知期限和程序，以保障乙方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "依法征用征收系甲方权利条款，对甲方有利，建议保障乙方与甲方视角质检口径相反"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方应依法给予乙方必要协助，但未明确甲方协助的具体内容和时限，可能导致乙方在用户不配合时无法及时获得协助，影响供热服务。",
+      "expected_suggestion": "明确甲方协助的具体内容和时限，确保乙方在用户不配合时能够及时获得必要协助。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "rationale关注的是乙方利益受损，与甲方视角相反，且归入termination_notice错误"
+    },
+    {
+      "clause_id": "C010",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "重大事故应告知用户，但未明确告知的具体时限和补偿标准。",
+      "expected_suggestion": "明确重大事故通知用户的时限和相应的补偿标准。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文903条要求事故发生后立即报告、905条明确乙方按影响程度赔偿用户，义务均在乙方，对甲方无不利"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "供热价格由政府统一定价，乙方执行，可能导致付款周期与实际供热成本不匹配，存在付款过度前置的风险。",
+      "expected_suggestion": "建议增加条款明确价格调整机制和付款周期，以适应实际供热成本的变化。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "政府统一定价条款不涉及甲方任何付款周期，rationale凭空"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方可以采取临时应急接管措施，但未明确乙方在何种情况下有义务通知甲方。",
+      "expected_suggestion": "明确约定乙方在采取临时应急接管措施前应通知甲方的义务和时限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "临时应急接管系甲方权利，对甲方有利，rationale混淆接管主体"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "条款中未明确不可抗力的定义和范围，以及不可抗力发生时甲乙双方的权利和义务。",
+      "expected_suggestion": "明确不可抗力的定义、范围以及发生不可抗力时甲乙双方的权利和义务。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "不可抗力在第二十章有详细定义、排除情形及双方通知减损义务，rationale与原文相悖"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "甲方有权提前终止特许经营协议的条件较多，且无明确的通知期要求。",
+      "expected_suggestion": "建议明确甲方提前终止协议的通知期限，以及乙方在接到通知后的合理期限内的补救措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "甲方提前终止权以乙方重大违约危害公共利益为前提，系甲方权利，对甲方有利，方向判断颠倒"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "乙方在特许经营期限届满后不再享有供热特许经营权时，应将资产移交给甲方，但未明确甲方是否有单方任意解除合同的权利。",
+      "expected_suggestion": "明确约定甲方在何种情况下有权单方解除合同，并规定相应的通知期限和交接程序。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "期满资产移交系乙方义务、对甲方有利，甲方终止权已在第十二章列明，rationale所设问题与条款无关"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "甲方违约时，乙方不给予甲方任何补偿",
+      "expected_suggestion": "增加甲方违约时的补偿条款，明确补偿标准和方式",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为乙方出现特定违约情形时『甲方不给予乙方任何补偿』，对甲方有利，rationale将主客体颠倒"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "条款中未明确资产处置谈判的具体流程和期限",
+      "expected_suggestion": "明确资产处置谈判的流程和期限，保障甲方权益",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "资产处置谈判系程序性安排且与保证金/押金无关，归类错误并属过度解读"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "特许经营期间，乙方未经甲方批准，不得擅自转让、出租、抵押或变更特许经营权，不得放弃、变换、扩大、缩小、分包、承包、委托、出租、抵押供热主业。",
+      "expected_suggestion": "增加乙方在未经甲方批准的情况下，擅自转让、出租、抵押或变更特许经营权的违约责任条款，并明确甲方有权终止协议的条件和通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引为乙方义务与禁止行为清单，对甲方有利；对应违约责任与终止权已在第十二、十八章明文规定"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "特许经营期间，乙方必须保证特许经营区域内供热生产和运行正常，禁止擅自停热或降低供热质量，发生故障时应快速抢修，直至恢复安全运行。",
+      "expected_suggestion": "明确服务水平故障的分级标准、响应时限以及相应的补偿措施，确保甲方在服务水平下降时能够获得相应的赔偿。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "保障供热连续性系乙方义务，对甲方有利；供热质量服务标准另有附件二约定，SLA指摘属过度解读"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "confidentiality",
+      "risk_level": "medium",
+      "rationale": "合同中未明确保密义务的具体范围、期限和例外情况。",
+      "expected_suggestion": "增加保密条款，明确保密信息的范围、保密期限以及未经授权披露保密信息的法律责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "公用事业特许经营协议未设保密条款属正常留白，对缺失的凭空指摘"
+    },
+    {
+      "clause_id": "C019",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "甲方违反本协议规定，给乙方造成经济损失，应赔偿乙方因此而遭受的经济损失。",
+      "expected_suggestion": "建议明确赔偿上限，避免无上限的经济责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "1801条系以甲方自身违约为前提的实际损失赔偿，为法定违约责任的重述，非无上限责任风险模式"
+    },
+    {
+      "clause_id": "C020",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲、乙双方可以采取签订书面补充协议或书面协议的方式修改本协议，但未明确约定单方解除协议的条件和通知期。",
+      "expected_suggestion": "明确约定单方解除协议的条件和通知期，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "协议变更须双方书面一致，双向对等；终止条件已在第十二章专章约定，rationale不成立"
+    },
+    {
+      "clause_id": "C021",
+      "risk_type": "force_majeure",
+      "risk_level": "high",
+      "rationale": "不可抗力免责单方化、无通知减损义务",
+      "expected_suggestion": "增加条款，规定在不可抗力事件发生时，双方均有义务通知对方并采取合理措施减少损失，否则可能承担相应责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文2004条明确规定提出方24/48小时通知义务及减损义务且对双方适用，rationale与原文完全相悖"
+    },
+    {
+      "clause_id": "C022",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定双方所在地法院，可能对甲方不利。",
+      "expected_suggestion": "建议明确约定争议解决法院为甲方所在地法院，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "协商前置加依法仲裁或向有管辖权法院起诉，中性对等约定；要求固定甲方所在地反属单方倾向"
+    }
+  ],
+  "errors": []
+}

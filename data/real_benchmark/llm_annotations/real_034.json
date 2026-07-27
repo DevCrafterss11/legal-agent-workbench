@@ -1,0 +1,112 @@
+{
+  "contract_id": "real_034",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C009",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "入住期间损坏甲方设施设备的，应当按照《设施设备清单》上标明的价格赔偿甲方损失。",
+      "expected_suggestion": "建议增加条款明确赔偿金额的上限，避免因设施设备损坏导致的过高赔偿。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "损坏设施按事先公示的《设施设备清单》价格赔偿，系基于过错的等价赔偿且价格透明，非风险条款，归入termination_notice类别错误。"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "乙方入住甲方期间，有关本合同的履行事宜甲方应以书面或数据电文形式通知乙方或乙方监护人、丙方，由乙方或乙方监护人、丙方确认签收；乙方或乙方监护人、丙方拒签的， 书面通知在第三方见证下送至收件人地址的视为已通知或已送达，数据电文进入收件人接收系统的视为已通知或已送达。",
+      "expected_suggestion": "建议增加甲方单方解除合同的通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条是通知送达条款且设有'受送达人举证未实际收到除外'及第三方见证等保护机制，与解除通知期无关，风险类型归错。"
+    },
+    {
+      "clause_id": "C020",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "保证金返还条件、扣除范围单方决定",
+      "expected_suggestion": "明确保证金返还的具体条件和扣除范围，保障甲方权益",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "押金抵扣范围已明确列举（欠付费用、违约金、赔偿金、急救垫付），原文并无'单方决定'表述，rationale与原文不符。"
+    },
+    {
+      "clause_id": "C022",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "乙方（乙方监护人）和丙方收到甲方变更服务方案的书面通知后 日内既不确认又不提出异议，但乙方实际接受甲方提供的相应服务的，视为甲、乙方（乙方监护人）和丙方三方就合同约定的服务项目的变更达成了一致，乙方（乙方监护人）和丙方有义务按照新的服务项目支付相应的服务费用。",
+      "expected_suggestion": "建议增加条款明确乙方有权在收到变更通知后的一定时间内提出异议，且在此期间内乙方无需支付变更后的服务费用。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "视为同意以'既不异议且实际接受服务'双重条件为前提，属以行为承诺的合理变更机制，且与payment_cycle类别无关。"
+    },
+    {
+      "clause_id": "C022",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "乙方（乙方监护人）和丙方收到通知后 15 日内不以书面形式提出异议，但拒绝根据调整后的价格支付相关费用的，甲方有权解除合同并按照原收费标准收取已提供服务的费用。",
+      "expected_suggestion": "建议增加甲方解除合同前需给予乙方合理的通知期，并明确乙方在通知期内有权选择是否继续按照原收费标准履行合同。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "调价以物价指数变动超10%为前提、提前30日书面通知并赋予消费者15日解约权，已提供服务仍按原标准计费，程序均衡；所引解除情形以消费者拒付为前提，非单方任意解除。"
+    },
+    {
+      "clause_id": "C023",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "乙方（乙方监护人）和丙方可以单方解除本合同，并无需承担违约责任",
+      "expected_suggestion": "增加甲方单方解除合同的条件，并规定相应的违约责任",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引条款是消费者一方（乙方及监护人、丙方）无责解除权，对消费者有利，方向判断颠倒。"
+    },
+    {
+      "clause_id": "C024",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "因乙方原因造成甲方或第三人人身或财产损失的，乙方（乙方监护人）和丙方应承担赔偿责任。",
+      "expected_suggestion": "明确赔偿范围和上限，避免无上限赔偿责任对甲方造成重大损失。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "因乙方原因致他人损失按过错承担赔偿是法定归责原则的复述，无加重或无限责任的特别安排，不构成书面风险模式。"
+    },
+    {
+      "clause_id": "C025",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "单方任意解除且无通知期",
+      "expected_suggestion": "增加甲方在联系中断情况下的通知期和解除权",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C025仅约定联系中断时经协商重新确定联系人，全文无任何解除权内容，rationale凭空引用。"
+    },
+    {
+      "clause_id": "C027",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方与乙方或乙方监护人协商后，可以重新确定新的联系人担任丙方。",
+      "expected_suggestion": "建议增加甲方在联系中断时有权单方面解除合同的权利，并规定相应的通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C027仅约定联系中断时经协商重新确定丙方联系人，与合同解除无关，且建议内容反而损害消费者利益。"
+    }
+  ],
+  "errors": [
+    "C001: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C002: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C004: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C005: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C006: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C007: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C010: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C011: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C012: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C013: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C014: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C015: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C016: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)"
+  ]
+}

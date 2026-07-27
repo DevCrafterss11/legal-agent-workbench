@@ -1,0 +1,178 @@
+{
+  "contract_id": "real_028",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C001",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同签订生效后，未被修改的文本印刷文字视为双方同意内容。",
+      "expected_suggestion": "建议明确甲方解除合同的通知期限和条件，避免单方任意解除合同的风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引文字是示范文本使用说明的通行表述，与解除通知无关，风险类型与rationale均不成立。"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同中未明确付款周期和方式，可能导致付款过度前置。",
+      "expected_suggestion": "建议明确付款周期和方式，避免一次性预付或过度前置付款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C001是首部与使用说明，付款方式在第二条已有专门约定且含预收费监管等保护性规定，属对留白的过度解读。"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "sla_remedy",
+      "risk_level": "low",
+      "rationale": "合同中未提及服务水平无故障分级、响应时限和补偿条款。",
+      "expected_suggestion": "建议增加服务水平无故障分级、响应时限和补偿条款，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "培训服务合同不适用故障分级SLA概念，且第六条已有完整违约救济，属类型错配的过度标注。"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "deposit_return",
+      "risk_level": "medium",
+      "rationale": "合同中未明确保证金/押金返还条件、扣除范围。",
+      "expected_suggestion": "建议明确保证金/押金返还条件、扣除范围，避免单方决定扣除。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "合同未要求消费者缴纳任何押金，'风险保证金'是对培训机构预收费的监管手段、保护消费者，rationale与文本不符。"
+    },
+    {
+      "clause_id": "C003",
+      "risk_type": "payment_cycle",
+      "risk_level": "high",
+      "rationale": "培训费用金额超过一定数额时，甲方需在特定日期前支付一定比例的费用，付款过度前置。",
+      "expected_suggestion": "建议调整付款周期，避免一次性预付过高比例的费用，可考虑分期支付方式。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "付费方式为□单选待填空白项且本身含分期选项，另有预收费银行托管监管，主体也搞反（付款方是乙方），不构成书面风险。"
+    },
+    {
+      "clause_id": "C003",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "合同中未明确培训服务验收或成果确认与付款的绑定关系。",
+      "expected_suggestion": "建议增加条款，明确培训服务验收或成果确认后支付相应费用。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "预收费须银行托管且按授课完成经消费者确认后拨付（见第四条），已有付款与履行绑定机制，rationale不成立。"
+    },
+    {
+      "clause_id": "C004",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "按课时收费的，每科不得一次性收取超过 60 课时的费用且不超过 3 个月。",
+      "expected_suggestion": "建议明确具体的付款周期，避免一次性预付过多费用，降低甲方财务风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引文字是限制机构预收费的国家政策上限，恰是保护消费者的条款，方向判断颠倒。"
+    },
+    {
+      "clause_id": "C004",
+      "risk_type": "termination_notice",
+      "risk_level": "low",
+      "rationale": "甲方若改变培训方式，须双方协商一致。",
+      "expected_suggestion": "建议增加甲方单方解除合同的条件和通知期限，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "变更培训方式须协商一致是限制机构单方变更、保护消费者的条款，与termination_notice无关。"
+    },
+    {
+      "clause_id": "C004",
+      "risk_type": "confidentiality",
+      "risk_level": "low",
+      "rationale": "甲方应当保护乙方个人信息，确保在收集、存储、使用、加工、公开等个人信息处理活动中严格遵守相关法律规定。",
+      "expected_suggestion": "建议明确个人信息保护的具体措施和责任，确保个人信息安全。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条是培训机构承担的个人信息保护义务，保护消费者一方，不构成风险。"
+    },
+    {
+      "clause_id": "C005",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "如甲方采用银行托管方式进行预收费监管，乙方应在托管协议规定的时间内对甲方授课完成和资金拨付予以确认；超过规定时限未确认的，视为确认同意。",
+      "expected_suggestion": "建议明确确认时限的具体长度，避免因时间过长导致甲方资金占用时间过长。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "视为确认机制以授课实际完成为前提，是托管拨付的通行平衡安排；rationale所称'资金占用时间过长'与条款风险点不符，归入payment_cycle亦不当。"
+    },
+    {
+      "clause_id": "C005",
+      "risk_type": "termination_notice",
+      "risk_level": "low",
+      "rationale": "如学员身体健康状况有特殊情形不再适合参与培训的，乙方应及时书面通知甲方。",
+      "expected_suggestion": "建议增加甲方在收到通知后的处理时限，确保甲方有足够的时间作出相应处理。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "健康特殊情形的通知及协商处理（含按实际课时结算选项）是中性且偏保护消费者的安排，与解除通知类别无关。"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "甲方应在收到乙方书面退费申请后 \t（≤ 20）个工作日内，将相应退费款项支付给乙方。",
+      "expected_suggestion": "建议增加甲方未按时支付退费时的违约责任条款，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "限定机构最迟20个工作日内退费是保护消费者的条款，且第六条第(五)款已配套逾期违约金，rationale不成立。"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "在办理退费时，对于已发放给乙方的培训资料的费用、已转付给第三方并无法索回的代收代支费用以及已向银行（第三方）支付的合理手续费用等，由甲方出示相关证明材料后，经协商，由乙方承担。",
+      "expected_suggestion": "建议明确费用承担的具体比例和上限，避免甲方承担过大的额外费用。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "扣减以机构举证并经双方协商为前提，仅限已实际发生且无法索回的费用，属合理分担而非明显不利，归入payment_cycle亦错误。"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "乙方有权要求解除合同，要求甲方退还剩余培训费并支付违约金，但甲方无通知期。",
+      "expected_suggestion": "建议增加甲方解除合同的通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条赋予消费者一方解除权并要求机构退费加付违约金，是保护消费者的救济条款，方向判断颠倒。"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同中未明确付款周期，可能导致付款过度前置。",
+      "expected_suggestion": "建议明确付款周期，避免一次性预付过多费用。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C007是违约责任条款，不涉及付款周期，付款安排在第二条另有约定，rationale与条款原文不符。"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "合同中未对服务水平故障分级、响应时限和补偿作出明确规定。",
+      "expected_suggestion": "建议增加服务水平故障分级、响应时限和补偿条款，以保障服务质量。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C007恰恰是完整的违约救济条款（解除、退费、违约金、逾期日息上限），rationale与原文相反。"
+    },
+    {
+      "clause_id": "C008",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式单方固定偏向乙方所在地",
+      "expected_suggestion": "建议增加条款，明确争议解决地点或法院选择权由双方协商确定",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为仲裁/诉讼□单选且机构名称留白，并无任何固定管辖地表述，rationale凭空引用。"
+    }
+  ],
+  "errors": []
+}

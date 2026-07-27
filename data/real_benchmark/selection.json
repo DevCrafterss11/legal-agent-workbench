@@ -1,0 +1,522 @@
+[
+  {
+    "contract_id": "real_001",
+    "title": "合同节水管理项目服务合同（水利部、市场监管总局2026版）",
+    "contract_type": "general",
+    "year": "2026",
+    "clauses": 19,
+    "chars": 7425
+  },
+  {
+    "contract_id": "real_002",
+    "title": "建设工程造价咨询合同（住房城乡建设部、国家工商总局2015版）",
+    "contract_type": "construction",
+    "year": "2015",
+    "clauses": 11,
+    "chars": 10356
+  },
+  {
+    "contract_id": "real_003",
+    "title": "山东省体育健身服务合同（山东省2025版）",
+    "contract_type": "consumer",
+    "year": "2025",
+    "clauses": 16,
+    "chars": 6418
+  },
+  {
+    "contract_id": "real_004",
+    "title": "农副产品买卖合同（市场监管总局2025版）",
+    "contract_type": "sales",
+    "year": "2025",
+    "clauses": 21,
+    "chars": 4394
+  },
+  {
+    "contract_id": "real_005",
+    "title": "城镇房屋租赁合同（市场监管总局2025版）",
+    "contract_type": "lease",
+    "year": "2025",
+    "clauses": 26,
+    "chars": 9181
+  },
+  {
+    "contract_id": "real_006",
+    "title": "保管合同（市场监管总局2025版）",
+    "contract_type": "service",
+    "year": "2025",
+    "clauses": 18,
+    "chars": 4464
+  },
+  {
+    "contract_id": "real_007",
+    "title": "委托合同（市场监管总局2025版）",
+    "contract_type": "procurement",
+    "year": "2025",
+    "clauses": 20,
+    "chars": 4857
+  },
+  {
+    "contract_id": "real_008",
+    "title": "赠与合同（市场监管总局2025版）",
+    "contract_type": "general",
+    "year": "2025",
+    "clauses": 24,
+    "chars": 4219
+  },
+  {
+    "contract_id": "real_009",
+    "title": "商品房买卖合同（现售）（住房城乡建设部、国家工商总局2014版）",
+    "contract_type": "construction",
+    "year": "2014",
+    "clauses": 31,
+    "chars": 11100
+  },
+  {
+    "contract_id": "real_010",
+    "title": "北京市科技类校外培训服务合同（北京市2024版）",
+    "contract_type": "consumer",
+    "year": "2024",
+    "clauses": 20,
+    "chars": 6257
+  },
+  {
+    "contract_id": "real_011",
+    "title": "危险化学品生产经营企业自建网站销售合同（市场监管总局、网信办、教育部、公安部、应急管理部、国家邮政局2023版）",
+    "contract_type": "sales",
+    "year": "2023",
+    "clauses": 28,
+    "chars": 9948
+  },
+  {
+    "contract_id": "real_012",
+    "title": "北京市错时停车位租赁合同（北京市2024版）",
+    "contract_type": "lease",
+    "year": "2024",
+    "clauses": 13,
+    "chars": 4068
+  },
+  {
+    "contract_id": "real_013",
+    "title": "城市供用水合同（国家工商总局1999版）",
+    "contract_type": "service",
+    "year": "1999",
+    "clauses": 13,
+    "chars": 2749
+  },
+  {
+    "contract_id": "real_014",
+    "title": "数据委托处理服务合同（国家数据局、市场监管总局2025版）",
+    "contract_type": "procurement",
+    "year": "2025",
+    "clauses": 19,
+    "chars": 7958
+  },
+  {
+    "contract_id": "real_015",
+    "title": "数据中介服务合同（国家数据局、市场监管总局2025版）",
+    "contract_type": "general",
+    "year": "2025",
+    "clauses": 13,
+    "chars": 5832
+  },
+  {
+    "contract_id": "real_016",
+    "title": "建设工程监理合同（住房城乡建设部、国家工商总局2012版）",
+    "contract_type": "construction",
+    "year": "2012",
+    "clauses": 13,
+    "chars": 9387
+  },
+  {
+    "contract_id": "real_017",
+    "title": "北京市机动车驾驶培训服务合同（北京市2024版）",
+    "contract_type": "consumer",
+    "year": "2024",
+    "clauses": 17,
+    "chars": 5107
+  },
+  {
+    "contract_id": "real_018",
+    "title": "生鲜乳购销合同（农业部、工业和信息化部、国家工商总局2016版）",
+    "contract_type": "sales",
+    "year": "2016",
+    "clauses": 12,
+    "chars": 3449
+  },
+  {
+    "contract_id": "real_019",
+    "title": "柜台租赁经营合同（国家工商总局2013版）",
+    "contract_type": "lease",
+    "year": "2013",
+    "clauses": 14,
+    "chars": 3092
+  },
+  {
+    "contract_id": "real_020",
+    "title": "城市供用气合同（国家工商总局1999版）",
+    "contract_type": "service",
+    "year": "1999",
+    "clauses": 12,
+    "chars": 2233
+  },
+  {
+    "contract_id": "real_021",
+    "title": "京津冀地区委托合同（京津冀2024版）",
+    "contract_type": "procurement",
+    "year": "2024",
+    "clauses": 15,
+    "chars": 4119
+  },
+  {
+    "contract_id": "real_022",
+    "title": "数据融合开发合同（国家数据局、市场监管总局2025版）",
+    "contract_type": "general",
+    "year": "2025",
+    "clauses": 13,
+    "chars": 6843
+  },
+  {
+    "contract_id": "real_023",
+    "title": "水利工程施工监理合同（水利部、国家工商总局2007版）",
+    "contract_type": "construction",
+    "year": "2007",
+    "clauses": 27,
+    "chars": 7570
+  },
+  {
+    "contract_id": "real_024",
+    "title": "医疗美容消费服务合同（市场监管总局2023版）",
+    "contract_type": "consumer",
+    "year": "2023",
+    "clauses": 11,
+    "chars": 5336
+  },
+  {
+    "contract_id": "real_025",
+    "title": "数据提供合同（国家数据局、市场监管总局2025版）",
+    "contract_type": "general",
+    "year": "2025",
+    "clauses": 23,
+    "chars": 9024
+  },
+  {
+    "contract_id": "real_026",
+    "title": "黑龙江省家居装饰装修工程施工合同 （试行）（黑龙江省2025版）",
+    "contract_type": "construction",
+    "year": "2025",
+    "clauses": 33,
+    "chars": 19677
+  },
+  {
+    "contract_id": "real_027",
+    "title": "汽车买卖合同（国家工商总局2015版）",
+    "contract_type": "sales",
+    "year": "2015",
+    "clauses": 11,
+    "chars": 3511
+  },
+  {
+    "contract_id": "real_028",
+    "title": "中小学生校外培训服务合同（教育部、市场监管总局2021版）",
+    "contract_type": "consumer",
+    "year": "2021",
+    "clauses": 11,
+    "chars": 5939
+  },
+  {
+    "contract_id": "real_029",
+    "title": "人民防空工程租赁使用合同（人防办公室、国家工商总局2002版）",
+    "contract_type": "lease",
+    "year": "2002",
+    "clauses": 12,
+    "chars": 1932
+  },
+  {
+    "contract_id": "real_030",
+    "title": "仓储合同（国家工商总局2000版）",
+    "contract_type": "service",
+    "year": "2000",
+    "clauses": 5,
+    "chars": 816
+  },
+  {
+    "contract_id": "real_031",
+    "title": "中介合同（市场监管总局2025版）",
+    "contract_type": "general",
+    "year": "2025",
+    "clauses": 17,
+    "chars": 3556
+  },
+  {
+    "contract_id": "real_032",
+    "title": "园林绿化工程施工合同（住房城乡建设部、市场监管总局2020版）",
+    "contract_type": "construction",
+    "year": "2020",
+    "clauses": 46,
+    "chars": 15774
+  },
+  {
+    "contract_id": "real_033",
+    "title": "二手车买卖合同（国家工商总局2015版）",
+    "contract_type": "sales",
+    "year": "2015",
+    "clauses": 11,
+    "chars": 4361
+  },
+  {
+    "contract_id": "real_034",
+    "title": "养老机构服务合同（民政部、国家工商总局2016版）",
+    "contract_type": "consumer",
+    "year": "2016",
+    "clauses": 27,
+    "chars": 10957
+  },
+  {
+    "contract_id": "real_035",
+    "title": "建筑施工物资租赁合同（国家工商总局2000版）",
+    "contract_type": "lease",
+    "year": "2000",
+    "clauses": 9,
+    "chars": 1398
+  },
+  {
+    "contract_id": "real_036",
+    "title": "黑龙江省预付式消费服务合同（试行）（黑龙江省2025版）",
+    "contract_type": "general",
+    "year": "2025",
+    "clauses": 23,
+    "chars": 9168
+  },
+  {
+    "contract_id": "real_037",
+    "title": "建设工程勘察合同（住房城乡建设部、国家工商总局2016版）",
+    "contract_type": "construction",
+    "year": "2016",
+    "clauses": 34,
+    "chars": 15659
+  },
+  {
+    "contract_id": "real_038",
+    "title": "粮食买卖合同（国家工商总局2000版）",
+    "contract_type": "sales",
+    "year": "2000",
+    "clauses": 5,
+    "chars": 1184
+  },
+  {
+    "contract_id": "real_039",
+    "title": "机动车驾驶培训先学后付、计时收费模式服务合同（交通运输部、国家工商总局2016版）",
+    "contract_type": "consumer",
+    "year": "2016",
+    "clauses": 17,
+    "chars": 5108
+  },
+  {
+    "contract_id": "real_040",
+    "title": "京津冀地区承揽合同（京津冀2024版）",
+    "contract_type": "general",
+    "year": "2024",
+    "clauses": 22,
+    "chars": 5194
+  },
+  {
+    "contract_id": "real_041",
+    "title": "商品房买卖合同（预售）（住房城乡建设部、国家工商总局2014版）",
+    "contract_type": "construction",
+    "year": "2014",
+    "clauses": 34,
+    "chars": 13293
+  },
+  {
+    "contract_id": "real_042",
+    "title": "工业品买卖合同（国家工商总局2000版）",
+    "contract_type": "sales",
+    "year": "2000",
+    "clauses": 5,
+    "chars": 1338
+  },
+  {
+    "contract_id": "real_043",
+    "title": "中国公民出境旅游合同（国家旅游局、国家工商总局2007版）",
+    "contract_type": "consumer",
+    "year": "2007",
+    "clauses": 24,
+    "chars": 10402
+  },
+  {
+    "contract_id": "real_044",
+    "title": "集体林权流转合同（国家林草局、市场监管总局2020版）",
+    "contract_type": "general",
+    "year": "2020",
+    "clauses": 11,
+    "chars": 4504
+  },
+  {
+    "contract_id": "real_045",
+    "title": "城镇供热特许经营协议（建设部2006版）",
+    "contract_type": "construction",
+    "year": "2006",
+    "clauses": 23,
+    "chars": 11475
+  },
+  {
+    "contract_id": "real_046",
+    "title": "化肥买卖合同（国家工商总局2000版）",
+    "contract_type": "sales",
+    "year": "2000",
+    "clauses": 6,
+    "chars": 1333
+  },
+  {
+    "contract_id": "real_047",
+    "title": "集体林地承包合同（国家林草局、市场监管总局2020版）",
+    "contract_type": "general",
+    "year": "2020",
+    "clauses": 12,
+    "chars": 4477
+  },
+  {
+    "contract_id": "real_048",
+    "title": "工程建设项目招标代理合同（建设部、国家工商总局2005版）",
+    "contract_type": "construction",
+    "year": "2005",
+    "clauses": 5,
+    "chars": 7651
+  },
+  {
+    "contract_id": "real_049",
+    "title": "农药买卖合同（国家工商总局2000版）",
+    "contract_type": "sales",
+    "year": "2000",
+    "clauses": 5,
+    "chars": 1496
+  },
+  {
+    "contract_id": "real_050",
+    "title": "自费出国留学中介服务合同（教育部、国家工商总局2016版）",
+    "contract_type": "general",
+    "year": "2016",
+    "clauses": 13,
+    "chars": 5005
+  },
+  {
+    "contract_id": "real_051",
+    "title": "城市管道燃气特许经营协议（建设部2004版）",
+    "contract_type": "construction",
+    "year": "2004",
+    "clauses": 16,
+    "chars": 7855
+  },
+  {
+    "contract_id": "real_052",
+    "title": "设备监理合同（国家质检总局、国家工商总局2010版）",
+    "contract_type": "general",
+    "year": "2010",
+    "clauses": 33,
+    "chars": 6129
+  },
+  {
+    "contract_id": "real_053",
+    "title": "城市生活垃圾处理特许经营协议（建设部2004版）",
+    "contract_type": "construction",
+    "year": "2004",
+    "clauses": 30,
+    "chars": 11679
+  },
+  {
+    "contract_id": "real_054",
+    "title": "修缮修理合同（国家工商总局2000版）",
+    "contract_type": "general",
+    "year": "2000",
+    "clauses": 7,
+    "chars": 1002
+  },
+  {
+    "contract_id": "real_055",
+    "title": "建设工程施工专业分包合同（建设部、国家工商总局2003版）",
+    "contract_type": "construction",
+    "year": "2003",
+    "clauses": 8,
+    "chars": 15481
+  },
+  {
+    "contract_id": "real_056",
+    "title": "行纪合同（国家工商总局2000版）",
+    "contract_type": "general",
+    "year": "2000",
+    "clauses": 5,
+    "chars": 976
+  },
+  {
+    "contract_id": "real_057",
+    "title": "家庭居室装饰装修工程施工合同（建设部、国家工商总局2000版）",
+    "contract_type": "construction",
+    "year": "2000",
+    "clauses": 16,
+    "chars": 5961
+  },
+  {
+    "contract_id": "real_058",
+    "title": "测绘合同（国家测绘局、国家工商总局2000版）",
+    "contract_type": "general",
+    "year": "2000",
+    "clauses": 12,
+    "chars": 2915
+  },
+  {
+    "contract_id": "real_059",
+    "title": "建筑装饰工程施工合同（乙种本）（国家工商总局1996版）",
+    "contract_type": "construction",
+    "year": "1996",
+    "clauses": 12,
+    "chars": 3438
+  },
+  {
+    "contract_id": "real_060",
+    "title": "商品代销合同（国家工商总局2000版）",
+    "contract_type": "general",
+    "year": "2000",
+    "clauses": 6,
+    "chars": 803
+  },
+  {
+    "contract_id": "real_061",
+    "title": "建筑装饰工程施工合同（甲种本）（国家工商总局1996版）",
+    "contract_type": "construction",
+    "year": "1996",
+    "clauses": 56,
+    "chars": 19161
+  },
+  {
+    "contract_id": "real_062",
+    "title": "加工合同（国家工商总局2000版）",
+    "contract_type": "general",
+    "year": "2000",
+    "clauses": 5,
+    "chars": 1376
+  },
+  {
+    "contract_id": "real_063",
+    "title": "承揽合同（国家工商总局2000版）",
+    "contract_type": "general",
+    "year": "2000",
+    "clauses": 5,
+    "chars": 935
+  },
+  {
+    "contract_id": "real_064",
+    "title": "定作合同（国家工商总局2000版）",
+    "contract_type": "general",
+    "year": "2000",
+    "clauses": 6,
+    "chars": 968
+  },
+  {
+    "contract_id": "real_065",
+    "title": "城市供用热力合同（国家工商总局1999版）",
+    "contract_type": "general",
+    "year": "1999",
+    "clauses": 12,
+    "chars": 2273
+  }
+]

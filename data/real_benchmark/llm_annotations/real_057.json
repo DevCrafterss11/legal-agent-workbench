@@ -1,0 +1,88 @@
+{
+  "contract_id": "real_057",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C009",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "因承包人责任不能按期开工或无故中途停工而影响工期的，工期不顺延；因承包人原因造成工程质量存在问题的，返工费用由承包人承担，工期不顺延。",
+      "expected_suggestion": "建议增加条款，明确承包人责任导致工期延误时的赔偿标准及甲方解除合同的权利和通知期。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引内容是承包人（乙方）过错的不利后果，对发包人（甲方）有利；且与解除通知期风险类型无关"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "工程款结清后办理移交手续，付款与验收/成果确认未直接绑定。",
+      "expected_suggestion": "建议将付款与工程验收合格直接绑定，确保验收合格后再支付工程款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "rationale与原文不符：合同付款表明确第三次付款以'双方验收合格'为条件，尾款于结算签字时支付，付款已与验收绑定"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "工程款全部结清后才开具正式统一发票，可能导致甲方在验收合格后无法及时获得发票，影响财务处理。",
+      "expected_suggestion": "建议修改为工程验收合格后，承包人应立即向发包人开具正式统一发票。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "款项结清后开票系交易惯例，与payment_cycle（付款过度前置/一次性预付）风险类型不符，非明显不利"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "合同中未对赔偿金额进行上限限制，责任方需赔偿对方造成的经济损失。",
+      "expected_suggestion": "建议增加赔偿金额的上限，以限制责任方的无限责任风险。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "'任何一方违约由责任方赔偿'系双向对等的过错赔偿原则，与法定损害赔偿一致，未设上限不构成对甲方单方不利"
+    },
+    {
+      "clause_id": "C013",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同中未规定单方解除合同的通知期限，可能导致甲方在合同解除时处于不利地位。",
+      "expected_suggestion": "建议明确单方解除合同的通知期限，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "条款已约定合同无法履行时'该方应及时通知另一方'并由责任方赔偿，双向对等，缺失式过度标注"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决方式未明确约定双方所在地法院或仲裁机构，可能导致争议解决地点对甲方不利。",
+      "expected_suggestion": "建议明确约定争议解决地点为甲方所在地法院或仲裁机构。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁/诉讼二选一填写项系示范文本标准留白，属正常安排，非管辖风险"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同履行完毕后终止",
+      "expected_suggestion": "建议增加甲方单方解除合同的条件和通知期",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "'履行完毕后终止'系合同自然终止的常规表述，本身不构成任何风险"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "deposit_return",
+      "risk_level": "low",
+      "rationale": "条款中未提及保证金/押金返还条件",
+      "expected_suggestion": "建议明确保证金/押金返还的具体条件和扣除范围",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "本合同不存在保证金/押金安排，缺失式机械套模板"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,108 @@
+{
+  "contract_id": "real_052",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C001",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "监理费用和报酬支付（支付币种、金额、时间、方式）未明确具体支付周期，可能导致付款过度前置。",
+      "expected_suggestion": "明确监理费用和报酬的支付周期，避免一次性预付或过度前置付款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "附件B支付条款系待双方填写的空白字段，属示范文本正常留白，非付款前置风险"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "termination_notice",
+      "risk_level": "low",
+      "rationale": "合同中未明确约定单方任意解除合同的条件和通知期。",
+      "expected_suggestion": "增加单方解除合同的条件和通知期条款，保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "通用条件第37、38条已有双向解除机制，缺失式过度标注且与原文不符"
+    },
+    {
+      "clause_id": "C001",
+      "risk_type": "sla_remedy",
+      "risk_level": "low",
+      "rationale": "合同中未明确服务水平故障分级、响应时限和补偿标准。",
+      "expected_suggestion": "增加服务水平故障分级、响应时限和补偿标准条款，确保服务质量。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "设备监理合同无SLA概念，缺失式机械套模板"
+    },
+    {
+      "clause_id": "C006",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "超过约定时间未收到决定视为委托人对监理人提出的事宜已无不同意见，监理人无须再作确认。",
+      "expected_suggestion": "增加委托人未在约定时间内作出决定的明确处理条款，如委托人未在约定时间内作出决定，应视为委托人同意监理人的提议。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "系逾期未答复视为无异议的默示确认条款，与解除通知期无关，risk_type归类错误；且期限由委托人在专用条件中自行约定，expected_suggestion与条款现状相同，标注自相矛盾"
+    },
+    {
+      "clause_id": "C007",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "监理人有权要求被监理人调换有关人员，但合同中未明确监理人单方解除合同的权利及通知期。",
+      "expected_suggestion": "建议增加监理人单方解除合同的条件和通知期，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C007是委托人授予监理人对第三人的监督权限，与解除权无关；监理人解除权在第38条另有规定，rationale与条款不符"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "监理人因非自身原因导致暂停或终止服务时，仅需通知委托人，但未规定委托人解除合同的通知期。",
+      "expected_suggestion": "建议增加委托人解除合同的通知期限，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "C012系非监理人原因暂停/终止时的额外服务费用条款，'立即通知'义务恰在保护委托人知情权，缺失式过度标注"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "委托人有权解除合同，但监理人逾期不整改的情况下，合同解除权仅由委托方行使，缺乏监理方解除合同的权利和通知期。",
+      "expected_suggestion": "建议增加监理方在特定情况下解除合同的权利，并规定相应的通知期。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条赋予委托人（甲方）对失职监理人的限期整改和解除权，对甲方有利；建议为乙方争取权利，方向颠倒（且第38条本就有监理人解除权）"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "termination_notice",
+      "risk_level": "high",
+      "rationale": "监理人有权单方解除合同且无通知期，对甲方不利。",
+      "expected_suggestion": "增加监理人解除合同前需提前通知甲方并给予甲方合理解决期限的条款。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文以委托人违约为前提，且须先要求委托人限期解决、欠付报酬须经催告后28日仍未支付方可解除，绝非'任意解除无通知期'，rationale与原文不符；与第37条委托人解除权对等"
+    },
+    {
+      "clause_id": "C018",
+      "risk_type": "force_majeure",
+      "risk_level": "medium",
+      "rationale": "合同中未对不可抗力事件的通知义务和减损义务进行明确约定，可能导致甲方在不可抗力事件发生时无法及时采取措施，造成损失。",
+      "expected_suggestion": "建议在合同中明确不可抗力事件的通知义务和减损义务，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "第44条为双向对等的法定不可抗力免责表述并明确迟延履行后不免责，属正常条款，缺失式过度标注"
+    },
+    {
+      "clause_id": "C033",
+      "risk_type": "jurisdiction",
+      "risk_level": "high",
+      "rationale": "争议解决方式未明确约定具体地点或机构，可能导致争议解决对甲方不利。",
+      "expected_suggestion": "明确约定争议解决的具体地点或机构，确保对甲方有利。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "专用条件第45条为待填写空白项，且通用条件已规定无约定时可向法院起诉，属示范文本正常留白"
+    }
+  ],
+  "errors": []
+}

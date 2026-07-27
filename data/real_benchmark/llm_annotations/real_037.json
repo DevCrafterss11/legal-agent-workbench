@@ -1,0 +1,224 @@
+{
+  "contract_id": "real_037",
+  "annotator": "script:glm-4-flash+verify:claude-fable-5",
+  "annotations": [],
+  "rejected_by_verifier": [
+    {
+      "clause_id": "C007",
+      "risk_type": "payment_acceptance",
+      "risk_level": "medium",
+      "rationale": "发包人应对勘察人满足质量标准的已完工作，按照合同约定及时支付相应的工程勘察合同价款及费用。",
+      "expected_suggestion": "建议明确验收标准及验收流程，确保付款与成果确认绑定，避免因验收问题导致付款延迟。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引为发包人对质量合格已完工作的正常付款义务，付款以满足质量标准为前提，均衡条款非风险"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "勘察人在提交成果资料后，应为发包人继续提供后期服务。",
+      "expected_suggestion": "明确后期服务的具体内容和期限，以及违约责任。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "后期服务系勘察人义务、对甲方有利，内容费用留待专用条款系示范文本正常留白"
+    },
+    {
+      "clause_id": "C009",
+      "risk_type": "data_security",
+      "risk_level": "low",
+      "rationale": "勘察人对其编制的所有文件资料，包括投标文件、成果资料、数据和专利技术等拥有知识产权。",
+      "expected_suggestion": "明确知识产权的使用范围和保密措施。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引为知识产权归属表述，与数据安全无关，risk_type归类错误"
+    },
+    {
+      "clause_id": "C011",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "勘察人造成的工期延误条款中，勘察人承担违约责任的具体情形较多，但未明确约定发包人单方解除合同的条件和通知期。",
+      "expected_suggestion": "建议增加条款明确发包人单方解除合同的条件和通知期，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为双向工期延误责任约定，解除条件与14天通知期在通用条款第12条另有明确约定，rationale不成立"
+    },
+    {
+      "clause_id": "C012",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "发包人14天内无正当理由不予组织验收，视为验收通过。",
+      "expected_suggestion": "建议明确验收期限和验收标准，避免因验收问题产生争议。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "14天不组织验收视为通过附有『无正当理由』限定，属建设领域示范文本惯常程序安排，且归入sla_remedy类别错误"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "合同价款调整需双方确认，但未明确约定调整的具体周期和条件，可能导致甲方付款周期过长。",
+      "expected_suggestion": "建议明确约定合同价款调整的周期和条件，确保甲方权益不受影响。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "价款调整设双向书面确认与争议解决程序，所称付款周期风险系过度解读"
+    },
+    {
+      "clause_id": "C014",
+      "risk_type": "deposit_return",
+      "risk_level": "low",
+      "rationale": "定金或预付款的返还条件在专用合同条款中约定，但未明确具体扣除范围，可能存在不确定性。",
+      "expected_suggestion": "建议在专用合同条款中明确定金或预付款的返还条件和扣除范围，以保障甲方权益。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "定金/预付款在进度款中抵扣原文已明确，抵扣办法留待专用条款为示范文本正常留白"
+    },
+    {
+      "clause_id": "C015",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "付款过度前置，未明确与成果验收/确认绑定",
+      "expected_suggestion": "建议明确付款与成果验收/确认的绑定关系，确保付款条件满足验收标准",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文为勘察人提交成果资料后28天内结算支付，付款在成果之后而非前置，rationale与原文相悖"
+    },
+    {
+      "clause_id": "C016",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "勘察人应在 7 天内就调整后的技术方案以书面形式向发包人提出变更要求，发包人应在收到报告后 7 天内予以确认，逾期不予确认也不提出修改意见，视为同意变更。",
+      "expected_suggestion": "建议增加甲方在特定情况下有权拒绝变更的条款，以及明确拒绝变更的通知期限。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引为变更确认程序而非解除条款，risk_type归类错误；限期确认机制在本合同中双向适用"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "ip_ownership",
+      "risk_level": "medium",
+      "rationale": "勘察人为实施工程所编制的成果文件的著作权属于勘察人，但发包人可因本工程的需要而复制、使用此类文件，可能存在成果知识产权归属偏向乙方的情况。",
+      "expected_suggestion": "明确约定成果知识产权的归属和使用权限，确保甲方在合同期内对成果文件的使用权。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "著作权约定双向对等：各自编制文件归各自所有、对方获本工程范围内使用权，另可在专用条款改约，非偏向乙方"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "合同解除条款中未明确约定解除合同的通知期，可能存在单方任意解除且无通知期的情况。",
+      "expected_suggestion": "明确约定解除合同的通知期限，确保甲方在合同解除时有合理的时间准备。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "原文第12.2条明确解除须书面通知且发出前不少于14天告知对方，rationale与原文相悖"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "sla_remedy",
+      "risk_level": "low",
+      "rationale": "合同中未明确服务水平无故障分级、响应时限和补偿的具体内容，但通常此类内容会在专用合同条款中约定。",
+      "expected_suggestion": "在专用合同条款中详细约定服务水平标准、故障响应和补偿措施，确保甲方权益得到保障。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "对勘察合同泛化套用SLA概念，属对示范文本正常留白的过度解读"
+    },
+    {
+      "clause_id": "C017",
+      "risk_type": "jurisdiction",
+      "risk_level": "low",
+      "rationale": "合同中未明确约定争议解决的具体管辖地，但通常此类内容会在专用合同条款中约定。",
+      "expected_suggestion": "在专用合同条款中明确约定争议解决的管辖地，确保甲方在争议解决过程中有便利。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁或诉讼由双方在专用条款选定，双向对等的正常留白，非风险"
+    },
+    {
+      "clause_id": "C025",
+      "risk_type": "auto_renewal",
+      "risk_level": "medium",
+      "rationale": "后续技术服务可能存在自动续约无通知期的情况",
+      "expected_suggestion": "明确后续技术服务是否自动续约，并约定明确的退出路径和通知期",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条为后续技术服务的空白待填项，原文无任何自动续约内容，rationale凭空"
+    },
+    {
+      "clause_id": "C026",
+      "risk_type": "payment_cycle",
+      "risk_level": "medium",
+      "rationale": "定金或预付款金额未明确约定支付时间，可能导致付款过度前置或一次性预付",
+      "expected_suggestion": "明确约定定金或预付款的支付时间，避免过度前置或一次性预付",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "专用条款空白待填项；支付时间通用条款已定为不迟于开工前7天，非风险"
+    },
+    {
+      "clause_id": "C029",
+      "risk_type": "ip_ownership",
+      "risk_level": "medium",
+      "rationale": "勘察人为实施工程所编制文件的著作权的归属未明确约定归甲方所有",
+      "expected_suggestion": "建议明确约定勘察人为实施工程所编制文件的著作权归甲方所有",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "著作权归属为专用条款空白待填项，供双方另行约定的正常留白，非风险"
+    },
+    {
+      "clause_id": "C032",
+      "risk_type": "termination_notice",
+      "risk_level": "medium",
+      "rationale": "单方任意解除且无通知期",
+      "expected_suggestion": "增加双方违约解除合同的通知期限和程序要求",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条仅为发包人违约金的空白待填项，『单方任意解除且无通知期』与原文完全不符"
+    },
+    {
+      "clause_id": "C033",
+      "risk_type": "unlimited_liability",
+      "risk_level": "high",
+      "rationale": "因勘察人原因导致工程质量安全事故或其他事故时的赔偿金上限",
+      "expected_suggestion": "建议明确赔偿金上限，避免无上限赔偿对甲方造成巨大财务风险",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "所引『赔偿金上限』为空白待填项，且系乙方（勘察人）对甲方的赔偿责任，非甲方无限责任"
+    },
+    {
+      "clause_id": "C033",
+      "risk_type": "sla_remedy",
+      "risk_level": "medium",
+      "rationale": "索赔程序和期限的约定未明确服务水平无故障分级、响应时限和补偿标准",
+      "expected_suggestion": "建议明确服务水平无故障分级、响应时限和补偿标准，保障甲方权益",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "索赔程序留白与服务水平无关，属凭空指摘"
+    },
+    {
+      "clause_id": "C033",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "争议解决条款未明确争议解决地点或法院，可能对甲方不利",
+      "expected_suggestion": "建议明确争议解决地点或法院，确保争议解决对甲方有利",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "该条仅含『第16条 争议解决』章节标题，无实体内容，rationale凭空"
+    },
+    {
+      "clause_id": "C034",
+      "risk_type": "jurisdiction",
+      "risk_level": "medium",
+      "rationale": "合同约定争议解决方式未明确指定仲裁或诉讼的优先级，且未说明仲裁或诉讼的地点，可能对甲方不利。",
+      "expected_suggestion": "明确约定争议解决地点和仲裁或诉讼的优先级，确保甲方在争议解决中的权益得到保障。",
+      "requires_human_review": true,
+      "annotation_notes": "llm_script",
+      "reject_reason": "仲裁/诉讼二选一为示范文本待选留白，双向对等，非风险"
+    }
+  ],
+  "errors": [
+    "C001: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C002: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C005: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C006: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)",
+    "C008: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)"
+  ]
+}
