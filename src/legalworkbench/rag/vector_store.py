@@ -48,7 +48,15 @@ class InMemoryVectorStore(VectorStore):
         filters = filters or {}
         hits: list[VectorHit] = []
         for entry, stored in self._rows:
-            if any(str(getattr(entry, key, "")).lower() != value.lower() for key, value in filters.items() if value):
+            if any(
+                key != "tenant_id"
+                and str(getattr(entry, key, "")).lower() != value.lower()
+                for key, value in filters.items()
+                if value
+            ):
+                continue
+            tenant_filter = str(filters.get("tenant_id") or "").lower()
+            if tenant_filter and entry.tenant_id.lower() not in {"shared", tenant_filter}:
                 continue
             hits.append(VectorHit(entry=entry, score=cosine_similarity(vector, stored), metadata={"backend": self.name}))
         hits.sort(key=lambda item: item.score, reverse=True)
@@ -75,6 +83,7 @@ class MilvusVectorStore(VectorStore):
             self._client = MilvusClient(uri=uri, timeout=timeout)
         except Exception as exc:  # pragma: no cover - depends on optional service
             self._connect_error = str(exc)
+            self._client = None
 
     def upsert(self, entries: list[KnowledgeEntry], vectors: list[list[float]]) -> None:
         self._fallback.upsert(entries, vectors)
@@ -93,6 +102,7 @@ class MilvusVectorStore(VectorStore):
                     "risk_type": entry.risk_type,
                     "risk_level": entry.risk_level,
                     "source": entry.source,
+                    "tenant_id": entry.tenant_id,
                     "tags_json": json.dumps(entry.tags, ensure_ascii=False),
                     "vector": vector,
                 }
@@ -105,6 +115,39 @@ class MilvusVectorStore(VectorStore):
                 )
         except Exception as exc:  # pragma: no cover - depends on optional service
             self._connect_error = str(exc)
+
+    def hydrate_fallback(self, entries: list[KnowledgeEntry]) -> bool:
+        """Load persisted Milvus vectors into the local failover index.
+
+        This is only used after a validated index reuse. It avoids a second
+        corpus embedding pass while ensuring a later Milvus outage has useful
+        retrieval results.
+        """
+
+        if self._client is None or not entries:
+            return False
+        try:
+            ids = [_stable_int_id(entry.id) for entry in entries]
+            rows: list[dict[str, Any]] = []
+            for offset in range(0, len(ids), 256):
+                rows.extend(
+                    self._client.query(
+                        collection_name=self.collection,
+                        filter=f"id in [{','.join(str(value) for value in ids[offset : offset + 256])}]",
+                        output_fields=["id", "vector"],
+                        limit=min(256, len(ids) - offset),
+                    )
+                )
+            by_id = {int(row.get("id")): row.get("vector") for row in rows}
+            vectors = [by_id.get(_stable_int_id(entry.id)) for entry in entries]
+            if any(not isinstance(vector, list) or not vector for vector in vectors):
+                return False
+            self._fallback.upsert(entries, vectors)  # type: ignore[arg-type]
+            return True
+        except Exception as exc:  # pragma: no cover - depends on optional service
+            self._connect_error = str(exc)
+            self._client = None
+            return False
 
     def can_reuse(self, entries: list[KnowledgeEntry], *, dimension: int) -> bool:
         """Validate a Milvus collection without scanning or rebuilding every vector.
@@ -161,6 +204,7 @@ class MilvusVectorStore(VectorStore):
                     "risk_type",
                     "risk_level",
                     "source",
+                    "tenant_id",
                     "tags_json",
                 ],
             )
@@ -176,12 +220,14 @@ class MilvusVectorStore(VectorStore):
                     risk_type=str(entity.get("risk_type") or "general"),
                     risk_level=str(entity.get("risk_level") or "medium"),
                     source=str(entity.get("source") or "milvus"),
+                    tenant_id=str(entity.get("tenant_id") or "shared"),
                     tags=json.loads(entity.get("tags_json") or "[]"),
                 )
                 hits.append(VectorHit(entry=entry, score=float(item.get("distance") or item.get("score") or 0.0), metadata={"backend": self.name}))
             return hits
         except Exception as exc:  # pragma: no cover - depends on optional service
             self._connect_error = str(exc)
+            self._client = None
             return self._fallback.search(vector, top_k=top_k, filters=filters)
 
     def status(self) -> dict[str, Any]:
@@ -233,5 +279,8 @@ def _filter_expr(filters: dict[str, str]) -> str:
     for key, value in filters.items():
         if value:
             escaped = value.replace('"', '\\"')
-            parts.append(f'{key} == "{escaped}"')
+            if key == "tenant_id":
+                parts.append(f'(tenant_id == "shared" or tenant_id == "{escaped}")')
+            else:
+                parts.append(f'{key} == "{escaped}"')
     return " and ".join(parts)

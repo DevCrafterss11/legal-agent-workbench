@@ -597,7 +597,7 @@ def markdown_for(template: dict[str, Any], text: str) -> str:
         [
             f"# {template.get('Title')}",
             "",
-            f"- 来源：国家市场监督管理总局合同示范文本库",
+            "- 来源：国家市场监督管理总局合同示范文本库",
             f"- ID：`{template.get('Id')}`",
             f"- 部门：{template.get('Department') or ''}",
             f"- 地区：{template.get('Region') or ''}",

@@ -29,8 +29,20 @@ class ReportWriterAgent(LegalReviewAgent):
             ),
             "compact_tokens": ctx.run.compact_snapshot.retained_tokens if ctx.run.compact_snapshot else 0,
         }
+        ctx.run.llm_calls.extend(ctx.llm.drain_traces(ctx.run.review_run_id))
+        ctx.run.token_usage.update(
+            {
+                "llm_calls": len(ctx.run.llm_calls),
+                "llm_prompt_tokens": sum(call.prompt_tokens for call in ctx.run.llm_calls),
+                "llm_completion_tokens": sum(call.completion_tokens for call in ctx.run.llm_calls),
+                "llm_cache_hits": sum(call.cache_hit for call in ctx.run.llm_calls),
+            }
+        )
         ctx.run.metrics = compute_run_metrics(ctx.run, elapsed=time.time() - ctx.started_at)
         ctx.run.metrics["retrieved_evidence"] = float(ctx.evidence_total)
+        ctx.run.metrics["llm_estimated_cost"] = round(
+            sum(call.estimated_cost for call in ctx.run.llm_calls), 8
+        )
         self.emit(ctx, "context_finalize_completed", {"status": ctx.run.status})
 
     def write_report(self, ctx: ReviewAgentContext) -> None:

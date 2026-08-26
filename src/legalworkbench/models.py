@@ -20,6 +20,15 @@ ReviewStatus = Literal[
     "failed",
 ]
 
+MemoryStatus = Literal[
+    "proposed",
+    "approved",
+    "active",
+    "rejected",
+    "stale",
+    "archived",
+]
+
 
 class ContractClause(BaseModel):
     clause_id: str
@@ -31,6 +40,7 @@ class KnowledgeEntry(BaseModel):
     id: str
     title: str
     body: str
+    tenant_id: str = "shared"
     contract_type: str = "general"
     clause_type: str = "general"
     risk_type: str = "general"
@@ -72,6 +82,8 @@ class RiskFinding(BaseModel):
 class LegalMemory(BaseModel):
     memory_id: str
     type: Literal["semantic", "episodic", "procedural", "preference"]
+    tenant_id: str = "local"
+    user_id: str = ""
     contract_type: str = "general"
     clause_type: str = "general"
     risk_type: str = "general"
@@ -79,7 +91,13 @@ class LegalMemory(BaseModel):
     summary: str
     approved_advice: str = ""
     source_review_run_id: str = ""
+    # 旧版记忆没有生命周期字段；默认 active 保持升级后的召回兼容性。
+    status: MemoryStatus = "active"
+    proposed_advice: str = ""
     approved_by_human: bool = False
+    approved_by: str = ""
+    approved_at: float = 0.0
+    status_changed_at: float = 0.0
     confidence: float = 0.0
     tags: list[str] = Field(default_factory=list)
     # 生命周期字段：写入时间、召回强化（次数/时间）、再确认次数。
@@ -104,11 +122,31 @@ class LegalSkill(BaseModel):
 
 class ToolCallTrace(BaseModel):
     tool_name: str
+    tenant_id: str = "local"
+    user_id: str = ""
     status: Literal["success", "blocked", "error"] = "success"
     input_summary: str = ""
     output_summary: str = ""
     duration_ms: int = 0
     metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class LLMCallTrace(BaseModel):
+    trace_id: str
+    review_run_id: str = ""
+    agent: str = ""
+    task: str = ""
+    model: str = ""
+    provider: str = "local"
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    latency_ms: int = 0
+    cache_hit: bool = False
+    retry_count: int = 0
+    fallback: bool = False
+    estimated_cost: float = 0.0
+    status: Literal["success", "error"] = "success"
+    error: str = ""
 
 
 class ReflectionCheck(BaseModel):
@@ -133,6 +171,9 @@ class CompactSnapshot(BaseModel):
 
 class ReviewRun(BaseModel):
     review_run_id: str
+    tenant_id: str = "local"
+    user_id: str = ""
+    roles: list[str] = Field(default_factory=lambda: ["admin"])
     status: ReviewStatus = "created"
     contract_path: str
     contract_type: str = "general"
@@ -144,6 +185,7 @@ class ReviewRun(BaseModel):
     reflection_checks: list[ReflectionCheck] = Field(default_factory=list)
     compact_snapshot: CompactSnapshot | None = None
     tool_calls: list[ToolCallTrace] = Field(default_factory=list)
+    llm_calls: list[LLMCallTrace] = Field(default_factory=list)
     selected_skills: list[str] = Field(default_factory=list)
     mcp_context: dict[str, Any] = Field(default_factory=dict)
     metrics: dict[str, float] = Field(default_factory=dict)

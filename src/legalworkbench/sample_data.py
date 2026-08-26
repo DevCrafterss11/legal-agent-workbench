@@ -5,6 +5,12 @@ from __future__ import annotations
 from legalworkbench.models import BenchmarkCase, KnowledgeEntry, LegalMemory, LegalSkill
 
 SAMPLE_SETTINGS = {
+    "auth": {
+        "mode": "local",
+        "local_tenant_id": "local",
+        "local_user_id": "local-admin",
+        "local_roles": ["admin"],
+    },
     "rag": {
         "vector_backend": "local",
         "milvus_uri": "http://127.0.0.1:19530",
@@ -18,6 +24,16 @@ SAMPLE_SETTINGS = {
         "vector_top_k": 32,
         "final_top_k": 10,
         "connect_timeout": 1.0,
+    },
+    "llm": {
+        "provider": "local",
+        "model": "local-legal-reviewer",
+        "model_routes": {},
+    },
+    "storage": {
+        "backend": "local",
+        "dsn": "",
+        "connect_timeout": 5.0,
     },
     # 不预置假连接器：真实 MCP server 用 `legal-agent lark-mcp` 或 Web 面板配置，
     # 未配置就是未配置，连接失败会如实报 failed

@@ -104,18 +104,20 @@ LLM 只评分”改为三路并行：规则候选、RAG 候选、LLM 独立语�
 5. 进入既有 Permission Guard / Reflection，且独立候选强制人工复核。
 
 受控回归测试覆盖两条关键路径：规则零命中的陌生责任措辞能由独立候选生成
-finding；同一候选在二次核验低于阈值时被拒绝。新的真实 held-out 指标尚未写入
+finding；同一候选在二次核验低于阈值时被拒绝。冻结 held-out 清单位于
+`annotations_heldout.json`，可通过 `eval-real --dataset heldout` 运行；它沿用冻结标注，
+仍不应参与规则或阈值调参。
 本表：2026-07-27 对 3 条未参与原 benchmark 的真实自动延续条款进行盲测时，
-`glm-4-flash` 均发生读取超时并按设计降级为空候选。网络/模型恢复后必须重新跑
-held-out 正负样本并同时报告 Precision、`real_recall`、FP/合同、耗时和调用成本，
-在此之前不得声称 `0.385` 已经提升。
+`glm-4-flash` 均发生读取超时并按设计降级为空候选。网络/模型恢复后应在冻结
+held-out 正负样本上同时报告 Precision、`real_recall`、FP/合同、耗时和调用成本；
+在使用独立新标注前不得声称 `0.385` 已经提升。
 
 ### 必须诚实交代的两个口径
 
 1. **inject_recall 0.98 偏乐观**：红线注入文本与不利模式库出自同一次设计，
    存在同源性；真正代表"新措辞泛化能力"的是 real_recall 0.385（13 条真实条款
-   风险只抓到 5 条）。LLM 独立语义候选层已实现，但新的 held-out 指标尚未产生，
-   因此 `0.385` 仍是当前对外口径。
+   风险只抓到 5 条）。LLM 独立语义候选层已实现；冻结 held-out 清单用于后续盲测，
+   在使用独立新标注前仍不宣称泛化能力提升。
 2. **precision 0.84 是可信的**：1724 个负例全部来自真实合同的真实条款，
    模式库对均衡文本的沉默能力是实测的（并有专门的均衡条款回归测试守护）。
 
@@ -128,6 +130,8 @@ python -c "from legalworkbench.cli import app; app()" eval-real
 python -c "from legalworkbench.cli import app; app()" eval-real --methods rule_only,rag_only,rule_plus_rag
 # Agent 端到端（可用 --limit 控制份数）
 python -c "from legalworkbench.cli import app; app()" eval-real --methods full_agent --limit 36 --save eval_agent.json
+# 冻结 held-out 消融
+python -c "from legalworkbench.cli import app; app()" eval-real --dataset heldout --methods rule_only,rag_only,rule_plus_rag
 
 # 扩到 500 份真实合同（需能访问 htsfwb.samr.gov.cn；断点续传）
 python scripts/build_common_contract_corpus.py --limit 500 --resume

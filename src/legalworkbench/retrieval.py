@@ -81,7 +81,14 @@ class HybridClauseRetriever:
         return total
 
 
-def retrieve_memories(memories: list[LegalMemory], query: str, *, contract_type: str, top_k: int = 5) -> list[LegalMemory]:
+def retrieve_memories(
+    memories: list[LegalMemory],
+    query: str,
+    *,
+    contract_type: str,
+    top_k: int = 5,
+    tenant_id: str = "local",
+) -> list[LegalMemory]:
     """Recall ranking = 相关性 + 企业上下文匹配 + 使用强化 + 时间衰减。
 
     时间衰减只作用于携带时间戳的记忆（半衰期 180 天），旧数据（created_at=0）
@@ -95,6 +102,11 @@ def retrieve_memories(memories: list[LegalMemory], query: str, *, contract_type:
     tokens = set(tokenize(query))
     scored: list[tuple[float, LegalMemory]] = []
     for memory in memories:
+        if memory.tenant_id != tenant_id:
+            continue
+        # PROPOSED/REJECTED/STALE/ARCHIVED 只用于治理和审计，不能进入 Agent 上下文。
+        if memory.status not in {"approved", "active"}:
+            continue
         text = " ".join([memory.summary, memory.approved_advice, memory.contract_type, memory.clause_type, memory.risk_type, " ".join(memory.tags)])
         doc_tokens = set(tokenize(text))
         score = len(tokens & doc_tokens) / max(1, len(tokens))

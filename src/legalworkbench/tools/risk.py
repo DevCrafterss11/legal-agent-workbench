@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from typing import Any
 
-from legalworkbench.governance import RiskRuleEngine
+from legalworkbench.governance import RiskRuleEngine, ToolAccess, ToolPolicy
 from legalworkbench.tools.base import ToolContext, ToolResult
 
 
 class RiskRuleTool:
     name = "risk_rule"
     description = "Evaluate explicit legal risk rules against clause text."
+    policy = ToolPolicy("legal.compute", ToolAccess.COMPUTE)
 
     def __init__(self) -> None:
         self.engine = RiskRuleEngine()

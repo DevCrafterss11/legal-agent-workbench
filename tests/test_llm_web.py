@@ -22,6 +22,7 @@ from legalworkbench.llm.client import (
 from legalworkbench.models import RetrievedEvidence
 from legalworkbench.rag.reranker import CrossEncoderReranker, build_reranker
 from legalworkbench.runtime import LegalAgentRuntime
+from legalworkbench.tasks import ReviewTaskWorker
 from legalworkbench.web import create_app
 
 
@@ -169,6 +170,10 @@ def test_planner_llm_decision_is_bounded_and_whitelisted(tmp_path: Path) -> None
     assert "auto_renewal" in profile["risk_focus"]
     assert "hallucinated_type" not in profile["risk_focus"]
     assert run.mcp_context["llm_plan"]["decision_source"] == "model"
+    assert run.llm_calls
+    assert all(call.review_run_id == run.review_run_id for call in run.llm_calls)
+    assert any(call.agent == "skill_planner_agent" for call in run.llm_calls)
+    assert run.token_usage["llm_calls"] == len(run.llm_calls)
 
 
 def test_semantic_judgment_degrades_on_remote_failure() -> None:
@@ -208,14 +213,12 @@ def test_llm_timeout_is_not_retried(monkeypatch) -> None:
     calls: list[float] = []
 
     class TimeoutClient:
-        def __init__(self, *, timeout: float) -> None:
+        def __init__(self, *, timeout: float, limits) -> None:
+            del limits
             calls.append(timeout)
 
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *args):
-            del args
+        def close(self):
+            pass
 
         def post(self, *args, **kwargs):
             del args, kwargs
@@ -236,6 +239,53 @@ def test_llm_timeout_is_not_retried(monkeypatch) -> None:
         client.complete(system="s", user="u")
 
     assert calls == [0.01]
+
+
+def test_llm_client_reuses_one_http_connection_pool(monkeypatch) -> None:
+    created = 0
+    posts = 0
+
+    class Response:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {
+                "choices": [{"message": {"content": "{}"}}],
+                "usage": {"prompt_tokens": 2, "completion_tokens": 1},
+            }
+
+    class PoolClient:
+        def __init__(self, *, timeout, limits):
+            nonlocal created
+            del timeout, limits
+            created += 1
+
+        def post(self, *args, **kwargs):
+            nonlocal posts
+            del args, kwargs
+            posts += 1
+            return Response()
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(httpx, "Client", PoolClient)
+    client = LlmClient(
+        LlmConfig(
+            provider="openai_compatible",
+            model="m",
+            base_url="http://x",
+            api_key="k",
+        )
+    )
+    client.complete(system="s", user="one", task="a")
+    client.complete(system="s", user="two", task="b")
+    client.close()
+
+    assert created == 1
+    assert posts == 2
+    assert [trace.task for trace in client.call_traces] == ["a", "b"]
 
 
 def test_semantic_candidate_validation_requires_grounded_whitelisted_output() -> None:
@@ -408,7 +458,11 @@ def test_fastapi_app_end_to_end(tmp_path: Path) -> None:
         )
         assert review.status_code == 202
         accepted = review.json()
-        assert accepted["status"] in {"pending", "running"}
+        assert accepted["status"] == "pending"
+        assert LegalAgentRuntime(tmp_path).store.list_runs() == []
+        worker_result = ReviewTaskWorker(tmp_path).run_once(block_ms=1)
+        assert worker_result is not None
+        assert worker_result["task_id"] == accepted["task_id"]
         body = wait_for_review_task(client, accepted["task_id"])
         assert body["status"] == "completed"
         assert body["review_run_id"].startswith("law_")
@@ -423,10 +477,12 @@ def test_fastapi_app_end_to_end(tmp_path: Path) -> None:
 
         assert client.post("/api/review", json={}).status_code == 400
         assert client.get("/api/report/nonexistent").status_code == 404
+        assert client.post("/api/worker/run-once").status_code == 404
 
         page = client.get("/")
         assert page.status_code == 200
         assert "EventSource" in page.text
+        assert "/api/worker/run-once" not in page.text
 
 
 def test_fastapi_sse_stream_pushes_events(tmp_path: Path) -> None:
@@ -436,6 +492,7 @@ def test_fastapi_sse_stream_pushes_events(tmp_path: Path) -> None:
         accepted = client.post(
             "/api/review", json={"contract_text": "## 管辖\n由乙方所在地人民法院管辖。"}
         ).json()
+        ReviewTaskWorker(tmp_path).run_once(block_ms=1)
         wait_for_review_task(client, accepted["task_id"])
         response = client.get("/api/events/stream", params={"cycles": 1})
         assert response.status_code == 200

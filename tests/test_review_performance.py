@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from threading import Event, Lock
+from threading import Event, Lock, Thread
 import time
 
 from fastapi.testclient import TestClient
@@ -14,6 +14,7 @@ from legalworkbench.paths import knowledge_dir
 from legalworkbench.rag.service import LegalRagService, RagConfig
 from legalworkbench.runtime import LegalAgentRuntime
 from legalworkbench.store import write_model_list
+from legalworkbench.tasks import ReviewTaskWorker
 from legalworkbench.web import create_app
 
 
@@ -127,15 +128,24 @@ def test_duplicate_web_reviews_share_one_background_task(tmp_path, monkeypatch) 
     with TestClient(app) as client:
         first = client.post("/api/review", json=payload)
         assert first.status_code == 202
-        assert started.wait(timeout=2)
 
         second = client.post("/api/review", json=payload)
         assert second.status_code == 202
         assert second.json()["task_id"] == first.json()["task_id"]
         assert second.json()["deduplicated"] is True
+        assert calls == 0
+
+        worker = Thread(
+            target=ReviewTaskWorker(tmp_path).run_once,
+            kwargs={"block_ms": 1},
+        )
+        worker.start()
+        assert started.wait(timeout=2)
         assert calls == 1
 
         release.set()
+        worker.join(timeout=5)
+        assert not worker.is_alive()
         deadline = time.monotonic() + 5
         while time.monotonic() < deadline:
             task = client.get(f"/api/tasks/{first.json()['task_id']}").json()

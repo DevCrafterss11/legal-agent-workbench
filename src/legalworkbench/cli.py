@@ -128,11 +128,19 @@ def eval_real_cmd(
     limit: int = typer.Option(0, "--limit", help="Only evaluate first N contracts (0 = all)"),
     json_output: bool = typer.Option(False, "--json", help="Print machine-readable JSON"),
     save: str = typer.Option("", "--save", help="Also write JSON report to this path"),
+    memory: str = typer.Option("on", "--memory", help="Memory ablation: on or off"),
+    dataset: str = typer.Option("real", "--dataset", help="real or heldout"),
 ) -> None:
     """Evaluate on the real-contract benchmark: precision/recall/F1 incl. full-agent mode."""
 
     selected = tuple(m.strip() for m in methods.split(",") if m.strip())
-    report = RealBenchmarkEvaluator(cwd).run(methods=selected, limit=limit)
+    if memory not in {"on", "off"}:
+        raise typer.BadParameter("--memory must be on or off")
+    if dataset not in {"real", "heldout"}:
+        raise typer.BadParameter("--dataset must be real or heldout")
+    report = RealBenchmarkEvaluator(cwd).run(
+        methods=selected, limit=limit, memory_enabled=memory == "on", dataset=dataset
+    )
     if save:
         atomic_write_text(Path(save).resolve(), json.dumps(report.to_dict(), ensure_ascii=False, indent=2) + "\n")
     if json_output:
@@ -258,6 +266,44 @@ def memory_cmd(
     print(f"Memory index: {index}")
 
 
+@app.command("memory-approve")
+def memory_approve_cmd(
+    memory_id: str = typer.Argument(..., help="Proposed memory ID"),
+    approver: str = typer.Option(..., "--approver", help="Human reviewer identity"),
+    cwd: str = typer.Option(str(Path.cwd()), "--cwd", help="Project root"),
+) -> None:
+    try:
+        memory = LegalMemoryStore(cwd).approve(memory_id, approver=approver)
+    except (KeyError, ValueError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    print(f"Memory {memory.memory_id}: {memory.status} by {memory.approved_by}")
+
+
+@app.command("memory-activate")
+def memory_activate_cmd(
+    memory_id: str = typer.Argument(..., help="Approved memory ID"),
+    cwd: str = typer.Option(str(Path.cwd()), "--cwd", help="Project root"),
+) -> None:
+    try:
+        memory = LegalMemoryStore(cwd).activate(memory_id)
+    except (KeyError, ValueError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    print(f"Memory {memory.memory_id}: {memory.status}")
+
+
+@app.command("memory-reject")
+def memory_reject_cmd(
+    memory_id: str = typer.Argument(..., help="Proposed or approved memory ID"),
+    approver: str = typer.Option(..., "--approver", help="Human reviewer identity"),
+    cwd: str = typer.Option(str(Path.cwd()), "--cwd", help="Project root"),
+) -> None:
+    try:
+        memory = LegalMemoryStore(cwd).reject(memory_id, approver=approver)
+    except (KeyError, ValueError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    print(f"Memory {memory.memory_id}: {memory.status} by {memory.approved_by}")
+
+
 @app.command("tasks")
 def tasks_cmd(
     title: str | None = typer.Argument(None, help="Optional task title to add"),
@@ -304,13 +350,38 @@ def llm_config_cmd(
     base_url: str = typer.Option("", "--base-url", help="OpenAI-compatible base URL (ollama defaults to http://127.0.0.1:11434/v1)"),
     api_key: str = typer.Option("", "--api-key", help="API key, stored in secrets.json (not settings.json)"),
     timeout: float = typer.Option(10.0, "--timeout", help="Request timeout seconds"),
+    input_cost_per_million: float = typer.Option(0.0, "--input-cost-per-million"),
+    output_cost_per_million: float = typer.Option(0.0, "--output-cost-per-million"),
+    planner_model: str = typer.Option("", "--planner-model", help="Optional model for plan_review"),
+    refine_model: str = typer.Option("", "--refine-model", help="Optional model for refine_query"),
+    risk_model: str = typer.Option("", "--risk-model", help="Optional model for discover_risks"),
+    verify_model: str = typer.Option("", "--verify-model", help="Optional model for semantic verification"),
 ) -> None:
     if provider not in {"local", "ollama", "openai_compatible"}:
         raise typer.BadParameter("--provider must be local, ollama, or openai_compatible")
     if provider == "openai_compatible" and not base_url:
         raise typer.BadParameter("--base-url is required for openai_compatible")
     current = _load_settings(cwd)
-    current["llm"] = {"provider": provider, "model": model, "base_url": base_url, "timeout_seconds": timeout}
+    previous_llm = current.get("llm") if isinstance(current.get("llm"), dict) else {}
+    routes = dict(previous_llm.get("model_routes") or {})
+    for task, route in {
+        "plan_review": planner_model,
+        "refine_query": refine_model,
+        "discover_risks": risk_model,
+        "legal_risk_semantic_judgment": verify_model,
+    }.items():
+        if route.strip():
+            routes[task] = route.strip()
+    current["llm"] = {
+        **previous_llm,
+        "provider": provider,
+        "model": model,
+        "base_url": base_url,
+        "timeout_seconds": timeout,
+        "input_cost_per_million": max(0.0, input_cost_per_million),
+        "output_cost_per_million": max(0.0, output_cost_per_million),
+        "model_routes": routes,
+    }
     atomic_write_text(settings_path(cwd), json.dumps(current, ensure_ascii=False, indent=2) + "\n")
     if api_key:
         secrets = load_secrets(cwd)
@@ -326,6 +397,8 @@ def llm_config_cmd(
         print(f"probe decision_source: {probe.get('decision_source', 'unknown')}")
     except Exception as exc:  # noqa: BLE001
         print(f"probe failed: {exc}")
+    finally:
+        client.close()
 
 
 @app.command("queue-config")
@@ -355,6 +428,27 @@ def queue_config_cmd(
     from legalworkbench.mq import create_task_bus
 
     print(json.dumps(create_task_bus(cwd).health(), ensure_ascii=False, indent=2))
+
+
+@app.command("storage-config")
+def storage_config_cmd(
+    cwd: str = typer.Option(str(Path.cwd()), "--cwd", help="Project root"),
+    backend: str = typer.Option("local", "--backend", help="local or postgres"),
+    dsn: str = typer.Option("", "--dsn", help="PostgreSQL DSN; prefer LEGAL_WORKBENCH_POSTGRES_DSN in shared environments"),
+    connect_timeout: float = typer.Option(5.0, "--connect-timeout"),
+) -> None:
+    """Select local encrypted files or the optional PostgreSQL JSONB backend."""
+
+    if backend not in {"local", "postgres"}:
+        raise typer.BadParameter("--backend must be local or postgres")
+    current = _load_settings(cwd)
+    current["storage"] = {
+        "backend": backend,
+        "dsn": dsn if backend == "postgres" else "",
+        "connect_timeout": max(0.1, connect_timeout),
+    }
+    atomic_write_text(settings_path(cwd), json.dumps(current, ensure_ascii=False, indent=2) + "\n")
+    print(f"Updated storage config: backend={backend}")
 
 
 @app.command("queue-health")

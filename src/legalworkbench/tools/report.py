@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from legalworkbench.fs import atomic_write_text
+from legalworkbench.governance import ToolAccess, ToolPolicy
 from legalworkbench.privacy import mask
 from legalworkbench.report import render_markdown_report
 from legalworkbench.tools.base import ToolContext, ToolResult
@@ -13,6 +14,7 @@ from legalworkbench.tools.base import ToolContext, ToolResult
 class ReportExportTool:
     name = "report_export"
     description = "Render and persist a Markdown review report."
+    policy = ToolPolicy("report.local_write", ToolAccess.LOCAL_WRITE)
 
     def execute(self, arguments: dict[str, Any], context: ToolContext) -> ToolResult:
         run = arguments["run"]

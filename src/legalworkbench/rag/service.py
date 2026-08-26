@@ -88,6 +88,11 @@ class LegalRagService:
         self._indexed_entries = entries
         if isinstance(self.vector_store, MilvusVectorStore) and self._can_reuse_milvus(entries):
             self.index_reused = True
+            # Reuse avoids re-embedding the corpus, but failover still needs a
+            # usable local copy. Milvus can hydrate its fallback from stored vectors.
+            hydrate = getattr(self.vector_store, "hydrate_fallback", None)
+            if callable(hydrate):
+                hydrate(entries)
             self._write_index_state(entries)
             return
         self.reindex(entries)
@@ -131,9 +136,21 @@ class LegalRagService:
             json.dumps(self._index_state(entries), ensure_ascii=False, indent=2) + "\n",
         )
 
-    def retrieve(self, query: str, *, contract_type: str, top_k: int | None = None) -> list[RetrievedEvidence]:
+    def retrieve(
+        self,
+        query: str,
+        *,
+        contract_type: str,
+        top_k: int | None = None,
+        tenant_id: str = "local",
+    ) -> list[RetrievedEvidence]:
         final_top_k = top_k or self.config.final_top_k
-        lexical = HybridClauseRetriever(self._indexed_entries).search(
+        visible_entries = [
+            entry
+            for entry in self._indexed_entries
+            if entry.tenant_id in {"shared", tenant_id}
+        ]
+        lexical = HybridClauseRetriever(visible_entries).search(
             query,
             contract_type=contract_type,
             top_k=self.config.lexical_top_k,
@@ -142,7 +159,7 @@ class LegalRagService:
         vector_hits = self.vector_store.search(
             self.embedding_model.embed(query),
             top_k=self.config.vector_top_k,
-            filters={},
+            filters={"tenant_id": tenant_id},
         )
         if self.config.fusion.lower() == "rrf":
             merged = self._fuse_rrf(lexical, vector_hits)
