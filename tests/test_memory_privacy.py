@@ -86,6 +86,69 @@ def test_memory_reinforces_instead_of_duplicating(tmp_path: Path) -> None:
     assert memories[0].source_review_run_id == "law_a"  # 溯源保留首次来源
 
 
+def test_unapproved_high_risk_memory_is_not_recalled(tmp_path: Path) -> None:
+    store = LegalMemoryStore(tmp_path)
+    run = make_run()
+    run.findings[0].risk_level = "high"
+    run.findings[0].requires_human_review = True
+
+    created = store.consolidate_from_run(run)
+
+    assert len(created) == 1
+    assert created[0].status == "proposed"
+    assert created[0].approved_advice == ""
+    assert store.recall("赔偿 责任 无上限", contract_type="SaaS") == []
+
+
+def test_memory_requires_approval_for_injection_and_llm_only_findings(
+    tmp_path: Path,
+) -> None:
+    store = LegalMemoryStore(tmp_path)
+    injection_run = make_run("law_injection")
+    injection_run.mcp_context["injection"] = {"detected": True}
+    llm_run = make_run("law_llm")
+    llm_run.findings[0].summary = "模型发现的隐式责任风险"
+    llm_run.findings[0].rule_hits = ["llm_semantic_candidate"]
+
+    created = [
+        *store.consolidate_from_run(injection_run),
+        *store.consolidate_from_run(llm_run),
+    ]
+
+    assert {item.status for item in created} == {"proposed"}
+    assert store.recall("责任风险", contract_type="SaaS") == []
+
+
+def test_human_approved_memory_can_be_activated_and_recalled(tmp_path: Path) -> None:
+    store = LegalMemoryStore(tmp_path)
+    run = make_run()
+    run.findings[0].risk_level = "high"
+    memory = store.consolidate_from_run(run)[0]
+
+    approved = store.approve(memory.memory_id, approver="legal_user_1")
+    assert approved.status == "approved"
+    assert approved.approved_by_human is True
+    assert approved.approved_advice == "加上限"
+    assert store.recall("责任无上限", contract_type="SaaS")[0].memory_id == memory.memory_id
+
+    active = store.activate(memory.memory_id)
+    assert active.status == "active"
+
+
+def test_proposed_memory_cannot_skip_human_approval(tmp_path: Path) -> None:
+    store = LegalMemoryStore(tmp_path)
+    run = make_run()
+    run.findings[0].risk_level = "high"
+    memory = store.consolidate_from_run(run)[0]
+
+    try:
+        store.activate(memory.memory_id)
+    except ValueError as exc:
+        assert "proposed -> active" in str(exc)
+    else:
+        raise AssertionError("proposed memory must not become active directly")
+
+
 def test_memory_mark_used_feeds_recall_ranking(tmp_path: Path) -> None:
     store = LegalMemoryStore(tmp_path)
     store.consolidate_from_run(make_run())
@@ -215,9 +278,12 @@ def test_mask_value_recursively_sanitizes_structured_data() -> None:
 
 
 def test_tool_trace_masks_input_and_output_summaries(tmp_path: Path) -> None:
+    from legalworkbench.governance import ToolAccess, ToolPolicy
+
     class EchoTool:
         name = "echo"
         description = "test"
+        policy = ToolPolicy("test.echo", ToolAccess.COMPUTE)
 
         def execute(self, arguments, context):
             del context
@@ -252,7 +318,7 @@ def test_remote_llm_sends_masked_text_and_restores_reply() -> None:
         def _openai_compatible(self, *, system: str, user: str) -> LlmResponse:
             captured["user"] = user
             return LlmResponse(
-                text=f'{{"score": 0.9, "contact": "[PII_PHONE_1]"}}', model="fake"
+                text='{"score": 0.9, "contact": "[PII_PHONE_1]"}', model="fake"
             )
 
     client = CapturingLlm(

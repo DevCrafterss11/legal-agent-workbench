@@ -46,6 +46,7 @@ class LegalAgentRuntime:
         cwd: str | Path | None = None,
         *,
         permission_mode: PermissionMode = PermissionMode.REVIEW,
+        memory_enabled: bool = True,
     ) -> None:
         self.cwd = Path(cwd or Path.cwd()).resolve()
         self.store = WorkbenchStore(self.cwd)
@@ -61,13 +62,23 @@ class LegalAgentRuntime:
         self.llm = LlmClient(cwd=self.cwd, cache=self.cache)
         self.permission = LegalPermissionChecker(mode=permission_mode)
         self.tools = build_default_tool_registry()
+        self.memory_enabled = memory_enabled
 
     def init_samples(self, *, force: bool = False) -> dict[str, Path]:
         paths = self.store.init_samples(force=force)
         self.memory.write_index()
         return paths
 
-    def review(self, contract_path: str | Path, *, connect_mcp: bool = False) -> ReviewRun:
+    def review(
+        self,
+        contract_path: str | Path,
+        *,
+        connect_mcp: bool = False,
+        tenant_id: str = "local",
+        user_id: str = "",
+        roles: list[str] | None = None,
+        memory_enabled: bool | None = None,
+    ) -> ReviewRun:
         path = self._resolve_contract_path(contract_path)
         permission = self.permission.evaluate_tool("contract_parser", is_read_only=True, contract_path=str(path))
         if not permission.allowed:
@@ -76,6 +87,10 @@ class LegalAgentRuntime:
             path,
             contract_text=secure_read_text(path, cwd=self.cwd),
             connect_mcp=connect_mcp,
+            tenant_id=tenant_id,
+            user_id=user_id,
+            roles=roles or ["admin"],
+            memory_enabled=self.memory_enabled if memory_enabled is None else memory_enabled,
         )
 
     def benchmark(self):

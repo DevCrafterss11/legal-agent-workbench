@@ -150,6 +150,8 @@ class RiskReviewerAgent(LegalReviewAgent):
                     evidence="\n".join(
                         item.body_preview for item in matched_evidence[:3]
                     ),
+                    agent=self.name,
+                    review_run_id=ctx.run.review_run_id,
                 )
                 llm_score = _safe_score(llm_judgment.get("score"))
             if (
@@ -233,6 +235,8 @@ class RiskReviewerAgent(LegalReviewAgent):
             clause=bundle.clause.text,
             contract_type=ctx.run.contract_type,
             allowed_risk_types=list(KNOWN_RISK_TYPES),
+            agent=self.name,
+            review_run_id=ctx.run.review_run_id,
         )
         raw_candidates = decision.get("candidates")
         if not isinstance(raw_candidates, list):

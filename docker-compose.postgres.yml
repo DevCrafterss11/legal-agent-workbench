@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: legalworkbench
+      POSTGRES_USER: legalworkbench
+      POSTGRES_PASSWORD: legalworkbench_dev_only
+    ports:
+      - "5432:5432"
+    volumes:
+      - legalworkbench-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U legalworkbench -d legalworkbench"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  legalworkbench-postgres:

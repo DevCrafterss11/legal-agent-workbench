@@ -8,18 +8,18 @@
 from __future__ import annotations
 
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 import threading
-import time
 from pathlib import Path
 from typing import Any
 
 import uvicorn
-from fastapi import Body, FastAPI, Request
+from fastapi import Body, Depends, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 
+from legalworkbench.auth import AuthError, AuthManager, Principal
+from legalworkbench.governance import ToolApprovalStore
 from legalworkbench.documents import ContractDocumentStore
 from legalworkbench.feishu_events import FeishuEventBridge
 from legalworkbench.fs import atomic_write_text
@@ -38,7 +38,7 @@ from legalworkbench.rag import (
 )
 from legalworkbench.runtime import LegalAgentRuntime
 from legalworkbench.store import write_model_list
-from legalworkbench.tasks import ReviewTaskQueue, ReviewTaskWorker
+from legalworkbench.tasks import ReviewTaskQueue
 
 
 class LegalWorkbenchServer:
@@ -67,53 +67,35 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
     documents = ContractDocumentStore(cwd)
     tasks = ReviewTaskQueue(cwd)
     feishu_events = FeishuEventBridge(cwd)
+    auth = AuthManager(cwd)
+    tool_approvals = ToolApprovalStore(cwd)
     app = FastAPI(title="Legal Agent Workbench", docs_url="/api/docs", openapi_url="/api/openapi.json")
-    review_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="lawbench-review")
-    submitted_task_ids: set[str] = set()
-    submitted_lock = threading.Lock()
 
-    def run_review_task(task_id: str) -> None:
-        try:
-            task = tasks.claim(task_id)
-            if task is None:
-                return
-            contract_path = str(task.get("contract_path") or "")
-            if not contract_path:
-                raise ValueError("contract_path required")
-            run = runtime.review(
-                contract_path,
-                connect_mcp=bool(task.get("connect_mcp")),
-            )
-            task_status = "completed" if run.status in {"completed", "blocked"} else "failed"
-            tasks.update(
-                task_id,
-                status=task_status,
-                review_run_id=run.review_run_id,
-                report_path=run.report_path,
-                error=run.error if task_status == "failed" else "",
-                completed_at=run.updated_at,
-            )
-        except Exception as exc:  # noqa: BLE001 - persisted for the operator
-            tasks.update(task_id, status="failed", error=str(exc), completed_at=time.time())
-        finally:
-            with submitted_lock:
-                submitted_task_ids.discard(task_id)
+    def require_permission(permission: str):
+        def dependency(request: Request) -> Principal:
+            try:
+                principal = auth.authenticate(
+                    authorization=str(request.headers.get("authorization") or ""),
+                    cookie_token=str(request.cookies.get("lawbench_access_token") or ""),
+                )
+            except AuthError as exc:
+                raise HTTPException(
+                    status_code=401,
+                    detail=str(exc),
+                    headers={"WWW-Authenticate": "Bearer"},
+                ) from exc
+            if not principal.can(permission):
+                raise HTTPException(status_code=403, detail=f"permission required: {permission}")
+            return principal
 
-    def schedule_review_task(task: dict[str, Any]) -> None:
-        task_id = str(task.get("task_id") or "")
-        if not task_id or task.get("status") != "pending":
-            return
-        with submitted_lock:
-            if task_id in submitted_task_ids:
-                return
-            submitted_task_ids.add(task_id)
-        review_executor.submit(run_review_task, task_id)
+        return dependency
 
     def enqueue_review(
         record: dict[str, Any],
         *,
         dedup_key: str,
         connect_mcp: bool,
+        principal: Principal,
     ) -> JSONResponse:
         task = tasks.add(
             title=f"审查 {record.get('filename') or record.get('document_id') or '合同'}",
@@ -121,27 +103,24 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
             contract_path=str(record.get("path") or ""),
             document_id=str(record.get("document_id") or ""),
             connect_mcp=connect_mcp,
-            publish=False,
             dedup_key=dedup_key,
-            auto_execute=True,
+            tenant_id=principal.tenant_id,
+            user_id=principal.user_id,
+            roles=list(principal.roles),
         )
-        schedule_review_task(task)
         return JSONResponse({**task, "accepted": True}, status_code=202)
 
     def startup_background_services() -> None:
-        # RAG model/index warming happens before the serial review queue, so the
-        # first user request returns immediately instead of paying cold-start cost.
-        review_executor.submit(get_rag_service, cwd)
-        tasks.recover_stale_running(max_age_seconds=0.0, auto_only=True)
-        for task in tasks.list():
-            if task.get("auto_execute") and task.get("status") == "pending":
-                schedule_review_task(task)
-
-    def shutdown_background_services() -> None:
-        review_executor.shutdown(wait=False, cancel_futures=True)
+        # 这里只预热只读 RAG 服务。合同审查必须由独立 ReviewTaskWorker 消费，
+        # Web 进程不再持有 Agent 执行线程，也不负责恢复或认领任务。
+        threading.Thread(
+            target=get_rag_service,
+            args=(cwd,),
+            name="lawbench-rag-warmup",
+            daemon=True,
+        ).start()
 
     app.router.add_event_handler("startup", startup_background_services)
-    app.router.add_event_handler("shutdown", shutdown_background_services)
 
     def error(message: str, status: int = 400) -> JSONResponse:
         return JSONResponse({"error": message}, status_code=status)
@@ -151,42 +130,97 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         return render_app_html()
 
     @app.get("/api/state")
-    def api_state() -> dict[str, Any]:
+    def api_state(
+        principal: Principal = Depends(require_permission("workbench:read")),
+    ) -> dict[str, Any]:
+        rag_status = lightweight_rag_status(cwd)
+        if not principal.can("settings:write"):
+            vector_store = rag_status.get("vector_store", {})
+            rag_status = {
+                "warm": bool(rag_status.get("warm")),
+                "warming": bool(rag_status.get("warming")),
+                "indexed_entries": int(rag_status.get("indexed_entries") or 0),
+                "embedding_provider": str(rag_status.get("embedding_provider") or ""),
+                "vector_backend": (
+                    str(vector_store.get("backend") or "")
+                    if isinstance(vector_store, dict)
+                    else ""
+                ),
+            }
         return {
-            "runs": [run_summary(run) for run in runtime.store.list_runs(limit=20)],
+            "principal": principal.as_dict(),
+            "runs": [
+                run_summary(run)
+                for run in runtime.store.list_runs(
+                    limit=20, tenant_id=principal.tenant_id
+                )
+            ],
             "skills": [skill.model_dump(mode="json") for skill in runtime.skills.list()],
-            "documents": documents.list(limit=30),
-            "tasks": tasks.list(),
-            "task_summary": tasks.summary(),
+            "documents": documents.list(limit=30, tenant_id=principal.tenant_id),
+            "tasks": tasks.list(tenant_id=principal.tenant_id),
+            "task_summary": tasks.summary(tenant_id=principal.tenant_id),
             "workflow": runtime.workflow.describe(),
-            "sessions": runtime.sessions.list_sessions(limit=20),
-            "events": runtime.hooks.tail(limit=20),
-            "rag": lightweight_rag_status(cwd),
-            "connectors": runtime.connectors.context(connect_mcp=False),
-            "lark": lark_mcp_status(cwd),
+            "sessions": runtime.sessions.list_sessions(
+                limit=20, tenant_id=principal.tenant_id
+            ),
+            "events": runtime.hooks.tail(limit=20, tenant_id=principal.tenant_id),
+            "rag": rag_status,
+            "connectors": (
+                runtime.connectors.context(connect_mcp=False)
+                if principal.can("settings:write")
+                else {"restricted": True}
+            ),
+            "lark": (
+                lark_mcp_status(cwd)
+                if principal.can("settings:write")
+                else {"restricted": True}
+            ),
         }
 
+    @app.get("/api/auth/me")
+    def api_auth_me(
+        principal: Principal = Depends(require_permission("workbench:read")),
+    ) -> dict[str, Any]:
+        return principal.as_dict()
+
     @app.get("/api/report/{run_id}")
-    def api_report(run_id: str):
-        run = runtime.store.load_run(run_id)
+    def api_report(
+        run_id: str,
+        principal: Principal = Depends(require_permission("workbench:read")),
+    ):
+        run = runtime.store.load_run(run_id, tenant_id=principal.tenant_id)
         if run is None:
             return error("run not found", 404)
         return {"review_run_id": run_id, "markdown": run.report_markdown}
 
     @app.get("/api/events/stream")
-    async def api_events_stream(cycles: int = 0) -> StreamingResponse:
+    async def api_events_stream(
+        request: Request,
+        cycles: int = 0,
+        run_id: str = "",
+        principal: Principal = Depends(require_permission("workbench:read")),
+    ) -> StreamingResponse:
         # SSE：轮询 hooks 事件总线（文件型），有增量就推送快照，空闲时发心跳注释。
         # 文件读取放到线程池，避免阻塞事件循环。cycles>0 时发送 N 轮后关闭（测试用）
         async def event_stream():
             last_signature = ""
+            cursor = str((request.headers.get("last-event-id") if request else "") or "")
             sent = 0
             while True:
-                events = await asyncio.to_thread(runtime.hooks.tail, limit=50)
+                events = await asyncio.to_thread(
+                    runtime.hooks.tail,
+                    limit=50,
+                    tenant_id=principal.tenant_id,
+                    review_run_id=run_id or None,
+                    after_event_id=cursor or None,
+                )
                 signature = f"{len(events)}:{json.dumps(events[-1], ensure_ascii=False, sort_keys=True) if events else ''}"
                 if signature != last_signature:
                     last_signature = signature
                     payload = json.dumps({"events": events}, ensure_ascii=False)
-                    yield f"event: events\ndata: {payload}\n\n"
+                    if events:
+                        cursor = str(events[-1].get("event_id") or cursor)
+                        yield f"id: {cursor}\nevent: events\ndata: {payload}\n\n"
                 else:
                     yield ": heartbeat\n\n"
                 sent += 1
@@ -201,21 +235,26 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         )
 
     @app.post("/api/init")
-    def api_init() -> dict[str, str]:
+    def api_init(
+        principal: Principal = Depends(require_permission("settings:write")),
+    ) -> dict[str, str]:
+        del principal
         return {key: str(value) for key, value in runtime.init_samples().items()}
 
     @app.post("/api/review")
-    def api_review(payload: dict[str, Any] = Body(default={})):
+    def api_review(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("review:create")),
+    ):
         text = str(payload.get("contract_text") or "").strip()
         if not text:
             return error("contract_text required")
         connect_mcp = bool(payload.get("connect_mcp"))
         dedup_key = hashlib.sha256(
-            f"web-paste\0{int(connect_mcp)}\0{text}".encode("utf-8")
+            f"{principal.tenant_id}\0web-paste\0{int(connect_mcp)}\0{text}".encode("utf-8")
         ).hexdigest()
-        existing = tasks.find_active(dedup_key)
+        existing = tasks.find_active(dedup_key, tenant_id=principal.tenant_id)
         if existing is not None:
-            schedule_review_task(existing)
             return JSONResponse(
                 {**existing, "accepted": True, "deduplicated": True},
                 status_code=202,
@@ -224,41 +263,65 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
             filename="pasted-contract.md",
             text=text,
             source="web_paste",
+            tenant_id=principal.tenant_id,
+            user_id=principal.user_id,
         )
         return enqueue_review(
             record,
             dedup_key=dedup_key,
             connect_mcp=connect_mcp,
+            principal=principal,
         )
 
     @app.post("/api/upload")
-    def api_upload(payload: dict[str, Any] = Body(default={})):
+    def api_upload(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("document:write")),
+    ):
         filename = str(payload.get("filename") or "contract.md")
         if payload.get("content_base64"):
-            return documents.save_base64(filename=filename, content_base64=str(payload.get("content_base64")))
+            return documents.save_base64(
+                filename=filename,
+                content_base64=str(payload.get("content_base64")),
+                tenant_id=principal.tenant_id,
+                user_id=principal.user_id,
+            )
         text = str(payload.get("text") or "")
         if not text.strip():
             return error("text or content_base64 required")
-        return documents.save_text(filename=filename, text=text)
+        return documents.save_text(
+            filename=filename,
+            text=text,
+            tenant_id=principal.tenant_id,
+            user_id=principal.user_id,
+        )
 
     @app.post("/api/review-document")
-    def api_review_document(payload: dict[str, Any] = Body(default={})):
+    def api_review_document(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("review:create")),
+    ):
         document_id = str(payload.get("document_id") or "")
-        record = documents.get(document_id)
+        record = documents.get(document_id, tenant_id=principal.tenant_id)
         if record is None:
             return error("document not found", 404)
         connect_mcp = bool(payload.get("connect_mcp"))
         dedup_key = hashlib.sha256(
-            f"web-document\0{int(connect_mcp)}\0{document_id}".encode("utf-8")
+            f"{principal.tenant_id}\0web-document\0{int(connect_mcp)}\0{document_id}".encode("utf-8")
         ).hexdigest()
         return enqueue_review(
             record,
             dedup_key=dedup_key,
             connect_mcp=connect_mcp,
+            principal=principal,
         )
 
     @app.post("/api/skills")
-    def api_skills(payload: dict[str, Any] = Body(default={})):
+    def api_skills(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("settings:write")),
+    ):
+        del principal
         skill = LegalSkill(
             name=str(payload.get("name") or "").strip(),
             contract_type=str(payload.get("contract_type") or "general").strip(),
@@ -279,7 +342,11 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         return {"ok": True, "skill": skill.model_dump(mode="json")}
 
     @app.post("/api/mcp-server")
-    def api_mcp_server(payload: dict[str, Any] = Body(default={})):
+    def api_mcp_server(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("settings:write")),
+    ):
+        del principal
         name = str(payload.get("name") or "").strip()
         server_type = str(payload.get("type") or "http").strip()
         if not name:
@@ -297,7 +364,11 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         return runtime.connectors.context(connect_mcp=True)
 
     @app.post("/api/lark-mcp")
-    def api_lark_mcp(payload: dict[str, Any] = Body(default={})):
+    def api_lark_mcp(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("settings:write")),
+    ):
+        del principal
         app_id = str(payload.get("app_id") or "").strip()
         app_secret = str(payload.get("app_secret") or "").strip()
         if not app_id or not app_secret:
@@ -322,7 +393,11 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         )
 
     @app.post("/api/lark-mcp-status")
-    def api_lark_mcp_status(payload: dict[str, Any] = Body(default={})):
+    def api_lark_mcp_status(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("settings:write")),
+    ):
+        del principal
         return lark_mcp_status(cwd, server_name=str(payload.get("server_name") or "feishu_legal_workspace").strip())
 
     @app.post("/api/feishu/events")
@@ -332,7 +407,11 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         return JSONResponse(result, status_code=status)
 
     @app.post("/api/feishu/event-test")
-    def api_feishu_event_test(payload: dict[str, Any] = Body(default={})):
+    def api_feishu_event_test(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("settings:write")),
+    ):
+        del principal
         text = str(payload.get("text") or "").strip()
         if not text:
             return error("text required")
@@ -352,7 +431,11 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         return feishu_events.handle(fake_event, trusted_source=True)
 
     @app.post("/api/rag-config")
-    def api_rag_config(payload: dict[str, Any] = Body(default={})):
+    def api_rag_config(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("settings:write")),
+    ):
+        del principal
         current = _load_settings(cwd)
         current["rag"] = {
             "vector_backend": str(payload.get("vector_backend") or "local"),
@@ -375,13 +458,16 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         return LegalRagService(cwd).status()
 
     @app.post("/api/tasks")
-    def api_tasks(payload: dict[str, Any] = Body(default={})):
+    def api_tasks(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("review:create")),
+    ):
         title = str(payload.get("title") or "").strip()
         document_id = str(payload.get("document_id") or "").strip()
         contract_path = str(payload.get("contract_path") or "").strip()
         source = str(payload.get("source") or "web")
         if document_id:
-            record = documents.get(document_id)
+            record = documents.get(document_id, tenant_id=principal.tenant_id)
             if record is None:
                 return error("document not found", 404)
             contract_path = str(record.get("path") or "")
@@ -390,6 +476,13 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
         if title:
             if not contract_path:
                 return error("contract_path or document_id required")
+            if (
+                contract_path
+                and not document_id
+                and auth.config.mode == "jwt"
+                and not principal.can("settings:write")
+            ):
+                return error("document_id required for tenant-scoped review", 403)
             return tasks.add(
                 title=title,
                 source=source,
@@ -397,49 +490,112 @@ def create_app(cwd: str | Path | None = None) -> FastAPI:
                 document_id=document_id,
                 priority=int(payload.get("priority") or 50),
                 connect_mcp=bool(payload.get("connect_mcp")),
+                tenant_id=principal.tenant_id,
+                user_id=principal.user_id,
+                roles=list(principal.roles),
             )
-        return {"tasks": tasks.list(), "task_summary": tasks.summary()}
+        return {
+            "tasks": tasks.list(tenant_id=principal.tenant_id),
+            "task_summary": tasks.summary(tenant_id=principal.tenant_id),
+        }
 
     @app.get("/api/tasks/{task_id}")
-    def api_task(task_id: str):
-        task = tasks.get(task_id)
+    def api_task(
+        task_id: str,
+        principal: Principal = Depends(require_permission("workbench:read")),
+    ):
+        task = tasks.get(task_id, tenant_id=principal.tenant_id)
         if task is None:
             return error("task not found", 404)
         return task
 
     @app.post("/api/tasks/delete")
-    def api_tasks_delete(payload: dict[str, Any] = Body(default={})):
+    def api_tasks_delete(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("task:manage")),
+    ):
         task_id = str(payload.get("task_id") or "").strip()
         if not task_id:
             return error("task_id required")
-        if not tasks.delete(task_id):
+        if not tasks.delete(task_id, tenant_id=principal.tenant_id):
             return error("task not found", 404)
-        return {"ok": True, "task_id": task_id, "tasks": tasks.list(), "task_summary": tasks.summary()}
+        return {
+            "ok": True,
+            "task_id": task_id,
+            "tasks": tasks.list(tenant_id=principal.tenant_id),
+            "task_summary": tasks.summary(tenant_id=principal.tenant_id),
+        }
 
     @app.post("/api/tasks/cleanup")
-    def api_tasks_cleanup():
-        deleted = tasks.delete_failed_without_contract()
-        return {"ok": True, "deleted": deleted, "tasks": tasks.list(), "task_summary": tasks.summary()}
+    def api_tasks_cleanup(
+        principal: Principal = Depends(require_permission("task:manage")),
+    ):
+        deleted = tasks.delete_failed_without_contract(tenant_id=principal.tenant_id)
+        return {
+            "ok": True,
+            "deleted": deleted,
+            "tasks": tasks.list(tenant_id=principal.tenant_id),
+            "task_summary": tasks.summary(tenant_id=principal.tenant_id),
+        }
 
-    @app.post("/api/worker/run-once")
-    def api_worker_run_once(payload: dict[str, Any] = Body(default={})):
-        result = ReviewTaskWorker(cwd).run_once(connect_mcp=bool(payload.get("connect_mcp")))
-        summary = tasks.summary()
-        if result is None:
-            return {"status": "idle", "queue_summary": summary}
-        result["queue_summary"] = summary
-        result["remaining"] = summary["remaining"]
-        return result
+    @app.get("/api/tool-approvals")
+    def api_tool_approvals(
+        principal: Principal = Depends(require_permission("task:manage")),
+    ):
+        return {
+            "approvals": tool_approvals.list(tenant_id=principal.tenant_id)
+        }
+
+    @app.post("/api/tool-approvals/{approval_id}/approve")
+    def api_tool_approval_approve(
+        approval_id: str,
+        principal: Principal = Depends(require_permission("task:manage")),
+    ):
+        try:
+            return tool_approvals.decide(
+                approval_id,
+                approver=principal.user_id,
+                approve=True,
+                tenant_id=principal.tenant_id,
+            )
+        except KeyError:
+            return error("approval not found", 404)
+        except ValueError as exc:
+            return error(str(exc), 409)
+
+    @app.post("/api/tool-approvals/{approval_id}/reject")
+    def api_tool_approval_reject(
+        approval_id: str,
+        principal: Principal = Depends(require_permission("task:manage")),
+    ):
+        try:
+            return tool_approvals.decide(
+                approval_id,
+                approver=principal.user_id,
+                approve=False,
+                tenant_id=principal.tenant_id,
+            )
+        except KeyError:
+            return error("approval not found", 404)
+        except ValueError as exc:
+            return error(str(exc), 409)
 
     @app.post("/api/eval")
-    def api_eval():
+    def api_eval(
+        principal: Principal = Depends(require_permission("settings:write")),
+    ):
+        del principal
         return {
             "standard": runtime.benchmark().model_dump(mode="json"),
             "human_annotated": runtime.human_benchmark().model_dump(mode="json"),
         }
 
     @app.post("/api/mcp-context")
-    def api_mcp_context(payload: dict[str, Any] = Body(default={})):
+    def api_mcp_context(
+        payload: dict[str, Any] = Body(default={}),
+        principal: Principal = Depends(require_permission("settings:write")),
+    ):
+        del principal
         return runtime.connectors.context(connect_mcp=bool(payload.get("connect")))
 
     return app
@@ -464,6 +620,12 @@ def run_summary(run) -> dict[str, Any]:
         "high_risks": sum(1 for finding in run.findings if finding.risk_level == "high"),
         "memory_hits": len(run.memory_hits),
         "tool_calls": len(run.tool_calls),
+        "llm_calls": len(run.llm_calls),
+        "llm_cache_hit_rate": round(
+            sum(call.cache_hit for call in run.llm_calls) / max(1, len(run.llm_calls)),
+            4,
+        ),
+        "llm_estimated_cost": run.metrics.get("llm_estimated_cost", 0.0),
         "reflection_checks": len(run.reflection_checks),
         "compact_retention": run.compact_snapshot.retention_rate if run.compact_snapshot else 1.0,
         "token_usage": run.token_usage,

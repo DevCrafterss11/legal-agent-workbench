@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from legalworkbench.rag import get_rag_service
+from legalworkbench.governance import ToolAccess, ToolPolicy
 from legalworkbench.retrieval import retrieve_memories
 from legalworkbench.store import WorkbenchStore
 from legalworkbench.tools.base import ToolContext, ToolResult
@@ -13,6 +14,7 @@ from legalworkbench.tools.base import ToolContext, ToolResult
 class ClauseRetrieverTool:
     name = "clause_retriever"
     description = "Retrieve legal evidence and historical memory for a clause."
+    policy = ToolPolicy("knowledge.read", ToolAccess.READ)
 
     def execute(self, arguments: dict[str, Any], context: ToolContext) -> ToolResult:
         store = WorkbenchStore(context.cwd)
@@ -23,8 +25,16 @@ class ClauseRetrieverTool:
             query,
             contract_type=contract_type,
             top_k=int(arguments.get("top_k") or 10),
+            tenant_id=str(context.metadata.get("tenant_id") or "local"),
         )
-        memories = retrieve_memories(store.load_memory(), query, contract_type=contract_type)
+        memories = []
+        if context.metadata.get("memory_enabled", True):
+            memories = retrieve_memories(
+                store.load_memory(),
+                query,
+                contract_type=contract_type,
+                tenant_id=str(context.metadata.get("tenant_id") or "local"),
+            )
         return ToolResult(
             output={"evidence": evidence, "memories": memories},
             summary=f"{len(evidence)} evidence, {len(memories)} memory hits",

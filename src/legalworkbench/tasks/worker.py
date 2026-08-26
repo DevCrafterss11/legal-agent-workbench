@@ -33,6 +33,7 @@ class ReviewTaskWorker:
         self.bus = bus
         self.consumer_name = f"worker-{uuid4().hex[:8]}"
         self._last_outbox_sweep = 0.0
+        self._runtime: Any = None
 
     def run_once(self, *, connect_mcp: bool = False, block_ms: int = 1000) -> dict[str, Any] | None:
         message = self.bus.consume(consumer=self.consumer_name, block_ms=block_ms)
@@ -60,10 +61,15 @@ class ReviewTaskWorker:
             if not path.exists():
                 raise FileNotFoundError(str(path))
             use_mcp = bool(task.get("connect_mcp")) or connect_mcp
-            # 惰性导入：runtime -> cache -> mq -> tasks 存在环，运行期再解析
-            from legalworkbench.runtime import LegalAgentRuntime
-
-            run = LegalAgentRuntime(self.cwd).review(path, connect_mcp=use_mcp)
+            run = self._get_runtime().review(
+                path,
+                connect_mcp=use_mcp,
+                tenant_id=str(task.get("tenant_id") or "local"),
+                user_id=str(task.get("user_id") or ""),
+                roles=[str(role) for role in (task.get("roles") or ["admin"])],
+            )
+            if run.status not in {"completed", "blocked"}:
+                raise RuntimeError(run.error or f"review run ended with status={run.status}")
             updated = self.queue.update(
                 task_id,
                 status="completed",
@@ -83,6 +89,16 @@ class ReviewTaskWorker:
                 completed_at=time.time(),
                 dead_lettered=outcome.get("action") == "dead_lettered",
             )
+
+    def _get_runtime(self):
+        """Keep one runtime per worker process so its caches and clients are reusable."""
+
+        if self._runtime is None:
+            # 惰性导入：runtime -> cache -> mq -> tasks 存在环，运行期再解析
+            from legalworkbench.runtime import LegalAgentRuntime
+
+            self._runtime = LegalAgentRuntime(self.cwd)
+        return self._runtime
 
     def run_loop(self, *, interval_seconds: float = 2.0, connect_mcp: bool = False) -> None:
         while True:

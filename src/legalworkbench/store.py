@@ -58,6 +58,9 @@ def write_model_list(path: Path, items: list[BaseModel]) -> None:
 class WorkbenchStore:
     def __init__(self, cwd: str | Path | None = None) -> None:
         self.cwd = Path(cwd or Path.cwd()).resolve()
+        from legalworkbench.storage.postgres import postgres_backend
+
+        self._postgres = postgres_backend(self.cwd)
 
     @property
     def root(self) -> Path:
@@ -112,6 +115,8 @@ class WorkbenchStore:
                 )
         if force or not memory_path(self.cwd).exists():
             write_model_list(memory_path(self.cwd), SAMPLE_MEMORY)
+        if self._postgres is not None and (force or not self._postgres.load_memory()):
+            self._postgres.save_memory(SAMPLE_MEMORY)
         if force or not benchmark_path(self.cwd).exists():
             write_model_list(benchmark_path(self.cwd), SAMPLE_BENCHMARK)
         if force or not settings_path(self.cwd).exists():
@@ -129,9 +134,14 @@ class WorkbenchStore:
         return load_model_list(skills_path(self.cwd), LegalSkill)
 
     def load_memory(self) -> list[LegalMemory]:
+        if self._postgres is not None:
+            return self._postgres.load_memory()
         return load_model_list(memory_path(self.cwd), LegalMemory)
 
     def save_memory(self, memories: list[LegalMemory]) -> None:
+        if self._postgres is not None:
+            self._postgres.save_memory(memories)
+            return
         write_model_list(memory_path(self.cwd), memories)
 
     def load_benchmark(self) -> list[BenchmarkCase]:
@@ -143,23 +153,42 @@ class WorkbenchStore:
         return benchmark_path(self.cwd)
 
     def save_run(self, run: ReviewRun) -> Path:
+        if self._postgres is not None:
+            self._postgres.save_run(run)
+            return runs_dir(self.cwd) / f"{run.review_run_id}.json"
         path = runs_dir(self.cwd) / f"{run.review_run_id}.json"
         payload = mask_value(run.model_dump(mode="json"))
         atomic_write_text(path, json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
         return path
 
-    def load_run(self, run_id: str) -> ReviewRun | None:
+    def load_run(
+        self, run_id: str, *, tenant_id: str | None = None
+    ) -> ReviewRun | None:
+        if self._postgres is not None:
+            return self._postgres.load_run(run_id, tenant_id=tenant_id)
         path = runs_dir(self.cwd) / f"{run_id}.json"
         if not path.exists():
             return None
-        return ReviewRun.model_validate(json.loads(path.read_text(encoding="utf-8")))
+        run = ReviewRun.model_validate(json.loads(path.read_text(encoding="utf-8")))
+        if tenant_id is not None and run.tenant_id != tenant_id:
+            return None
+        return run
 
-    def list_runs(self, limit: int = 20) -> list[ReviewRun]:
+    def list_runs(
+        self, limit: int = 20, *, tenant_id: str | None = None
+    ) -> list[ReviewRun]:
+        if self._postgres is not None:
+            return self._postgres.list_runs(limit=limit, tenant_id=tenant_id)
         runs: list[ReviewRun] = []
         paths = sorted(runs_dir(self.cwd).glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
-        for path in paths[:limit]:
+        for path in paths:
             try:
-                runs.append(ReviewRun.model_validate(json.loads(path.read_text(encoding="utf-8"))))
+                run = ReviewRun.model_validate(json.loads(path.read_text(encoding="utf-8")))
             except Exception:
                 continue
+            if tenant_id is not None and run.tenant_id != tenant_id:
+                continue
+            runs.append(run)
+            if len(runs) >= limit:
+                break
         return runs

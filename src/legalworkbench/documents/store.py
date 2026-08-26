@@ -32,7 +32,13 @@ class ContractDocumentStore:
         self.index_path = self.root / "documents.json"
 
     def save_text(
-        self, *, filename: str, text: str, source: str = "web"
+        self,
+        *,
+        filename: str,
+        text: str,
+        source: str = "web",
+        tenant_id: str = "local",
+        user_id: str = "",
     ) -> dict[str, Any]:
         document_id = f"doc_{uuid4().hex[:10]}"
         safe_name = _safe_filename(filename)
@@ -45,6 +51,8 @@ class ContractDocumentStore:
         )
         record = {
             "document_id": document_id,
+            "tenant_id": tenant_id,
+            "user_id": user_id,
             "filename": safe_name,
             "path": str(path),
             "source": source,
@@ -56,13 +64,31 @@ class ContractDocumentStore:
         return record
 
     def save_base64(
-        self, *, filename: str, content_base64: str, source: str = "web_upload"
+        self,
+        *,
+        filename: str,
+        content_base64: str,
+        source: str = "web_upload",
+        tenant_id: str = "local",
+        user_id: str = "",
     ) -> dict[str, Any]:
         raw = base64.b64decode(content_base64)
-        return self.save_bytes(filename=filename, data=raw, source=source)
+        return self.save_bytes(
+            filename=filename,
+            data=raw,
+            source=source,
+            tenant_id=tenant_id,
+            user_id=user_id,
+        )
 
     def save_bytes(
-        self, *, filename: str, data: bytes, source: str = "web_upload"
+        self,
+        *,
+        filename: str,
+        data: bytes,
+        source: str = "web_upload",
+        tenant_id: str = "local",
+        user_id: str = "",
     ) -> dict[str, Any]:
         suffix = Path(filename).suffix.lower()
         raw = data
@@ -79,12 +105,20 @@ class ContractDocumentStore:
             text = _extract_document_bytes(raw, suffix=suffix, root=self.root)
         else:
             text = f"# Unsupported document preview\n\n文件 `{filename}` 已接收，但当前解析器支持 txt/md/pdf/docx。"
-        record = self.save_text(filename=filename, text=text, source=source)
+        record = self.save_text(
+            filename=filename,
+            text=text,
+            source=source,
+            tenant_id=tenant_id,
+            user_id=user_id,
+        )
         record["raw_path"] = str(raw_path)
         self._replace(record)
         return record
 
-    def list(self, limit: int = 50) -> list[dict[str, Any]]:
+    def list(
+        self, limit: int = 50, *, tenant_id: str | None = None
+    ) -> list[dict[str, Any]]:
         if not self.index_path.exists():
             return []
         try:
@@ -93,17 +127,25 @@ class ContractDocumentStore:
             return []
         if not isinstance(rows, list):
             return []
+        if tenant_id is not None:
+            rows = [
+                row
+                for row in rows
+                if str(row.get("tenant_id") or "local") == tenant_id
+            ]
         rows.sort(key=lambda item: item.get("created_at", 0), reverse=True)
         return rows[:limit]
 
-    def get(self, document_id: str) -> dict[str, Any] | None:
-        for record in self.list(limit=500):
+    def get(
+        self, document_id: str, *, tenant_id: str | None = None
+    ) -> dict[str, Any] | None:
+        for record in self.list(limit=500, tenant_id=tenant_id):
             if record.get("document_id") == document_id:
                 return record
         return None
 
-    def read_text(self, document_id: str) -> str:
-        record = self.get(document_id)
+    def read_text(self, document_id: str, *, tenant_id: str | None = None) -> str:
+        record = self.get(document_id, tenant_id=tenant_id)
         if record is None:
             raise FileNotFoundError(document_id)
         return secure_read_text(record["path"], cwd=self.cwd)

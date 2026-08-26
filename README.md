@@ -39,7 +39,7 @@
 - `agents/`：Supervisor-Worker 多 Agent 编排；RAG 作为 Evidence Agent 的工具能力
 - `tools/`：合同解析、RAG、风险规则、改写、权限、报告等工具注册表
 - `rag/`：合同条款知识库混合检索
-- `memory/`：长期审查记忆全生命周期（写入门槛、冲突强化、使用反馈、时间衰减、容量驱逐与归档）
+- `memory/`：长期审查记忆全生命周期（Proposed → Approved → Active、人工审批隔离、冲突强化、使用反馈、时间衰减、容量驱逐与归档）
 - `privacy.py`：PII 识别与可逆脱敏（身份证/手机/邮箱/银行卡 + 本地姓名/地址实体识别）
 - `secure_storage.py`：AES-256-GCM 信封加密，支持 macOS Keychain 与 AWS KMS 的外部主密钥
 - `governance/`：权限策略、风险规则、合规拦截与 prompt injection 三层防御
@@ -54,11 +54,11 @@
 - `documents/`：合同上传与文本抽取
 - `llm/`：OpenAI-compatible / Ollama 模型接口、结构化决策（decide）与确定性本地 fallback
 - `feishu_stream.py`：飞书机器人长连接事件监听
-- `web.py`：FastAPI 交互式工作台，SSE 实时推送审查事件流
+- `web.py`：FastAPI 交互式工作台；审查端点只创建并发布任务，SSE 实时推送独立 Worker 产生的审查事件流
 
 ## 快速运行
 
-macOS 一键启动（会检查虚拟环境、Milvus、Web 和已安装的飞书 LaunchAgent，并自动打开浏览器）：
+macOS 一键启动（会检查虚拟环境、Milvus，分别启动 Web 与独立审查 Worker，并自动打开浏览器）：
 
 ```bash
 ./start.command
@@ -77,8 +77,25 @@ legal-agent review .lawbench/contracts/sample_saas_contract.md
 legal-agent eval
 legal-agent eval --human
 legal-agent eval-baseline --dataset both
+# 分别在两个终端启动 API 与 Worker；Web 请求本身不执行 Agent
 legal-agent serve --port 5180
+legal-agent worker
 ```
+
+准生产环境可选启用 PostgreSQL 持久化（需要 `pip install -e ".[postgres]"`）：
+
+```bash
+export LEGAL_WORKBENCH_STORAGE_BACKEND=postgres
+export LEGAL_WORKBENCH_POSTGRES_DSN='postgresql://user:pass@127.0.0.1:5432/legalworkbench'
+legal-agent serve --port 5180
+legal-agent worker
+```
+
+本地可用 `docker compose -f docker-compose.postgres.yml up -d` 启动开发数据库，
+并使用 `legal-agent storage-config --backend postgres --dsn ...` 写入项目配置。
+
+Run、Task、Memory、Session 和审计 Event 会按租户写入 JSONB 表；数据库生产部署仍应
+启用 TLS、连接池、迁移版本管理和 PostgreSQL RLS。
 
 打开：
 
@@ -99,6 +116,8 @@ rule_only / rag_only / rule_plus_rag 是组件消融对照：
 legal-agent eval-real                                   # 全部方法（full_agent 走真实 LLM）
 legal-agent eval-real --methods rule_only,rag_only,rule_plus_rag   # 快速消融
 legal-agent eval-real --methods full_agent --limit 12   # Agent 端到端限量评测
+legal-agent eval-real --dataset heldout --methods rule_only,rag_only,rule_plus_rag
+python scripts/build_heldout_benchmark.py --ratio 0.2  # 标注冻结后生成 held-out 清单
 ```
 
 当前结果（`rule_only` 修复前 → 修复后）：precision 0.14 → **0.84**、F1 0.21 → **0.88**、
@@ -106,8 +125,8 @@ legal-agent eval-real --methods full_agent --limit 12   # Agent 端到端限量�
 "话题词误报洪水"，并驱动了不利模式规则重写（`governance/rules.py`）。
 `full_agent` 端到端（12 份均衡子集、真实 LLM，独立语义候选改造前基线）：
 precision 0.889 / recall 1.0 / F1 0.941。当前 LLM 已能绕过规则硬门控独立提出候选，
-但必须通过风险类型白名单、原文锚定、同类 RAG 证据和二次语义核验；新的真实
-held-out 指标完成前仍保留上述基线，不提前宣称提升。
+但必须通过风险类型白名单、原文锚定、同类 RAG 证据和二次语义核验。冻结清单
+位于 `data/real_benchmark/annotations_heldout.json`，不得参与规则、Prompt 或阈值调参。
 数据来源、标注口径（LLM 标注 + 人工复核流程，非"人工标注"）、指标定义与完整
 结果见 `docs/benchmarks/REAL_BENCHMARK.md`。
 
@@ -140,8 +159,15 @@ legal-agent llm-config --provider ollama --model qwen2.5:7b
 
 # 或任意 OpenAI-compatible API（api_key 存入 secrets.json，不进 settings）
 legal-agent llm-config --provider openai_compatible \
-  --model deepseek-chat --base-url https://api.deepseek.com/v1 --api-key sk-xxx
+  --model deepseek-chat --base-url https://api.deepseek.com/v1 --api-key sk-xxx \
+  --input-cost-per-million 2 --output-cost-per-million 8
 ```
+
+`LlmClient` 在 Worker 生命周期内复用一个带 keep-alive 的 `httpx.Client` 连接池，
+不再为每次条款判断重新建 TCP/TLS 连接。每次调用都会生成 `LLMCallTrace`，记录
+review run、Agent、task、模型、provider、prompt/completion token、延迟、缓存命中、
+重试、fallback 和估算成本；汇总结果写入 `ReviewRun.llm_calls`、报告与 Web state。
+单价单位为每百万 token，未配置时成本保守显示为 0。
 
 模型输出解析失败、网络超时或服务不可用时，决策点自动回落确定性规则，主链路不中断。
 
@@ -174,6 +200,36 @@ legal-agent encryption-init --provider aws-kms \
 
 检索融合支持两种模式：`--fusion score`（加权分数融合，可解释）与
 `--fusion rrf`（reciprocal rank fusion，免疫 BM25 与向量分的量纲差异）。
+
+## JWT、RBAC 与租户隔离
+
+默认 `auth.mode=local`，保持本地单人工作台开箱即用；此模式使用内置的
+`local-admin` 身份。部署共享服务前应切换到 JWT：
+
+```bash
+legal-agent auth-config --mode jwt
+legal-agent auth-token --tenant tenant-a --user reviewer-1 --roles reviewer
+```
+
+JWT 使用 HS256，并校验签名、issuer、audience、过期时间及必需的租户、用户和角色
+声明。API 接受 `Authorization: Bearer <token>`；角色从只读到平台管理依次为
+`viewer`、`reviewer`、`operator`、`admin`。审查任务、上传文档、运行记录、会话、
+事件、工具轨迹和 Legal Memory 都携带租户/用户上下文，API 与 Worker 交接时不会
+丢失该上下文。公共法律知识仍使用 `tenant_id=shared`；企业私有知识在词法和
+Milvus 召回时按 `shared OR current tenant` 强制预过滤。生产环境仍应以 PostgreSQL
+RLS 和隔离渗透测试作为最终边界，不能只依赖应用层过滤。
+
+所有工具调用还必须经过 `ToolPolicyMiddleware`：每个 Tool 显式声明 scope、
+read/compute/local-write/external-write 类型和所需权限；未声明策略的工具默认拒绝。
+外部写入会生成与 tenant、user、review run、tool 和参数指纹绑定的审批请求，批准后
+只能消费一次，不能换参数或跨租户重放。共享服务可由 `operator` 调用审批 API；
+本地运维也可使用：
+
+```bash
+legal-agent tool-approvals --tenant tenant-a
+legal-agent tool-approve approval_xxx --approver legal-admin --tenant tenant-a
+# 或 legal-agent tool-reject approval_xxx --approver legal-admin --tenant tenant-a
+```
 
 ## Cross-Encoder 重排
 
@@ -208,7 +264,8 @@ legal-agent rag-health
 
 如果 Docker Desktop 未启动或 BGE 依赖未安装，系统会明确显示 fallback 状态：
 
-- Milvus 不可用时降级到 in-memory vector store
+- Milvus 不可用时降级到 in-memory vector store；复用持久索引时会先 hydrate 本地
+  向量，避免运行中断后的空 fallback
 - BGE 不可用时降级到 deterministic hashing embedding
 - `legal-agent rag-health` 会同时检查 Docker、Milvus 端口、向量库连接和 embedding provider
 
@@ -220,7 +277,11 @@ docker compose -f docker-compose.milvus.yml down
 
 ## Redis 任务总线与缓存
 
-审查任务的投递默认走文件队列轮询；生产形态切换到 Redis Streams 任务总线，文件任务表退化为任务状态存储 + 本地消息表（outbox）：
+Web 异步审查入口和 `legal-agent tasks` 创建任务时统一经过 `ReviewTaskQueue.add()` 发布；默认由独立 Worker 轮询本地文件队列，生产形态切换到 Redis Streams 后，文件任务表退化为任务状态存储 + 本地消息表（outbox）。Web API 不再使用进程内线程执行 Agent：
+
+```text
+POST /api/review -> task store/outbox -> Redis Streams -> ReviewTaskWorker -> Agent Runtime
+```
 
 ```bash
 python -m pip install -e ".[dev,redis]"
@@ -362,6 +423,11 @@ legal-agent tools
 legal-agent workflow
 legal-agent sessions
 legal-agent memory
+# 高风险、Prompt Injection 或 LLM-only 结论先进入 proposed，不能直接召回
+legal-agent memory-approve mem_xxx --approver legal_user_1
+legal-agent memory-activate mem_xxx
+# 或拒绝候选，使其仅作为审计记录保留
+legal-agent memory-reject mem_xxx --approver legal_user_1
 legal-agent events
 legal-agent rag-status
 legal-agent tasks "审查供应商 SaaS 服务协议"

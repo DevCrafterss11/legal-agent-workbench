@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from typing import Any
 
-from legalworkbench.governance import PermissionGuard
+from legalworkbench.governance import PermissionGuard, ToolAccess, ToolPolicy
 from legalworkbench.tools.base import ToolContext, ToolResult
 
 
 class PermissionGuardTool:
     name = "permission_guard"
     description = "Block unsupported legal conclusions and flag high-risk findings for review."
+    policy = ToolPolicy("governance.check", ToolAccess.COMPUTE)
 
     def __init__(self) -> None:
         self.guard = PermissionGuard()

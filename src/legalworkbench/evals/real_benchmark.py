@@ -58,8 +58,11 @@ def real_benchmark_dir(cwd: str | Path | None = None) -> Path:
     return Path(cwd or Path.cwd()).resolve() / "data" / "real_benchmark"
 
 
-def load_real_benchmark(cwd: str | Path | None = None) -> dict:
-    path = real_benchmark_dir(cwd) / "annotations.json"
+def load_real_benchmark(cwd: str | Path | None = None, *, dataset: str = "real") -> dict:
+    if dataset not in {"real", "heldout"}:
+        raise ValueError("dataset must be real or heldout")
+    filename = "annotations_heldout.json" if dataset == "heldout" else "annotations.json"
+    path = real_benchmark_dir(cwd) / filename
     if not path.exists():
         return {}
     parsed = json.loads(path.read_text(encoding="utf-8"))
@@ -131,8 +134,10 @@ class RealBenchmarkEvaluator:
         *,
         methods: tuple[str, ...] = REAL_BENCHMARK_METHODS,
         limit: int = 0,
+        memory_enabled: bool = True,
+        dataset: str = "real",
     ) -> RealBenchmarkReport:
-        payload = load_real_benchmark(self.cwd)
+        payload = load_real_benchmark(self.cwd, dataset=dataset)
         contracts = payload.get("contracts", [])
         if limit:
             # 均衡取样：一半真实原件（负例为主）+ 一半红线变体（已知答案正样本），
@@ -148,7 +153,7 @@ class RealBenchmarkEvaluator:
                 raise ValueError(f"Unsupported method: {method}")
             started = time.time()
             per_contract = [
-                (contract, self._predict(method, contract))
+                (contract, self._predict(method, contract, memory_enabled=memory_enabled))
                 for contract in contracts
             ]
             results.append(self._score(method, per_contract, time.time() - started))
@@ -176,9 +181,9 @@ class RealBenchmarkEvaluator:
         path = (real_benchmark_dir(self.cwd) / contract["file"]).resolve()
         return parse_clauses(path.read_text(encoding="utf-8"))
 
-    def _predict(self, method: str, contract: dict) -> set[tuple[str, str]]:
+    def _predict(self, method: str, contract: dict, *, memory_enabled: bool = True) -> set[tuple[str, str]]:
         if method == "full_agent":
-            return self._predict_full_agent(contract)
+            return self._predict_full_agent(contract, memory_enabled=memory_enabled)
         retriever = None
         if method in {"rag_only", "rule_plus_rag"}:
             retriever = HybridClauseRetriever(self.store.load_knowledge())
@@ -200,7 +205,7 @@ class RealBenchmarkEvaluator:
                         predicted.add((clause.clause_id, item.risk_type))
         return predicted
 
-    def _predict_full_agent(self, contract: dict) -> set[tuple[str, str]]:
+    def _predict_full_agent(self, contract: dict, *, memory_enabled: bool = True) -> set[tuple[str, str]]:
         # 延迟导入避免 evals -> runtime -> evals 环
         from legalworkbench.runtime import LegalAgentRuntime
 
@@ -213,8 +218,8 @@ class RealBenchmarkEvaluator:
         if had_memory:
             shutil.copy2(mem_path, backup)
         try:
-            runtime = LegalAgentRuntime(self.cwd)
-            run = runtime.review(contract_path)
+            runtime = LegalAgentRuntime(self.cwd, memory_enabled=memory_enabled)
+            run = runtime.review(contract_path, memory_enabled=memory_enabled)
         finally:
             if had_memory and backup.exists():
                 shutil.move(backup, mem_path)

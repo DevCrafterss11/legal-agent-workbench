@@ -53,6 +53,8 @@ class SkillPlannerAgent(LegalReviewAgent):
                     ),
                 },
                 fallback={"adjust": False},
+                agent=self.name,
+                review_run_id=ctx.run.review_run_id,
             )
         if decision.get("adjust"):
             try:

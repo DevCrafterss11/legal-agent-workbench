@@ -42,6 +42,7 @@ class ReviewAgentContext:
     sessions: ReviewSessionStore
     store: WorkbenchStore
     connect_mcp: bool = False
+    memory_enabled: bool = True
     started_at: float = field(default_factory=time.time)
     evidence_total: int = 0
     memory_hits: dict[str, LegalMemory] = field(default_factory=dict)
@@ -73,6 +74,8 @@ class LegalReviewAgent:
                 name=f"agent.{event}",
                 review_run_id=ctx.run.review_run_id,
                 payload={"agent": self.name, "role": self.role, **payload},
+                tenant_id=ctx.run.tenant_id,
+                user_id=ctx.run.user_id,
             )
         )
 
@@ -85,11 +88,30 @@ class LegalReviewAgent:
         tool_context = ToolContext(
             ctx.cwd,
             ctx.run.review_run_id,
-            metadata={"agent": self.name, "agent_role": self.role},
+            metadata={
+                "agent": self.name,
+                "agent_role": self.role,
+                "tenant_id": ctx.run.tenant_id,
+                "user_id": ctx.run.user_id,
+                "roles": ctx.run.roles,
+                "contract_path": ctx.run.contract_path,
+                "sensitive_resource": bool(
+                    ctx.run.mcp_context.get("privacy", {}).get("sensitive")
+                ),
+                "memory_enabled": ctx.memory_enabled,
+            },
         )
         result, trace = ctx.tools.execute(tool_name, arguments, tool_context)
         ctx.run.tool_calls.append(trace)
-        ctx.hooks.emit(HookEvent("tool.called", ctx.run.review_run_id, trace.model_dump(mode="json")))
+        ctx.hooks.emit(
+            HookEvent(
+                "tool.called",
+                ctx.run.review_run_id,
+                trace.model_dump(mode="json"),
+                tenant_id=ctx.run.tenant_id,
+                user_id=ctx.run.user_id,
+            )
+        )
         if result.is_error:
             self.emit(ctx, "tool_error", {"tool": tool_name, "summary": result.summary})
         else:

@@ -7,8 +7,11 @@ import os
 import time
 from dataclasses import dataclass
 from typing import Any
+from uuid import uuid4
 
 import httpx
+
+from legalworkbench.models import LLMCallTrace
 
 OLLAMA_DEFAULT_BASE_URL = "http://127.0.0.1:11434/v1"
 REMOTE_CIRCUIT_BREAKER_SECONDS = 300.0
@@ -43,6 +46,9 @@ def load_llm_config(cwd: Any = None) -> LlmConfig:
     except (OSError, json.JSONDecodeError):
         pass
     section = settings.get("llm") if isinstance(settings.get("llm"), dict) else {}
+    routes = section.get("model_routes")
+    if not isinstance(routes, dict):
+        routes = {}
     return LlmConfig(
         provider=os.environ.get("LEGAL_WORKBENCH_LLM_PROVIDER")
         or str(section.get("provider") or "local"),
@@ -54,6 +60,13 @@ def load_llm_config(cwd: Any = None) -> LlmConfig:
         or str(secrets.get("llm_api_key") or ""),
         timeout_seconds=float(section.get("timeout_seconds") or 10.0),
         mask_pii=bool(section.get("mask_pii", True)),
+        input_cost_per_million=float(section.get("input_cost_per_million") or 0),
+        output_cost_per_million=float(section.get("output_cost_per_million") or 0),
+        model_routes={
+            str(key): str(value)
+            for key, value in routes.items()
+            if str(key).strip() and str(value).strip()
+        },
     )
 
 
@@ -65,6 +78,12 @@ class LlmConfig:
     api_key: str = ""
     timeout_seconds: float = 10.0
     mask_pii: bool = True
+    input_cost_per_million: float = 0.0
+    output_cost_per_million: float = 0.0
+    model_routes: dict[str, str] | None = None
+
+    def model_for(self, task: str) -> str:
+        return str((self.model_routes or {}).get(task) or self.model)
 
 
 @dataclass(frozen=True)
@@ -91,6 +110,24 @@ class LlmClient:
         self.cache = cache
         self.cache_ttl_seconds = cache_ttl_seconds
         self._remote_unavailable_until = 0.0
+        self._http_client: httpx.Client | None = None
+        self.call_traces: list[LLMCallTrace] = []
+        self._active_model = self.config.model
+
+    def close(self) -> None:
+        if self._http_client is not None:
+            self._http_client.close()
+            self._http_client = None
+
+    def drain_traces(self, review_run_id: str = "") -> list[LLMCallTrace]:
+        if not review_run_id:
+            traces, self.call_traces = self.call_traces, []
+            return traces
+        traces = [call for call in self.call_traces if call.review_run_id == review_run_id]
+        self.call_traces = [
+            call for call in self.call_traces if call.review_run_id != review_run_id
+        ]
+        return traces
 
     def remote_endpoint(self) -> tuple[str, str] | None:
         """Return (base_url, api_key) when a remote provider is usable."""
@@ -110,7 +147,62 @@ class LlmClient:
             )
         return None
 
-    def complete(self, *, system: str, user: str) -> LlmResponse:
+    def complete(
+        self,
+        *,
+        system: str,
+        user: str,
+        task: str = "",
+        agent: str = "",
+        review_run_id: str = "",
+    ) -> LlmResponse:
+        started = time.time()
+        try:
+            response = self._complete(system=system, user=user, task=task)
+        except Exception as exc:
+            self.call_traces.append(
+                LLMCallTrace(
+                    trace_id=f"llm_{uuid4().hex[:12]}",
+                    review_run_id=review_run_id,
+                    agent=agent,
+                    task=task,
+                    model=self._active_model,
+                    provider=self.config.provider,
+                    latency_ms=int((time.time() - started) * 1000),
+                    status="error",
+                    error=str(exc)[:200],
+                )
+            )
+            raise
+        raw = response.raw or {}
+        self.call_traces.append(
+            LLMCallTrace(
+                trace_id=f"llm_{uuid4().hex[:12]}",
+                review_run_id=review_run_id,
+                agent=agent,
+                task=task,
+                model=response.model,
+                provider=self.config.provider,
+                prompt_tokens=response.prompt_tokens,
+                completion_tokens=response.completion_tokens,
+                latency_ms=int((time.time() - started) * 1000),
+                cache_hit=bool(raw.get("cached")),
+                retry_count=int(raw.get("retry_count") or 0),
+                fallback=self.remote_endpoint() is None,
+                estimated_cost=round(
+                    (
+                        response.prompt_tokens * self.config.input_cost_per_million
+                        + response.completion_tokens * self.config.output_cost_per_million
+                    )
+                    / 1_000_000,
+                    8,
+                ),
+            )
+        )
+        return response
+
+    def _complete(self, *, system: str, user: str, task: str = "") -> LlmResponse:
+        self._active_model = self.config.model_for(task)
         if self.remote_endpoint() is not None:
             # 隐私边界：合同文本出境（远端 LLM）前先可逆脱敏，映射表只留在进程内；
             # 缓存 key 与缓存值均基于脱敏文本，PII 不落 Redis，回复占位符本地回填
@@ -129,7 +221,7 @@ class LlmClient:
                 from legalworkbench.cache import content_hash
 
                 cache_key = (
-                    f"llm:{content_hash(self.config.model, system, outbound_user)}"
+                    f"llm:{content_hash(self._active_model, system, outbound_user)}"
                 )
                 cached = self.cache.get_json(cache_key)
                 if cached is not None:
@@ -137,7 +229,7 @@ class LlmClient:
 
                     return LlmResponse(
                         text=restore(str(cached.get("text") or ""), mapping),
-                        model=str(cached.get("model") or self.config.model),
+                        model=str(cached.get("model") or self._active_model),
                         prompt_tokens=int(cached.get("prompt_tokens") or 0),
                         completion_tokens=int(cached.get("completion_tokens") or 0),
                         raw={"cached": True, "pii_masked": bool(mapping)},
@@ -179,7 +271,8 @@ class LlmClient:
         return self._local(system=system, user=user)
 
     def semantic_judgment(
-        self, *, clause: str, risk_type: str, evidence: str
+        self, *, clause: str, risk_type: str, evidence: str,
+        agent: str = "", review_run_id: str = ""
     ) -> dict[str, Any]:
         prompt = {
             "task": "legal_risk_semantic_judgment",
@@ -195,10 +288,15 @@ class LlmClient:
                     "JSON 中的 reason 用中文。" + DATA_NOT_INSTRUCTIONS
                 ),
                 user=user,
+                task="legal_risk_semantic_judgment",
+                agent=agent,
+                review_run_id=review_run_id,
             )
         except Exception as exc:  # noqa: BLE001
             # 真实运行教训：远端网络抖动（SSL 断连/读超时）曾把整单审查打成 failed。
             # 语义判断是增强信号，远端失败降级到本地确定性打分，主链路继续
+            if self.call_traces:
+                self.call_traces[-1].fallback = True
             local = self._local(system="", user=user)
             parsed = json.loads(local.text)
             parsed["degraded"] = f"remote llm unavailable: {str(exc)[:120]}"
@@ -214,6 +312,8 @@ class LlmClient:
         clause: str,
         contract_type: str,
         allowed_risk_types: list[str],
+        agent: str = "",
+        review_run_id: str = "",
     ) -> dict[str, Any]:
         """Discover risks independently of rule and retrieval candidates.
 
@@ -238,10 +338,13 @@ class LlmClient:
                 ),
             },
             fallback={"candidates": []},
+            agent=agent,
+            review_run_id=review_run_id,
         )
 
     def decide(
-        self, *, task: str, payload: dict[str, Any], fallback: dict[str, Any]
+        self, *, task: str, payload: dict[str, Any], fallback: dict[str, Any],
+        agent: str = "", review_run_id: str = ""
     ) -> dict[str, Any]:
         """Structured decision: ask the model for a JSON verdict, fall back on any failure.
 
@@ -258,8 +361,13 @@ class LlmClient:
                     "JSON 中的 reason 等文本字段用中文。" + DATA_NOT_INSTRUCTIONS
                 ),
                 user=json.dumps(prompt, ensure_ascii=False),
+                task=task,
+                agent=agent,
+                review_run_id=review_run_id,
             )
         except Exception as exc:  # noqa: BLE001 - 远端不可用不阻塞审查主链路
+            if self.call_traces:
+                self.call_traces[-1].fallback = True
             return {**fallback, "decision_source": "fallback", "error": str(exc)[:200]}
         parsed = _extract_json_object(response.text)
         if parsed is None:
@@ -286,7 +394,7 @@ class LlmClient:
             "content-type": "application/json",
         }
         payload = {
-            "model": self.config.model,
+            "model": self._active_model,
             "messages": [
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
@@ -298,10 +406,18 @@ class LlmClient:
         last_error: Exception | None = None
         for attempt in range(2):
             try:
-                with httpx.Client(timeout=self.config.timeout_seconds) as client:
-                    res = client.post(url, headers=headers, json=payload)
-                    res.raise_for_status()
-                    data = res.json()
+                if self._http_client is None:
+                    self._http_client = httpx.Client(
+                        timeout=self.config.timeout_seconds,
+                        limits=httpx.Limits(
+                            max_connections=20,
+                            max_keepalive_connections=10,
+                            keepalive_expiry=30.0,
+                        ),
+                    )
+                res = self._http_client.post(url, headers=headers, json=payload)
+                res.raise_for_status()
+                data = res.json()
                 break
             except httpx.TimeoutException:
                 raise
@@ -317,10 +433,10 @@ class LlmClient:
         text = data["choices"][0]["message"]["content"]
         return LlmResponse(
             text=text,
-            model=self.config.model,
+            model=self._active_model,
             prompt_tokens=int(usage.get("prompt_tokens") or 0),
             completion_tokens=int(usage.get("completion_tokens") or 0),
-            raw=data,
+            raw={**data, "retry_count": attempt},
         )
 
     def _local(self, *, system: str, user: str) -> LlmResponse:
@@ -382,7 +498,7 @@ class LlmClient:
         text = json.dumps(body, ensure_ascii=False)
         return LlmResponse(
             text=text,
-            model=self.config.model,
+            model=self._active_model,
             prompt_tokens=len(user),
             completion_tokens=len(text),
         )

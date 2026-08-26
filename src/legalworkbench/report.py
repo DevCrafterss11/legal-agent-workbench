@@ -115,6 +115,17 @@ def render_markdown_report(run: ReviewRun) -> str:
     lines.extend(["", "## Token 估算"])
     for key, value in sorted(run.token_usage.items()):
         lines.append(f"- {key}: {value}")
+    lines.extend(["", "## LLM 调用链路"])
+    if run.llm_calls:
+        for idx, call in enumerate(run.llm_calls, start=1):
+            lines.append(
+                f"{idx}. `{call.agent or 'runtime'} / {call.task or 'complete'}` "
+                f"[{call.status}] {call.model} · {call.latency_ms}ms · "
+                f"tokens={call.prompt_tokens}+{call.completion_tokens} · "
+                f"cache={'hit' if call.cache_hit else 'miss'} · cost={call.estimated_cost:.8f}"
+            )
+    else:
+        lines.append("- 本次运行没有 LLM 调用。")
     lines.extend(["", "## 工具调用链路"])
     for idx, trace in enumerate(run.tool_calls, start=1):
         lines.append(f"{idx}. `{trace.tool_name}` [{trace.status}] {trace.duration_ms}ms - {trace.output_summary or trace.input_summary}")

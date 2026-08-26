@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
 
+from legalworkbench.governance.tool_policy import ToolPolicy, ToolPolicyMiddleware
 from legalworkbench.models import ToolCallTrace
 from legalworkbench.privacy import mask
 
@@ -35,6 +36,7 @@ class LegalTool(Protocol):
 
     name: str
     description: str
+    policy: ToolPolicy
 
     def execute(self, arguments: dict[str, Any], context: ToolContext) -> ToolResult:
         """Execute the tool."""
@@ -45,6 +47,7 @@ class ToolRegistry:
 
     def __init__(self) -> None:
         self._tools: dict[str, LegalTool] = {}
+        self._policy = ToolPolicyMiddleware()
 
     def register(self, tool: LegalTool) -> None:
         self._tools[tool.name] = tool
@@ -66,13 +69,40 @@ class ToolRegistry:
         if tool is None:
             result = ToolResult(output=None, summary=f"tool not found: {name}", is_error=True)
         else:
-            try:
-                result = tool.execute(arguments, context)
-            except Exception as exc:  # pragma: no cover - defensive boundary
-                result = ToolResult(output=None, summary=str(exc), is_error=True)
+            decision = self._policy.evaluate(
+                tool_name=name,
+                policy=getattr(tool, "policy", None),
+                arguments=arguments,
+                context=context,
+            )
+            if not decision.allowed:
+                result = ToolResult(
+                    output=None,
+                    summary=decision.reason,
+                    is_error=True,
+                    metadata={
+                        "policy": "blocked",
+                        "approval_id": decision.approval_id,
+                        "requires_approval": decision.requires_approval,
+                    },
+                )
+            else:
+                try:
+                    result = tool.execute(arguments, context)
+                    result.metadata = {
+                        "policy": "allowed",
+                        "policy_reason": decision.reason,
+                        "approval_id": decision.approval_id,
+                        **result.metadata,
+                    }
+                except Exception as exc:  # pragma: no cover - defensive boundary
+                    result = ToolResult(output=None, summary=str(exc), is_error=True)
+        blocked = bool(result.metadata.get("policy") == "blocked")
         trace = ToolCallTrace(
             tool_name=name,
-            status="error" if result.is_error else "success",
+            tenant_id=str(context.metadata.get("tenant_id") or "local"),
+            user_id=str(context.metadata.get("user_id") or ""),
+            status="blocked" if blocked else ("error" if result.is_error else "success"),
             input_summary=_summarize(arguments),
             output_summary=mask(result.summary).masked_text,
             duration_ms=int((time.time() - started) * 1000),

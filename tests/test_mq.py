@@ -3,16 +3,21 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 from pathlib import Path
+from uuid import uuid4
 
 import fakeredis
+import pytest
+from fastapi.testclient import TestClient
 
 from legalworkbench.cache import WorkbenchCache, content_hash
 from legalworkbench.llm.client import LlmClient, LlmConfig, LlmResponse
 from legalworkbench.mq import LocalTaskBus, QueueConfig, RedisTaskBus, create_task_bus
 from legalworkbench.runtime import LegalAgentRuntime
 from legalworkbench.tasks import ReviewTaskQueue, ReviewTaskWorker
+from legalworkbench.web import create_app
 
 
 def make_bus(tmp_path: Path, **overrides) -> RedisTaskBus:
@@ -24,6 +29,28 @@ def make_bus(tmp_path: Path, **overrides) -> RedisTaskBus:
 
 def make_task(task_id: str = "task_abc123", priority: int = 50) -> dict:
     return {"task_id": task_id, "title": "t", "priority": priority, "max_attempts": 2}
+
+
+@pytest.mark.integration
+def test_real_redis_stream_roundtrip_when_enabled(tmp_path: Path) -> None:
+    """Exercise the real Redis protocol in CI when RUN_REDIS_INTEGRATION=1."""
+
+    if os.environ.get("RUN_REDIS_INTEGRATION") != "1":
+        pytest.skip("set RUN_REDIS_INTEGRATION=1 to run against a Redis service")
+    redis = pytest.importorskip("redis")
+    config = QueueConfig(
+        backend="redis",
+        redis_url=os.environ.get("LEGAL_WORKBENCH_REDIS_URL", "redis://127.0.0.1:6379/0"),
+        stream_prefix=f"lawbench_test_{uuid4().hex[:8]}",
+    )
+    bus = RedisTaskBus(tmp_path, config=config, client=redis.Redis.from_url(config.redis_url, decode_responses=True))
+    bus.ensure_groups()
+    task = make_task(f"task_{uuid4().hex[:10]}")
+    assert bus.publish(task)["published"] is True
+    message = bus.consume(consumer="integration-worker", block_ms=500)
+    assert message is not None and message.task_id == task["task_id"]
+    bus.ack(message)
+    assert bus.health()["ok"] is True
 
 
 def test_publish_consume_ack_roundtrip(tmp_path: Path) -> None:
@@ -166,6 +193,37 @@ def test_worker_consumes_from_redis_stream_end_to_end(tmp_path: Path) -> None:
     assert worker.run_once(block_ms=1) is None
 
 
+def test_web_publishes_to_redis_and_external_worker_consumes(
+    tmp_path: Path, monkeypatch
+) -> None:
+    bus = make_bus(tmp_path)
+    monkeypatch.setattr("legalworkbench.mq.create_task_bus", lambda cwd: bus)
+    app = create_app(tmp_path)
+
+    with TestClient(app) as client:
+        client.post("/api/init")
+        response = client.post(
+            "/api/review",
+            json={
+                "contract_text": "## 赔偿责任\n乙方承担全部损失且不设赔偿责任上限。"
+            },
+        )
+        assert response.status_code == 202
+        accepted = response.json()
+        assert accepted["status"] == "pending"
+        assert accepted["queue"]["backend"] == "redis"
+        assert accepted["queue"]["published"] is True
+        assert bus.health()["streams"][bus.stream_normal]["length"] == 1
+        assert LegalAgentRuntime(tmp_path).store.list_runs() == []
+
+        result = ReviewTaskWorker(tmp_path, bus=bus).run_once(block_ms=1)
+        assert result is not None
+        assert result["status"] == "completed"
+        assert result["task_id"] == accepted["task_id"]
+        assert client.get(f"/api/tasks/{accepted['task_id']}").json()["status"] == "completed"
+        assert bus.health()["streams"][bus.stream_normal]["pending"] == 0
+
+
 def test_worker_skips_redelivered_completed_task(tmp_path: Path) -> None:
     runtime = LegalAgentRuntime(tmp_path)
     paths = runtime.init_samples()
@@ -207,6 +265,36 @@ def test_worker_failure_path_updates_task_store(tmp_path: Path) -> None:
     assert second["status"] == "failed"
     assert second["dead_lettered"] is True
     assert bus.dlq_list()[0]["task_id"] == task["task_id"]
+
+
+def test_worker_retries_failed_review_run_instead_of_marking_completed(
+    tmp_path: Path,
+) -> None:
+    contract = tmp_path / "contract.md"
+    contract.write_text("## 条款\n测试", encoding="utf-8")
+    queue = ReviewTaskQueue(tmp_path)
+    task = queue.add(
+        title="runtime failed",
+        source="test",
+        contract_path=str(contract),
+        max_attempts=1,
+        publish=False,
+    )
+
+    class FailedRuntime:
+        def review(self, *args, **kwargs):
+            del args, kwargs
+            return type("FailedRun", (), {"status": "failed", "error": "agent failed"})()
+
+    worker = ReviewTaskWorker(tmp_path)
+    worker._runtime = FailedRuntime()
+    result = worker.run_once(block_ms=1)
+
+    assert result is not None
+    assert result["task_id"] == task["task_id"]
+    assert result["status"] == "failed"
+    assert result["dead_lettered"] is True
+    assert result["error"] == "agent failed"
 
 
 def test_local_bus_preserves_file_queue_behavior(tmp_path: Path) -> None:
@@ -255,7 +343,14 @@ def test_cache_roundtrip_and_set_if_absent() -> None:
 def test_llm_client_remote_calls_hit_cache() -> None:
     cache = WorkbenchCache()
     client = LlmClient(
-        LlmConfig(provider="openai_compatible", model="m", base_url="http://fake", api_key="k"),
+        LlmConfig(
+            provider="openai_compatible",
+            model="m",
+            base_url="http://fake",
+            api_key="k",
+            input_cost_per_million=2.0,
+            output_cost_per_million=4.0,
+        ),
         cache=cache,
     )
     calls = {"n": 0}
@@ -273,6 +368,11 @@ def test_llm_client_remote_calls_hit_cache() -> None:
     # 不同 prompt 不会命中同一个 key
     client.complete(system="s", user="other")
     assert calls["n"] == 2
+    assert len(client.call_traces) == 3
+    assert client.call_traces[1].cache_hit is True
+    assert client.call_traces[0].prompt_tokens == 10
+    assert client.call_traces[0].completion_tokens == 5
+    assert client.call_traces[0].estimated_cost == 0.00004
 
 
 def test_content_hash_is_stable_and_separator_safe() -> None:

@@ -81,10 +81,23 @@ class LegalReviewSupervisor(LegalReviewAgent):
         self.report_writer = ReportWriterAgent()
         self.memory_curator = MemoryCuratorAgent()
 
-    def review(self, contract_path: Path, *, contract_text: str, connect_mcp: bool = False) -> ReviewRun:
+    def review(
+        self,
+        contract_path: Path,
+        *,
+        contract_text: str,
+        connect_mcp: bool = False,
+        tenant_id: str = "local",
+        user_id: str = "",
+        roles: list[str] | None = None,
+        memory_enabled: bool = True,
+    ) -> ReviewRun:
         now = time.time()
         run = ReviewRun(
             review_run_id=f"law_{uuid4().hex[:10]}",
+            tenant_id=tenant_id,
+            user_id=user_id,
+            roles=roles or ["admin"],
             contract_path=str(contract_path),
             status="created",
             created_at=now,
@@ -92,6 +105,7 @@ class LegalReviewSupervisor(LegalReviewAgent):
             mcp_context={
                 "workflow": self.workflow.describe(),
                 "agent_architecture": self.architecture(),
+                "memory_enabled": memory_enabled,
             },
         )
         ctx = ReviewAgentContext(
@@ -109,11 +123,20 @@ class LegalReviewSupervisor(LegalReviewAgent):
             sessions=self.sessions,
             store=self.store,
             connect_mcp=connect_mcp,
+            memory_enabled=memory_enabled,
             started_at=now,
         )
 
         self.sessions.save_snapshot(run, event="created")
-        self.hooks.emit(HookEvent("review.created", run.review_run_id, {"contract_path": str(contract_path)}))
+        self.hooks.emit(
+            HookEvent(
+                "review.created",
+                run.review_run_id,
+                {"contract_path": str(contract_path)},
+                tenant_id=run.tenant_id,
+                user_id=run.user_id,
+            )
+        )
         self.emit(ctx, "started", {"contract_path": str(contract_path)})
 
         try:
@@ -126,7 +149,15 @@ class LegalReviewSupervisor(LegalReviewAgent):
             pii_counts = scan_pii(contract_text)
             run.mcp_context["privacy"] = {"pii_counts": pii_counts, "sensitive": bool(pii_counts)}
             if pii_counts:
-                self.hooks.emit(HookEvent("privacy.pii_detected", run.review_run_id, {"counts": pii_counts}))
+                self.hooks.emit(
+                    HookEvent(
+                        "privacy.pii_detected",
+                        run.review_run_id,
+                        {"counts": pii_counts},
+                        tenant_id=run.tenant_id,
+                        user_id=run.user_id,
+                    )
+                )
             # 注入检测：合同是不可信输入，命中指令注入模式 -> 打标 + 审计事件 +
             # 本次审查全部结论强制人工复核（宁可保守，不让被污染的结论静默通过）
             injection_hits = scan_injection(contract_text)
@@ -140,6 +171,8 @@ class LegalReviewSupervisor(LegalReviewAgent):
                         "security.injection_detected",
                         run.review_run_id,
                         {"patterns": [hit.pattern_id for hit in injection_hits]},
+                        tenant_id=run.tenant_id,
+                        user_id=run.user_id,
                     )
                 )
             skill_profile = self.skill_planner.run(ctx)
@@ -172,6 +205,8 @@ class LegalReviewSupervisor(LegalReviewAgent):
                                 "risk_type": finding.risk_type,
                                 "risk_level": finding.risk_level,
                             },
+                            tenant_id=run.tenant_id,
+                            user_id=run.user_id,
                         )
                     )
 
@@ -185,7 +220,13 @@ class LegalReviewSupervisor(LegalReviewAgent):
             self.store.save_run(run)
             self.sessions.save_snapshot(run, event="completed", metadata={"report_path": run.report_path})
             self.hooks.emit(
-                HookEvent("review.completed", run.review_run_id, {"status": run.status, "findings": len(run.findings)})
+                HookEvent(
+                    "review.completed",
+                    run.review_run_id,
+                    {"status": run.status, "findings": len(run.findings)},
+                    tenant_id=run.tenant_id,
+                    user_id=run.user_id,
+                )
             )
             self.export_dashboard()
             self.emit(ctx, "completed", {"status": run.status, "findings": len(run.findings)})
@@ -199,7 +240,15 @@ class LegalReviewSupervisor(LegalReviewAgent):
         ctx.run.updated_at = time.time()
         self.store.save_run(ctx.run)
         self.sessions.save_snapshot(ctx.run, event="failed", metadata={"error": error})
-        self.hooks.emit(HookEvent("review.failed", ctx.run.review_run_id, {"error": error}))
+        self.hooks.emit(
+            HookEvent(
+                "review.failed",
+                ctx.run.review_run_id,
+                {"error": error},
+                tenant_id=ctx.run.tenant_id,
+                user_id=ctx.run.user_id,
+            )
+        )
         self.emit(ctx, "failed", {"error": error})
         return ctx.run
 

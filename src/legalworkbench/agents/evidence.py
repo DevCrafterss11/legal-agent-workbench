@@ -91,6 +91,8 @@ class EvidenceAgent(LegalReviewAgent):
                 ),
             },
             fallback={"refine": False},
+            agent=self.name,
+            review_run_id=ctx.run.review_run_id,
         )
         refined_query = str(decision.get("query") or "").strip()
         if not decision.get("refine") or not refined_query:

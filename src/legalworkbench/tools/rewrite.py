@@ -5,12 +5,14 @@ from __future__ import annotations
 from typing import Any
 
 from legalworkbench.models import LegalMemory, RetrievedEvidence
+from legalworkbench.governance import ToolAccess, ToolPolicy
 from legalworkbench.tools.base import ToolContext, ToolResult
 
 
 class ClauseRewriterTool:
     name = "clause_rewriter"
     description = "Generate source-grounded rewrite suggestions for risky clauses."
+    policy = ToolPolicy("legal.compute", ToolAccess.COMPUTE)
 
     def execute(self, arguments: dict[str, Any], context: ToolContext) -> ToolResult:
         del context

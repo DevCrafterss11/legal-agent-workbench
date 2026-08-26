@@ -12,6 +12,8 @@ STATE_DIR="${PROJECT_DIR}/.lawbench/run"
 LOG_DIR="${PROJECT_DIR}/.lawbench/logs"
 WEB_PID_FILE="${STATE_DIR}/web.pid"
 WEB_LOG_FILE="${LOG_DIR}/web.log"
+WORKER_PID_FILE="${STATE_DIR}/worker.pid"
+WORKER_LOG_FILE="${LOG_DIR}/worker.log"
 FEISHU_PID_FILE="${STATE_DIR}/feishu.pid"
 FEISHU_LOG_FILE="${LOG_DIR}/feishu.log"
 PYTHON_BIN="${PROJECT_DIR}/.venv/bin/python"
@@ -53,6 +55,14 @@ valid_pid_file() {
   local pid
   pid="$(tr -cd '0-9' < "${pid_file}")"
   [[ -n "${pid}" ]] && kill -0 "${pid}" >/dev/null 2>&1
+}
+
+valid_worker_pid() {
+  valid_pid_file "${WORKER_PID_FILE}" || return 1
+  local worker_pid worker_command
+  worker_pid="$(tr -cd '0-9' < "${WORKER_PID_FILE}")"
+  worker_command="$(ps -p "${worker_pid}" -o command= 2>/dev/null || true)"
+  [[ "${worker_command}" == *"legalworkbench.cli"* && "${worker_command}" == *"worker"* ]]
 }
 
 cd "${PROJECT_DIR}"
@@ -133,6 +143,15 @@ else
   else
     ok "Web 服务已经运行"
   fi
+fi
+
+if valid_worker_pid; then
+  ok "独立审查 Worker 已经运行"
+else
+  info "正在启动独立审查 Worker…"
+  nohup "${PYTHON_BIN}" -c 'from legalworkbench.cli import app; app()' \
+    worker --cwd "${PROJECT_DIR}" >>"${WORKER_LOG_FILE}" 2>&1 &
+  printf '%s\n' "$!" > "${WORKER_PID_FILE}"
 fi
 
 info "等待 Web 健康检查…"

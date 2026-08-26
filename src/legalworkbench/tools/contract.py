@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from legalworkbench.models import LegalSkill
+from legalworkbench.governance import ToolAccess, ToolPolicy
 from legalworkbench.parser import detect_contract_type, parse_clauses
 from legalworkbench.retrieval import semantic_overlap_score
 from legalworkbench.skills import SkillCatalog
@@ -14,6 +15,7 @@ from legalworkbench.tools.base import ToolContext, ToolResult
 class ContractParserTool:
     name = "contract_parser"
     description = "Detect contract type and parse contract text into clauses."
+    policy = ToolPolicy("contract.read", ToolAccess.READ)
 
     def execute(self, arguments: dict[str, Any], context: ToolContext) -> ToolResult:
         text = str(arguments.get("text") or "")

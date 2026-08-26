@@ -31,6 +31,9 @@ class ReviewTaskQueue:
         self.path = workspace_dir(self.cwd) / "tasks.json"
         self._lock = _queue_lock(self.path)
         self._bus: Any = None
+        from legalworkbench.storage.postgres import postgres_backend
+
+        self._postgres = postgres_backend(self.cwd)
 
     def add(
         self,
@@ -45,6 +48,9 @@ class ReviewTaskQueue:
         publish: bool = True,
         dedup_key: str = "",
         auto_execute: bool = False,
+        tenant_id: str = "local",
+        user_id: str = "",
+        roles: list[str] | None = None,
     ) -> dict[str, Any]:
         with self._lock:
             tasks = self.list()
@@ -54,6 +60,7 @@ class ReviewTaskQueue:
                         item
                         for item in tasks
                         if item.get("dedup_key") == dedup_key
+                        and str(item.get("tenant_id") or "local") == tenant_id
                         and item.get("status") in {"pending", "running"}
                     ),
                     None,
@@ -62,6 +69,9 @@ class ReviewTaskQueue:
                     return {**existing, "deduplicated": True}
             task = {
                 "task_id": f"task_{uuid4().hex[:10]}",
+                "tenant_id": tenant_id,
+                "user_id": user_id,
+                "roles": list(roles or ["admin"]),
                 "title": title,
                 "source": source,
                 "contract_path": contract_path,
@@ -98,14 +108,21 @@ class ReviewTaskQueue:
         except Exception as exc:  # noqa: BLE001 - 发布失败不阻塞任务创建
             return {"published": False, "error": str(exc)}
 
-    def get(self, task_id: str) -> dict[str, Any] | None:
+    def get(
+        self, task_id: str, *, tenant_id: str | None = None
+    ) -> dict[str, Any] | None:
         with self._lock:
             for task in self.list():
-                if task.get("task_id") == task_id:
+                if task.get("task_id") == task_id and (
+                    tenant_id is None
+                    or str(task.get("tenant_id") or "local") == tenant_id
+                ):
                     return task
         return None
 
-    def find_active(self, dedup_key: str) -> dict[str, Any] | None:
+    def find_active(
+        self, dedup_key: str, *, tenant_id: str | None = None
+    ) -> dict[str, Any] | None:
         if not dedup_key:
             return None
         with self._lock:
@@ -114,6 +131,10 @@ class ReviewTaskQueue:
                     task
                     for task in self.list()
                     if task.get("dedup_key") == dedup_key
+                    and (
+                        tenant_id is None
+                        or str(task.get("tenant_id") or "local") == tenant_id
+                    )
                     and task.get("status") in {"pending", "running"}
                 ),
                 None,
@@ -138,18 +159,29 @@ class ReviewTaskQueue:
                 return dict(task)
         return None
 
-    def list(self) -> list[dict[str, Any]]:
+    def list(self, *, tenant_id: str | None = None) -> list[dict[str, Any]]:
         with self._lock:
+            if self._postgres is not None:
+                return self._postgres.list_tasks(tenant_id=tenant_id)
             if not self.path.exists():
                 return []
             try:
                 raw = json.loads(secure_read_text(self.path, cwd=self.cwd))
             except (json.JSONDecodeError, UnicodeDecodeError):
                 return []
-            return raw if isinstance(raw, list) else []
+            rows = raw if isinstance(raw, list) else []
+            if tenant_id is None:
+                return rows
+            return [
+                row
+                for row in rows
+                if str(row.get("tenant_id") or "local") == tenant_id
+            ]
 
-    def summary(self, *, limit: int = 5) -> dict[str, Any]:
-        tasks = self.list()
+    def summary(
+        self, *, limit: int = 5, tenant_id: str | None = None
+    ) -> dict[str, Any]:
+        tasks = self.list(tenant_id=tenant_id)
         counts = {"pending": 0, "running": 0, "completed": 0, "failed": 0}
         for task in tasks:
             status = str(task.get("status") or "unknown")
@@ -196,21 +228,35 @@ class ReviewTaskQueue:
                 self.save(tasks)
             return updated
 
-    def delete(self, task_id: str) -> bool:
+    def delete(self, task_id: str, *, tenant_id: str | None = None) -> bool:
         tasks = self.list()
-        remaining = [task for task in tasks if task.get("task_id") != task_id]
+        remaining = [
+            task
+            for task in tasks
+            if not (
+                task.get("task_id") == task_id
+                and (
+                    tenant_id is None
+                    or str(task.get("tenant_id") or "local") == tenant_id
+                )
+            )
+        ]
         if len(remaining) == len(tasks):
             return False
         self.save(remaining)
         return True
 
-    def delete_failed_without_contract(self) -> int:
+    def delete_failed_without_contract(self, *, tenant_id: str | None = None) -> int:
         tasks = self.list()
         remaining = [
             task
             for task in tasks
             if not (
                 task.get("status") == "failed"
+                and (
+                    tenant_id is None
+                    or str(task.get("tenant_id") or "local") == tenant_id
+                )
                 and not str(task.get("contract_path") or "")
                 and not str(task.get("review_run_id") or "")
             )
@@ -228,6 +274,9 @@ class ReviewTaskQueue:
                     -float(item.get("updated_at", 0)),
                 )
             )
+            if self._postgres is not None:
+                self._postgres.replace_tasks(tasks)
+                return
             secure_write_text(
                 self.path,
                 json.dumps(tasks, ensure_ascii=False, indent=2) + "\n",

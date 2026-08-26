@@ -200,17 +200,17 @@ A：没有 mock。早期版本有一个 mock 工具目录兜底，后来在推�
 
 A：合同审查可能包含 PDF/DOCX 解析、OCR、RAG 检索、多 Agent 审查和报告生成，耗时不稳定。同步请求容易超时，用户体验差。任务队列用于把大文件、批量合同、飞书附件放到后台处理。
 
-**Q：现在为什么用 file-backed queue？**
+**Q：本地为什么还能用 file-backed queue？**
 
-A：MVP 阶段优先保证本地可运行和可调试，所以用 `.lawbench/tasks.json` 存任务。它支持 pending/running/completed/failed、attempts、report_path 等基本状态，能解释异步流程。
+A：TaskBus 有 Redis Streams 和 local 两种实现。`.lawbench/tasks.json` 始终承担任务状态表与 outbox；本地模式由独立 Worker 轮询它，降低演示部署门槛。切到 Redis 后，Web 会在任务落盘后 XADD，Worker 用 Consumer Group 消费，API 与执行链不变。
 
-**Q：为什么不直接上 Redis/RQ/Celery？**
+**Q：Web 请求真的经过 Redis 吗？**
 
-A：Redis/RQ 是生产增强，不是 MVP 必需。当前 file queue 的价值是降低部署门槛；生产环境可以替换为 Redis + RQ，让多个 worker 消费任务、支持失败重试和并发执行。Celery 更强但配置更重，当前合同审查任务用 RQ 更容易解释。
+A：是。`/api/review` 和 `/api/review-document` 统一调用 `ReviewTaskQueue.add()`，先写任务/outbox，再由 `RedisTaskBus.publish()` XADD；接口返回 HTTP 202 后不执行 Agent。独立 `legal-agent worker` 执行 XREADGROUP、更新状态并在成功后 XACK。Redis 不可用时工厂降级到 LocalTaskBus，但仍然由独立 Worker 消费，不会退回 Web 线程池。
 
 **Q：Kafka 合适吗？**
 
-A：不优先。Kafka 适合高吞吐事件流，合同审查更像后台任务队列，需要任务状态、重试和 worker 执行结果。Redis/RQ 或 Celery 更贴近场景。
+A：不优先。Kafka 适合高吞吐、长留存和跨业务事件流，合同审查更像长耗时后台任务，需要 Consumer Group、Pending Recovery、重试、DLQ 和 worker 执行结果。Redis Streams 已覆盖当前千级日任务量的语义，运维成本更低。
 
 ## Benchmark 和指标
 
@@ -459,7 +459,7 @@ A：两级。第一级是公式重排：检索分 × 0.55 + 语义重叠 × 8 + 
 
 **Q：Web 层为什么用 FastAPI？异步体现在哪里？**
 
-A：业务端点是阻塞型（审查是 CPU + IO 混合的同步链路），用 def 定义交给 FastAPI 的线程池，不阻塞事件循环；SSE 事件流是 async def，用 asyncio.to_thread 把文件型事件总线的读取放到线程池，每秒轮询增量推送，空闲发心跳。浏览器端 EventSource 订阅，审查过程中的每个 Agent 事件（检索完成、风险发现、复核通过）实时上屏。没有为了"全异步"把同步审查链路强行改成 async——那只会把线程池换个名字，我可以解释这个取舍。
+A：Web 只做上传、任务落盘和 TaskBus 发布，返回 HTTP 202，不在 FastAPI 线程池里执行 Agent；耗时审查由独立 Worker 进程完成。SSE 是 async def，用 asyncio.to_thread 读取当前文件型事件总线并推送 Worker 产生的 Agent 事件。这里的异步是 API 与任务执行的进程级解耦，不是把同步 Agent 链路简单改写成 async。
 
 ## 后端拷打：Redis 任务总线与缓存
 
