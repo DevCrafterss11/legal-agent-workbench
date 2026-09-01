@@ -144,12 +144,18 @@ class RiskReviewerAgent(LegalReviewAgent):
             if primary is not None:
                 llm_score = 1.0
             else:
+                packet = ctx.context_manager.build_for_clause(
+                    ctx.run,
+                    bundle.clause,
+                    task="legal_risk_semantic_judgment",
+                    evidence=matched_evidence,
+                    memories=bundle.memories,
+                )
+                ctx.context_manager.record(ctx.run, packet)
                 llm_judgment = ctx.llm.semantic_judgment(
-                    clause=bundle.query,
+                    clause=packet.text,
                     risk_type=risk_type,
-                    evidence="\n".join(
-                        item.body_preview for item in matched_evidence[:3]
-                    ),
+                    evidence="",
                     agent=self.name,
                     review_run_id=ctx.run.review_run_id,
                 )
@@ -231,8 +237,16 @@ class RiskReviewerAgent(LegalReviewAgent):
         ctx: ReviewAgentContext,
         bundle: EvidenceBundle,
     ) -> tuple[list[SemanticRiskCandidate], str]:
+        packet = ctx.context_manager.build_for_clause(
+            ctx.run,
+            bundle.clause,
+            task="discover_risks",
+            evidence=bundle.evidence,
+            memories=bundle.memories,
+        )
+        ctx.context_manager.record(ctx.run, packet)
         decision = ctx.llm.discover_risk_candidates(
-            clause=bundle.clause.text,
+            clause=packet.text,
             contract_type=ctx.run.contract_type,
             allowed_risk_types=list(KNOWN_RISK_TYPES),
             agent=self.name,

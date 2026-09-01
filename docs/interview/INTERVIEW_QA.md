@@ -329,6 +329,7 @@ A：不是直接套壳。迁移的是思想：Agent Runtime、Tool Registry、Pe
 A：三层，按生命周期和信任等级划分，这与当前主流 harness 的 context engineering 思路一致：
 
 - **工作记忆（context 内，单次审查）**：ReviewRun 共享状态——当前条款、证据包、每个决策的来源标记。子 Agent 之间不传完整对话历史，只传结构化状态，这就是"塞聊天历史"和"状态化工作记忆"的区别：token 成本不随步骤数线性膨胀，且每个字段可审计。
+- **Context 投影**：`ContextManager` 不新增一套持久化状态，而是把 ReviewRun 投影成一次 LLM 调用的 `ContextPacket`。它按优先级、token budget 和去重规则选择当前条款、RAG 证据、当前 findings 及同租户的 `approved/active` memory，并记录选中/省略片段的 provenance；`proposed/rejected` 记忆不会进入模型上下文。
 - **短期记忆（会话级）**：两个机制。ReviewSession 按阶段快照（created/completed/failed），失败可回溯；CompactSnapshot 对长合同做压缩——不是暴力截断，而是**状态感知压缩**：有风险发现的条款全保留（带风险类型和证据来源），无风险条款截断限流，压缩率记进 trace。这对应 harness 里的 context compaction。
 - **长期记忆（跨会话）**：LegalMemoryStore，完整生命周期（下一问）。写入有门槛——只有带证据、过复核门槛的结论才能跨会话存活，这是长期记忆和短期记忆之间的**信任边界**：短期记忆是过程态可以有噪声，长期记忆是资产必须干净。
 

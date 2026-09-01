@@ -22,6 +22,7 @@ from legalworkbench.agents.risk_reviewer import RiskReviewerAgent
 from legalworkbench.agents.skill_planner import SkillPlannerAgent
 from legalworkbench.compact import LegalContextCompactor
 from legalworkbench.connectors import EnterpriseConnectorRegistry
+from legalworkbench.context import ContextManager
 from legalworkbench.fs import atomic_write_text
 from legalworkbench.hooks import HookEvent, HookEventBus
 from legalworkbench.llm import LlmClient
@@ -57,6 +58,7 @@ class LegalReviewSupervisor(LegalReviewAgent):
         workflow: LegalReviewWorkflow,
         reflection: ReflectionAuditor,
         compactor: LegalContextCompactor,
+        context_manager: ContextManager,
         llm: LlmClient,
         tools: ToolRegistry,
     ) -> None:
@@ -70,6 +72,7 @@ class LegalReviewSupervisor(LegalReviewAgent):
         self.workflow = workflow
         self.reflection = reflection
         self.compactor = compactor
+        self.context_manager = context_manager
         self.llm = llm
         self.tools = tools
         self.parser = ParserAgent()
@@ -118,6 +121,7 @@ class LegalReviewSupervisor(LegalReviewAgent):
             llm=self.llm,
             reflection=self.reflection,
             compactor=self.compactor,
+            context_manager=self.context_manager,
             connectors=self.connectors,
             memory_store=self.memory,
             sessions=self.sessions,
@@ -272,6 +276,10 @@ class LegalReviewSupervisor(LegalReviewAgent):
         return {
             "pattern": "supervisor_worker",
             "communication": "ReviewRun shared state + structured agent steps + ToolCallTrace",
+            "context_management": (
+                "ContextManager projects ReviewRun, RAG evidence, and approved tenant-local memory "
+                "into bounded provenance-aware ContextPackets for each LLM call."
+            ),
             "supervisor": self.name,
             "workers": [
                 self.parser.name,

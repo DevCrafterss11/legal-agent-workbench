@@ -29,6 +29,25 @@ class ReportWriterAgent(LegalReviewAgent):
             ),
             "compact_tokens": ctx.run.compact_snapshot.retained_tokens if ctx.run.compact_snapshot else 0,
         }
+        context_packets = ctx.run.mcp_context.get("context_packets", [])
+        if not isinstance(context_packets, list):
+            context_packets = []
+        context_tokens = sum(
+            int(packet.get("used_tokens") or 0)
+            for packet in context_packets
+            if isinstance(packet, dict)
+        )
+        context_budget = sum(
+            int(packet.get("token_budget") or 0)
+            for packet in context_packets
+            if isinstance(packet, dict)
+        )
+        ctx.run.token_usage.update(
+            {
+                "context_packets": len(context_packets),
+                "context_selected_tokens": context_tokens,
+            }
+        )
         ctx.run.llm_calls.extend(ctx.llm.drain_traces(ctx.run.review_run_id))
         ctx.run.token_usage.update(
             {
@@ -42,6 +61,9 @@ class ReportWriterAgent(LegalReviewAgent):
         ctx.run.metrics["retrieved_evidence"] = float(ctx.evidence_total)
         ctx.run.metrics["llm_estimated_cost"] = round(
             sum(call.estimated_cost for call in ctx.run.llm_calls), 8
+        )
+        ctx.run.metrics["context_budget_utilization"] = round(
+            context_tokens / max(1, context_budget), 4
         )
         self.emit(ctx, "context_finalize_completed", {"status": ctx.run.status})
 

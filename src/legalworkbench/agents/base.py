@@ -9,6 +9,7 @@ from typing import Any
 
 from legalworkbench.compact import LegalContextCompactor
 from legalworkbench.connectors import EnterpriseConnectorRegistry
+from legalworkbench.context import ContextManager
 from legalworkbench.hooks import HookEvent, HookEventBus
 from legalworkbench.llm import LlmClient
 from legalworkbench.memory import LegalMemoryStore
@@ -37,6 +38,7 @@ class ReviewAgentContext:
     llm: LlmClient
     reflection: ReflectionAuditor
     compactor: LegalContextCompactor
+    context_manager: ContextManager
     connectors: EnterpriseConnectorRegistry
     memory_store: LegalMemoryStore
     sessions: ReviewSessionStore

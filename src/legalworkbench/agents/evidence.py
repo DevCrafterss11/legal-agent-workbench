@@ -77,14 +77,21 @@ class EvidenceAgent(LegalReviewAgent):
         *,
         top_k: int,
     ) -> tuple[str, list[RetrievedEvidence]]:
+        packet = ctx.context_manager.build_for_clause(
+            ctx.run,
+            clause,
+            task="refine_query",
+            evidence=evidence,
+        )
+        ctx.context_manager.record(ctx.run, packet)
         decision = ctx.llm.decide(
             task="refine_query",
             payload={
                 "clause_title": clause.title,
-                "clause_text": clause.text[:400],
                 "contract_type": ctx.run.contract_type,
                 "evidence_count": len(evidence),
                 "top_rerank_score": max((item.rerank_score for item in evidence), default=0.0),
+                "context": packet.text,
                 "instruction": (
                     "证据不足。判断是否用更聚焦的检索式重试一次。"
                     '返回 {"refine": bool, "query": str, "reason": str}。'

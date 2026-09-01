@@ -19,6 +19,7 @@ from legalworkbench.agents.risk_reviewer import (
 from legalworkbench.cache import create_cache
 from legalworkbench.compact import LegalContextCompactor
 from legalworkbench.connectors import EnterpriseConnectorRegistry
+from legalworkbench.context import ContextManager
 from legalworkbench.evals import BenchmarkRunner, HumanBenchmarkRunner
 from legalworkbench.fs import atomic_write_text
 from legalworkbench.governance import LegalPermissionChecker, PermissionMode
@@ -58,6 +59,7 @@ class LegalAgentRuntime:
         self.workflow = LegalReviewWorkflow()
         self.reflection = ReflectionAuditor()
         self.compactor = LegalContextCompactor()
+        self.context_manager = ContextManager()
         self.cache = create_cache(self.cwd)
         self.llm = LlmClient(cwd=self.cwd, cache=self.cache)
         self.permission = LegalPermissionChecker(mode=permission_mode)
@@ -133,6 +135,7 @@ class LegalAgentRuntime:
             workflow=self.workflow,
             reflection=self.reflection,
             compactor=self.compactor,
+            context_manager=self.context_manager,
             llm=self.llm,
             tools=self.tools,
         )

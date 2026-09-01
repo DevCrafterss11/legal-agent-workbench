@@ -50,6 +50,7 @@
 - `evals/`：benchmark 指标评测
 - `reflection/`：二次复核与报告审计
 - `compact/`：长合同上下文压缩快照
+- `context/`：按任务和 token 预算构建 provenance-aware ContextPacket；只选择当前条款、RAG 证据和已批准的租户记忆，避免把完整运行状态或未审核记忆直接交给模型
 - `hooks/`：runtime 事件总线
 - `documents/`：合同上传与文本抽取
 - `llm/`：OpenAI-compatible / Ollama 模型接口、结构化决策（decide）与确定性本地 fallback
